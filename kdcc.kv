@@ -1,0 +1,55 @@
+<LoginWindow>:
+    canvas.before:
+        Color:
+            rgba: (1,1,1,1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Label:
+        text: "Login"
+        color: (0,0,0,1)
+        font_size: 60
+        center_x: root.width * 0.5
+        center_y: root.top * 0.8
+    Label:
+        id: username_label
+        text: "Username"
+        color: (0,0,0,1)
+        font_size: 30
+        right: username_input.x - 60
+        center_y: root.top * 0.6
+    TextInput:
+        id: username_input
+        font_size: 20
+        center_x: root.width * 0.5
+        center_y: root.top * 0.6
+        height: 35
+        width: 300
+    Label:
+        id: password_label
+        text: "Password"
+        color: (0,0,0,1)
+        font_size: 30
+        right: password_input.x - 60
+        center_y: root.top * 0.5
+    TextInput:
+        id: password_input
+        font_size: 20
+        password: True
+        center_x: root.width * 0.5
+        center_y: root.top * 0.5
+        height: 35
+        width: 300
+    Button:
+        id: login_button
+        font_size: 20
+        center_x: root.width * 0.5
+        center_y: password_input.y - 100
+        text: "login"
+        size: (150,100)
+        on_press: root.login()
+    Label:
+        id: success
+        pos: (100,100)
+        color: (0,0,0,1)
+        text: "fail"
