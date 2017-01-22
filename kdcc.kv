@@ -1,5 +1,5 @@
 <LoginWindow>:
-    canvas.before:
+    canvas:
         Color:
             rgba: (1,1,1,1)
         Rectangle:
@@ -53,3 +53,46 @@
         pos: (100,100)
         color: (0,0,0,1)
         text: "fail"
+
+<MainMenuWindow>:
+    canvas.before:
+        Color:
+            rgba: (1,1,1,1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Button:
+        id: student_records
+        font_size: 15
+        center_x: root.width + 100
+        center_y: root.y + 350
+        text: "Student Records"
+        size: (250,100)
+    Button:
+        id: faculty_records
+        font_size: 15
+        center_x: root.width + 350
+        center_y: root.y + 350
+        text: "Faculty Records"
+        size: (250,100)
+    Button:
+        id: daily_attendance
+        font_size: 15
+        center_x: root.width + 100
+        center_y: root.y + 250
+        text: "Daily Attendance"
+        size: (250,100)
+    Button:
+        id: finance_summary
+        font_size: 15
+        center_x: root.width + 350
+        center_y: root.y + 250
+        text: "Financial Semi-Monthly\n            Summary"
+        size: (250,100)
+    Button:
+        id: logout
+        font_size: 15
+        center_x: root.width + 500
+        center_y: root.y + 100
+        text: "Logout"
+        size: (150,50)

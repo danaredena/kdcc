@@ -11,6 +11,8 @@ DBSession = sessionmaker()
 DBSession.configure(bind=engine)
 session = DBSession()
 
+
+
 class LoginWindow(Widget):
     def login(self, *args):
         username_input = self.ids.username_input
@@ -22,7 +24,12 @@ class LoginWindow(Widget):
                 return
             label = self.ids.success
             label.text = "Success"
+        self.clear_widgets()
+        self.add_widget(MainMenuWindow())
 
+class MainMenuWindow(Widget):
+    pass
+    
 class KDCCApp(App):
     def build(self):
         return LoginWindow()
