@@ -26,6 +26,7 @@
         height: 35
         width: 300
         write_tab: False
+        multiline: False
     Label:
         id: password_label
         text: "Password"
@@ -42,6 +43,7 @@
         height: 35
         width: 300
         write_tab: False
+        multiline: False
     Button:
         id: login_button
         font_size: 20
@@ -164,6 +166,7 @@
         width: 200
         hint_text: "Nickname"
         write_tab: False
+        multiline: False
     TextInput:
         id: last_name
         font_size: 20
@@ -173,6 +176,7 @@
         width: 200
         hint_text: "Last Name"
         write_tab: False
+        multiline: False
     TextInput:
         id: first_name
         font_size: 20
@@ -182,6 +186,7 @@
         width: 200
         hint_text: "First Name"
         write_tab: False
+        multiline: False
     TextInput:
         id: middle_name
         font_size: 20
@@ -191,6 +196,7 @@
         width: 200
         hint_text: "Middle Name"
         write_tab: False
+        multiline: False
     TextInput:
         id: address
         font_size: 20
@@ -200,6 +206,7 @@
         width: 600
         hint_text: "Address"
         write_tab: False
+        multiline: False
     TextInput:
         id: birthday
         font_size: 20
@@ -209,6 +216,7 @@
         width: 200
         hint_text: "Birthday"
         write_tab: False
+        multiline: False
     TextInput:
         id: sex
         font_size: 20
@@ -218,6 +226,7 @@
         width: 200
         hint_text: "Sex"
         write_tab: False
+        multiline: False
     TextInput:
         id: date_of_enrollment
         font_size: 20
@@ -227,6 +236,7 @@
         width: 200
         hint_text: "Date of Enrollment"
         write_tab: False
+        multiline: False
     TextInput:
         id: group
         font_size: 20
@@ -236,8 +246,9 @@
         width: 200
         hint_text: "Group"
         write_tab: False
+        multiline: False
     TextInput:
-        id: guardian
+        id: guardianA
         font_size: 20
         center_x: root.width + 25
         center_y: root.y + 300 - 50
@@ -245,8 +256,9 @@
         width: 200
         hint_text: "Guardian Name"
         write_tab: False
+        multiline: False
     TextInput:
-        id: contact
+        id: contactA
         font_size: 20
         center_x: root.width + 235
         center_y: root.y + 300 - 50
@@ -254,6 +266,7 @@
         width: 200
         hint_text: "Contact Number"
         write_tab: False
+        multiline: False
     TextInput:
         id: up_nonup
         font_size: 20
@@ -263,8 +276,9 @@
         width: 200
         hint_text: "UP/Non-UP"
         write_tab: False
+        multiline: False
     TextInput:
-        id: guardian
+        id: guardianB
         font_size: 20
         center_x: root.width + 25
         center_y: root.y + 250 - 50
@@ -272,8 +286,9 @@
         width: 200
         hint_text: "Guardian Name"
         write_tab: False
+        multiline: False
     TextInput:
-        id: contact
+        id: contactB
         font_size: 20
         center_x: root.width + 235
         center_y: root.y + 250 - 50
@@ -281,6 +296,7 @@
         width: 200
         hint_text: "Contact Number"
         write_tab: False
+        multiline: False
     Button:
         id: student_records
         font_size: 15
@@ -296,7 +312,7 @@
         center_y: root.y + 75
         text: "Create"
         size: (250,40)
-        on_press: root.back_to_student_records()
+        on_press: root.create()
 
 
 
