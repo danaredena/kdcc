@@ -28,7 +28,14 @@ class LoginWindow(Widget):
         self.add_widget(MainMenuWindow())
 
 class MainMenuWindow(Widget):
-    pass
+    def student_records(self, *args):
+        self.clear_widgets()
+        self.add_widget(StudentRecordsWindow())
+
+class StudentRecordsWindow(Widget):
+    def main_menu(self, *args):
+        self.clear_widgets()
+        self.add_widget(MainMenuWindow())
     
 class KDCCApp(App):
     def build(self):
