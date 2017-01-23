@@ -31,12 +31,23 @@ class MainMenuWindow(Widget):
     def student_records(self, *args):
         self.clear_widgets()
         self.add_widget(StudentRecordsWindow())
+    def logout(self, *args):
+        self.clear_widgets()
+        self.add_widget(LoginWindow())
 
 class StudentRecordsWindow(Widget):
     def main_menu(self, *args):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
-    
+    def create(self, *args):
+        self.clear_widgets()
+        self.add_widget(CreateWindow())
+
+class CreateWindow(Widget):
+    def back_to_student_records(self, *args):
+        self.clear_widgets()
+        self.add_widget(StudentRecordsWindow())
+
 class KDCCApp(App):
     def build(self):
         return LoginWindow()
