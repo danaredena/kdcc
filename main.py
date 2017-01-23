@@ -5,6 +5,7 @@ from kivy.core.window import Window
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import User
+from kivy.uix.dropdown import DropDown
 
 engine = create_engine('sqlite:///kdcc.db')
 DBSession = sessionmaker()
