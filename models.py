@@ -25,7 +25,7 @@ class Students(Base):
 class Faculty(Base):
     __tablename__ = 'faculty'
 
-    facultyID = Column(Integer, nullable=False, primary_key=True)
+    facultyID = Column(Integer, nullable=False, primary_key=True, autoincrement=True)
     firstName = Column(String(70), nullable=False)
     lastName = Column(String(50), nullable=False)
     birthDate = Column(String(10), nullable=False)
@@ -37,6 +37,11 @@ class Semester(Base):
     __tablename__ = 'semester'
 
     semCode = Column(String(10), nullable=False, primary_key=True)
+
+class Enrolled(Base):
+    __tablename__ = 'enrolled'
+    semCode = Column(String(10), nullable=False, ForeignKey('semester.semCode'), primary_key=True)
+    studentID = Column(Integer, nullable=False, ForeignKey('students.studentID'), primary_key=True)
 
 
 engine = create_engine('sqlite:///kdcc.db')
