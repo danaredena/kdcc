@@ -40,14 +40,15 @@ class Semester(Base):
 
 class Enrolled(Base):
     __tablename__ = 'enrolled'
-    semCode = Column(String(10), nullable=False, ForeignKey('semester.semCode'), primary_key=True)
-    studentID = Column(Integer, nullable=False, ForeignKey('student.studentID'), primary_key=True)
+    semCode = Column(String(10), nullable=False, primary_key=True)
+    studentID = Column(Integer, nullable=False, primary_key=True)
+    ForeignKeyConstraint(['semCode', 'studentID'], ['semester.semCode', 'student.studentID'])
 
 class Employed(Base):
     __tablename__ = 'employed'
-    semCode = Column(String(10), nullable=False, ForeignKey('semester.semCode'), primary_key=True)
-    facultyID = Column(Integer, nullable=False, ForeignKey('faculty.facultyID'), primary_key=True)
-
+    semCode = Column(String(10), nullable=False, primary_key=True)
+    facultyID = Column(Integer, nullable=False, primary_key=True)
+    ForeignKeyConstraint(['semCode', 'facultyID'], ['semester.semCode', 'faculty.facultyID'])
 
 
 engine = create_engine('sqlite:///kdcc.db')
