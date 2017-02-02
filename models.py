@@ -12,7 +12,7 @@ class User(Base):
     password = Column(String(20), nullable=False)
 
 class Students(Base):
-    __tablename__ = 'students'
+    __tablename__ = 'student'
 
     studentID = Column(Integer, nullable=False, primary_key=True)
     firstName = Column(String(70), nullable=False)
@@ -41,7 +41,13 @@ class Semester(Base):
 class Enrolled(Base):
     __tablename__ = 'enrolled'
     semCode = Column(String(10), nullable=False, ForeignKey('semester.semCode'), primary_key=True)
-    studentID = Column(Integer, nullable=False, ForeignKey('students.studentID'), primary_key=True)
+    studentID = Column(Integer, nullable=False, ForeignKey('student.studentID'), primary_key=True)
+
+class Employed(Base):
+    __tablename__ = 'employed'
+    semCode = Column(String(10), nullable=False, ForeignKey('semester.semCode'), primary_key=True)
+    facultyID = Column(Integer, nullable=False, ForeignKey('faculty.facultyID'), primary_key=True)
+
 
 
 engine = create_engine('sqlite:///kdcc.db')
