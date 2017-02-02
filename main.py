@@ -35,13 +35,13 @@ class LoginWindow(Widget):
         username_text = username_input.text
         password_input = self.ids.password_input
         password_text = password_input.text
-        for a in session.query(User).filter(User.username == username_text):
-            if a.password != password_text:
-                return
-            label = self.ids.success
-            label.text = "Success"
-        self.clear_widgets()
-        self.add_widget(MainMenuWindow())
+        for row in session.query(User).all():
+            if (row.username==username_text and row.password==password_text):
+                self.clear_widgets()
+                self.add_widget(MainMenuWindow())
+            else:
+                label = self.ids.success
+                label.text = "Invalid username or password."
 
 class MainMenuWindow(Widget):
     def student_records(self, *args):
