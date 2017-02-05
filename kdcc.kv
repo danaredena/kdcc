@@ -80,6 +80,7 @@
         center_y: root.y + 350
         text: "Faculty Records"
         size: (250,100)
+		on_press: root.faculty_records()
     Button:
         id: daily_attendance
         font_size: 15
@@ -104,6 +105,58 @@
         on_press: root.logout()
 
 <StudentRecordsWindow>:
+    canvas.before:
+        Color:
+            rgba: (1,1,1,1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Button:
+        id: create
+        font_size: 15
+        center_x: root.width
+        center_y: root.y + 75
+        text: "Create"
+        size: (100,40)
+        on_press: root.create()
+    Button:
+        id: edit
+        font_size: 15
+        center_x: root.width + 100
+        center_y: root.y + 75
+        text: "Edit"
+        size: (100,40)
+    Button:
+        id: delete
+        font_size: 15
+        center_x: root.width + 200  
+        center_y: root.y + 75
+        text: "Delete"
+        size: (100,40)
+    Button:
+        id: view_summary
+        font_size: 15
+        center_x: root.width + 390
+        center_y: root.y + 560
+        text: "View Summary"
+        size: (150,50)
+    Button:
+        id: semester_list
+        font_size: 15
+        center_x: root.width + 540
+        center_y: root.y + 560
+        text: "Semester List"
+        size: (150,50)
+    Button:
+        id: home
+        font_size: 15
+        center_x: root.width + 560
+        center_y: root.y + 75
+        text: "Back to Home"
+        size: (130,40)
+        on_press: root.main_menu()
+		
+<FacultyRecordsWindow>:
     canvas.before:
         Color:
             rgba: (1,1,1,1)
