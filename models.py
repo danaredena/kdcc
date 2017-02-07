@@ -14,14 +14,14 @@ class User(Base):
 class Students(Base):
     __tablename__ = 'student'
 
-    student_id = Column(Integer, nullable=False, primary_key=True)
+    student_id = Column(Integer, nullable=False, primary_key=True, autoincrement=True)
     nickname = Column(String(30), nullable=False)
     first_name = Column(String(70), nullable=False)
     middle_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
     address = Column(String, nullable=False)
     birth_date = Column(String(10), nullable=False)
-    age = Column(Integer, nullable=False) #autocompute na age
+    age = Column(Integer, nullable=True) #autocompute na age; True muna
     sex = Column(String(8), nullable=False)
     date_of_admission = Column(String, nullable=False)
     group = Column(String(20), nullable=True)

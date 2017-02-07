@@ -4,13 +4,24 @@ from kivy.core.window import Window
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import User
+from models import *
 from kivy.uix.dropdown import DropDown
 
 engine = create_engine('sqlite:///kdcc.db')
 DBSession = sessionmaker()
 DBSession.configure(bind=engine)
 session = DBSession()
+
+#insert to database function (for safety)
+def add_db(addobject):
+    session = DBSession()
+    try:
+        session.add(addobject)
+        session.commit()
+        return "Successfully added!"
+    except:
+        session.rollback()
+        raise
 
 class Student():
     def __init__(self):
@@ -115,8 +126,11 @@ class CreateWindow(Widget):
         student.up_dependent = self.ids.up_dependent
         up_dependent_text = student.up_dependent.text
 
-        print(nickname_text, first_name_text, middle_name_text, last_name_text, address_text, birth_date_text, sex_text, date_of_admission_text, group_text, guardian1_name_text, guardian2_name_text, contact_number1_text, contact_number2_text, up_dependent_text)
 
+        new_student = Students(nickname=nickname_text, first_name=first_name_text, middle_name=middle_name_text, last_name=last_name_text, address=address_text, birth_date=birth_date_text, sex=sex_text, date_of_admission=date_of_admission_text, group=group_text, guardian1_name=guardian1_name_text, guardian2_name=guardian2_name_text, contact_number1=contact_number1_text, contact_number2=contact_number2_text, up_dependent=up_dependent_text)
+        print( add_db(new_student) )
+        
+        #print(session.query(Students).all())
         self.clear_widgets()
         self.add_widget(StudentRecordsWindow())
     def back_to_student_records(self, *args):
