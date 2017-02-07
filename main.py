@@ -19,15 +19,16 @@ class Student():
         self.middle_name = None
         self.last_name = None
         self.address = None
-        self.birthday = None
+        self.birth_date = None
+        self.age = None #autocompute
         self.sex = None
-        self.date_of_enrollment = None
+        self.date_of_admission = None
         self.group = None
         self.guardian1_name = None
         self.guardian2_name = None
         self.contact_number1 = None
         self.contact_number2 = None
-        self.UP_NonUP = None
+        self.up_dependent = None
 
 class LoginWindow(Widget):
     def login(self, *args):
@@ -87,14 +88,14 @@ class CreateWindow(Widget):
         student.address = self.ids.address
         address_text = student.address.text
 
-        student.birthday = self.ids.birthday
-        birthday_text = student.birthday.text
+        student.birth_date = self.ids.birth_date
+        birth_date_text = student.birth_date.text
 
         student.sex = self.ids.sex
         sex_text = student.sex.text
 
-        student.date_of_enrollment = self.ids.date_of_enrollment
-        date_of_enrollment_text = student.date_of_enrollment.text
+        student.date_of_admission = self.ids.date_of_admission
+        date_of_admission_text = student.date_of_admission.text
 
         student.group = self.ids.group
         group_text = student.group.text
@@ -111,10 +112,10 @@ class CreateWindow(Widget):
         student.contact_number2 = self.ids.contactB
         contact_number2_text = student.contact_number2.text
 
-        student.UP_NonUP = self.ids.up_nonup
-        UP_NonUP_text = student.UP_NonUP.text
+        student.up_dependent = self.ids.up_dependent
+        up_dependent_text = student.up_dependent.text
 
-        print(nickname_text, first_name_text, middle_name_text, last_name_text, address_text, birthday_text, sex_text, date_of_enrollment_text, group_text, guardian1_name_text, guardian2_name_text, contact_number1_text, contact_number2_text, UP_NonUP_text)
+        print(nickname_text, first_name_text, middle_name_text, last_name_text, address_text, birth_date_text, sex_text, date_of_admission_text, group_text, guardian1_name_text, guardian2_name_text, contact_number1_text, contact_number2_text, up_dependent_text)
 
         self.clear_widgets()
         self.add_widget(StudentRecordsWindow())

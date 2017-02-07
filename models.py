@@ -15,18 +15,19 @@ class Students(Base):
     __tablename__ = 'student'
 
     student_id = Column(Integer, nullable=False, primary_key=True)
-    first_name = Column(String(70), nullable=False)
-    last_name = Column(String(50), nullable=False)
-    middle_name = Column(String(50), nullable=False)
     nickname = Column(String(30), nullable=False)
-    birth_date = Column(String(10), nullable=False)
-    #age = Column(Integer, nullable=False) #autocompute na age
+    first_name = Column(String(70), nullable=False)
+    middle_name = Column(String(50), nullable=False)
+    last_name = Column(String(50), nullable=False)
     address = Column(String, nullable=False)
-    group = Column(String(20), nullable=True)
+    birth_date = Column(String(10), nullable=False)
+    age = Column(Integer, nullable=False) #autocompute na age
+    sex = Column(String(8), nullable=False)
     date_of_admission = Column(String, nullable=False)
+    group = Column(String(20), nullable=True)
     guardian1_name = Column(String, nullable=False)
-    contact_number1 = Column(String, nullable=False)
     guardian2_name = Column(String, nullable=True)
+    contact_number1 = Column(String, nullable=False)
     contact_number2 = Column(String, nullable=True)
     up_dependent = Column(Boolean, nullable=False)
 

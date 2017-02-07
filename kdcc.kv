@@ -47,7 +47,7 @@
     Button:
         id: login_button
         font_size: 20
-        center_x: root.x + 375 
+        center_x: root.x + 375
         center_y: root.y + 250
         text: "Login"
         size: (150,100)
@@ -129,7 +129,7 @@
     Button:
         id: delete
         font_size: 15
-        center_x: root.width + 200  
+        center_x: root.width + 200
         center_y: root.y + 75
         text: "Delete"
         size: (100,40)
@@ -155,7 +155,7 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
-		
+
 <FacultyRecordsWindow>:
     canvas.before:
         Color:
@@ -181,7 +181,7 @@
     Button:
         id: delete
         font_size: 15
-        center_x: root.width + 200  
+        center_x: root.width + 200
         center_y: root.y + 75
         text: "Delete"
         size: (100,40)
@@ -266,7 +266,7 @@
         write_tab: False
         multiline: False
     TextInput:
-        id: birthday
+        id: birth_date
         font_size: 20
         center_x: root.width + 25
         center_y: root.y + 400 - 50
@@ -286,7 +286,7 @@
         write_tab: False
         multiline: False
     TextInput:
-        id: date_of_enrollment
+        id: date_of_admission
         font_size: 20
         center_x: root.width + 25
         center_y: root.y + 350 - 50
@@ -326,7 +326,7 @@
         write_tab: False
         multiline: False
     TextInput:
-        id: up_nonup
+        id: up_dependent
         font_size: 20
         center_x: root.width + 445
         center_y: root.y + 300 - 50
@@ -371,6 +371,3 @@
         text: "Create"
         size: (250,40)
         on_press: root.create()
-
-
-
