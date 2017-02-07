@@ -1,5 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import *
+from sqlalchemy.orm import scoped_session, sessionmaker
 #from sqlalchemy import Column, String
 #from sqlalchemy import create_engine
 
@@ -61,17 +62,6 @@ class Enrolled(Base):
     __tablename__ = 'enrolled'
     sem_code = Column(String(10), nullable=False, primary_key=True)
     student_id = Column(Integer, nullable=False, primary_key=True)
-    payment_mode = Column(Integer, nullable=False)
-    semestral_pay = Column(String, nullable=True) #float
-    semestral_OR = Column(String, nullable=True) #di pa ako sure dito kung standardized ung payments, will update next time
-    month1_pay = Column(String, nullable=True)
-    month1_OR = Column(String, nullable=True)
-    month2_pay = Column(String, nullable=True)
-    month2_OR = Column(String, nullable=True)
-    month3_pay = Column(String, nullable=True)
-    month3_OR = Column(String, nullable=True)
-    month4_pay = Column(String, nullable=True)
-    month4_OR = Column(String, nullable=True)
     ForeignKeyConstraint(['sem_code', 'student_id'], ['semester.sem_code', 'student.student_id'])
 
 class Employed(Base):
@@ -80,21 +70,10 @@ class Employed(Base):
     faculty_id = Column(Integer, nullable=False, primary_key=True)
     ForeignKeyConstraint(['sem_code', 'faculty_id'], ['semester.sem_code', 'faculty.faculty_id'])
 
-class Day(Base):
-    __tablename__ = 'day'
-    sem_code = Column(String(10), nullable=False)
-    date = Column(String(10), nullable=False, primary_key=True) #should be strict format eg 10/13/2017 (will add constraint later)
-    ForeignKeyConstraint(['sem_code'], ['semester.sem_code'])
-
-class DailyAttendance(Base):
-    __tablename__ = 'daily_attendance'
-    date = Column(String(10), nullable=False, primary_key=True)
-    faculty_id = Column(Integer, nullable=False, primary_key=True)
-    time_in = Column(String(5), nullable=False) #formatted din (will add constraints later)
-    time_out = Column(String(5), nullable=False) #constraint military format
-    minutes_late = Column(Integer, nullable=False) #constraint 0+
-    ForeignKeyConstraint(['date', 'faculty_id'], ['day.date', 'faculty.faculty_id'])
-
 
 engine = create_engine('sqlite:///kdcc.db')
+db_session = scoped_session(sessionmaker(autocommit=False,
+                                     autoflush=False,
+                                     bind=engine))
 Base.metadata.create_all(engine)
+Base.query = db_session.query_property()

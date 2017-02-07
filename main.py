@@ -1,11 +1,15 @@
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.core.window import Window
+from kivy.uix.boxlayout import BoxLayout
+from kivy.properties import ObjectProperty
+from kivy.uix.listview import ListItemButton
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import *
 from kivy.uix.dropdown import DropDown
+from sqlalchemy.ext.declarative import declarative_base
 
 engine = create_engine('sqlite:///kdcc.db')
 DBSession = sessionmaker()
@@ -81,14 +85,22 @@ class MainMenuWindow(Widget):
     def faculty_records(self, *args):
         self.clear_widgets()
         self.add_widget(FacultyRecordsWindow())
-    def daily_attendance(self, *args):
-        self.clear_widgets()
-        self.add_widget(DailyAttendanceWindow())
     def logout(self, *args):
         self.clear_widgets()
         self.add_widget(LoginWindow())
 
+class StudentListButton(ListItemButton):
+    pass
+
 class StudentRecordsWindow(Widget):
+    student_list = ObjectProperty()
+    def populate_list(self):
+        students = Students.query.all()
+        for student in students:
+            details = [student.nickname, student.first_name+' '+student.middle_name+' '+student.last_name, student.group, student.birth_date, student.address, student.up_dependent, student.date_of_admission]
+            #print(", ".join(details))
+            self.student_list.adapter.data.extend([", ".join(details)])
+        self.student_list._trigger_reset_populate()
     def main_menu(self, *args):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
@@ -219,11 +231,6 @@ class CreateFacultyWindow(Widget):
     def back_to_faculty_records(self, *args):
         self.clear_widgets()
         self.add_widget(FacultyRecordsWindow())
-
-class DailyAttendanceWindow(Widget):
-    def main_menu(self, *args):
-        self.clear_widgets()
-        self.add_widget(MainMenuWindow())
 
 class KDCCApp(App):
     def build(self):

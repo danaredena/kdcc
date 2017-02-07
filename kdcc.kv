@@ -1,3 +1,8 @@
+# Reference main.py
+#: import main main
+#: import ListAdapter kivy.adapters.listadapter.ListAdapter
+#: import ListItemButton kivy.uix.listview.ListItemButton
+
 <LoginWindow>:
     canvas.before:
         Color:
@@ -80,7 +85,7 @@
         center_y: root.y + 350
         text: "Faculty Records"
         size: (250,100)
-		on_press: root.faculty_records()
+        on_press: root.faculty_records()
     Button:
         id: daily_attendance
         font_size: 15
@@ -88,7 +93,6 @@
         center_y: root.y + 250
         text: "Daily Attendance"
         size: (250,100)
-		on_press: root.daily_attendance()
     Button:
         id: finance_summary
         font_size: 15
@@ -106,6 +110,7 @@
         on_press: root.logout()
 
 <StudentRecordsWindow>:
+    student_list: students_list_view
     canvas.before:
         Color:
             rgba: (1,1,1,1)
@@ -141,6 +146,7 @@
         center_y: root.y + 560
         text: "View Summary"
         size: (150,50)
+        on_press: root.populate_list()
     Button:
         id: semester_list
         font_size: 15
@@ -156,6 +162,13 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
+    ListView:
+        id: students_list_view
+        adapter:
+            ListAdapter(data=[], cls=main.StudentListButton)
+        width: 680
+        center_x: root.width + 285
+        center_y: root.y + 400
 
 <FacultyRecordsWindow>:
     canvas.before:
@@ -470,7 +483,7 @@
         hint_text: "Contact Number"
         write_tab: False
         multiline: False
-	TextInput:
+    TextInput:
         id: position
         font_size: 20
         center_x: root.width + 25
@@ -546,44 +559,3 @@
         text: "Create"
         size: (250,40)
         on_press: root.create()
-		
-		
-<DailyAttendanceWindow>:
-    canvas.before:
-        Color:
-            rgba: (1,1,1,1)
-        Rectangle:
-            pos: self.pos
-            size: self.size
-    Button:
-        id: save
-        font_size: 15
-        center_x: root.width
-        center_y: root.y + 75
-        text: "Save"
-        size: (100,40)
-	TextInput:
-        id: change_date
-        font_size: 20
-        center_x: root.width + 390
-        center_y: root.y + 560
-        height: 35
-        width: 140
-        hint_text: "Change Date"
-        write_tab: False
-        multiline: False
-    Button:
-        id: previous_days
-        font_size: 15
-        center_x: root.width + 540
-        center_y: root.y + 560
-        text: "View Previous Days"
-        size: (150,35)
-    Button:
-        id: home
-        font_size: 15
-        center_x: root.width + 560
-        center_y: root.y + 75
-        text: "Back to Home"
-        size: (130,40)
-        on_press: root.main_menu()
