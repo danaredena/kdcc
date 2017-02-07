@@ -107,6 +107,11 @@ class StudentRecordsWindow(Widget):
     def create(self, *args):
         self.clear_widgets()
         self.add_widget(CreateStudentWindow())
+    def delete_student(self):
+        if self.student_list.adapter.selection:
+            selection = self.student_list.adapter.selection[0].text
+            self.student_list.adapter.data.remove(selection)
+            self.student_list._trigger_reset_populate()
 
 class FacultyRecordsWindow(Widget):
     def main_menu(self, *args):
