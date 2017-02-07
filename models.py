@@ -35,6 +35,7 @@ class Faculty(Base):
     __tablename__ = 'faculty'
 
     faculty_id = Column(Integer, nullable=False, primary_key=True, autoincrement=True)
+    id_number = Column(String, nullable=False)
     first_name = Column(String(70), nullable=False)
     last_name = Column(String(50), nullable=False)
     middle_name = Column(String(50), nullable=False)
@@ -42,8 +43,8 @@ class Faculty(Base):
     sex = Column(String(8), nullable=False)
     date_of_employment = Column(String, nullable=False)
     address = Column(String, nullable=False)
-    contact_number = Column(String(11), nullable=False)
     position = Column(String, nullable=False)
+    contact_number = Column(String(11), nullable=False)
     remarks = Column(String, nullable=True)
     #personal details
     pers_tin = Column(String, nullable=True)

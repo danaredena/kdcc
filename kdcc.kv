@@ -208,7 +208,7 @@
         size: (130,40)
         on_press: root.main_menu()
 
-<CreateWindow>:
+<CreateStudentWindow>:
     canvas.before:
         Color:
             rgba: (1,1,1,1)
@@ -363,6 +363,180 @@
         text: "Back to Student Records"
         size: (250,40)
         on_press: root.back_to_student_records()
+    Button:
+        id: create
+        font_size: 15
+        center_x: root.width + 25
+        center_y: root.y + 75
+        text: "Create"
+        size: (250,40)
+        on_press: root.create()
+
+<CreateFacultyWindow>:
+    canvas.before:
+        Color:
+            rgba: (1,1,1,1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    TextInput:
+        id: id_number
+        font_size: 20
+        center_x: root.width + 25
+        center_y: root.y + 550 - 50
+        height: 35
+        width: 200
+        hint_text: "ID Number"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: last_name
+        font_size: 20
+        center_x: root.width + 25
+        center_y: root.y + 500 - 50
+        height: 35
+        width: 200
+        hint_text: "Last Name"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: first_name
+        font_size: 20
+        center_x: root.width + 235
+        center_y: root.y + 500 - 50
+        height: 35
+        width: 200
+        hint_text: "First Name"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: middle_name
+        font_size: 20
+        center_x: root.width + 445
+        center_y: root.y + 500 - 50
+        height: 35
+        width: 200
+        hint_text: "Middle Name"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: address
+        font_size: 20
+        center_x: root.width + 25
+        center_y: root.y + 450 - 50
+        height: 35
+        width: 600
+        hint_text: "Address"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: birth_date
+        font_size: 20
+        center_x: root.width + 25
+        center_y: root.y + 400 - 50
+        height: 35
+        width: 200
+        hint_text: "Birthday"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: sex
+        font_size: 20
+        center_x: root.width + 235
+        center_y: root.y + 400 - 50
+        height: 35
+        width: 200
+        hint_text: "Sex"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: date_of_employment
+        font_size: 20
+        center_x: root.width + 25
+        center_y: root.y + 350 - 50
+        height: 35
+        width: 200
+        hint_text: "Date of Employment"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: contact_number
+        font_size: 20
+        center_x: root.width + 235
+        center_y: root.y + 350 - 50
+        height: 35
+        width: 200
+        hint_text: "Contact Number"
+        write_tab: False
+        multiline: False
+	TextInput:
+        id: position
+        font_size: 20
+        center_x: root.width + 25
+        center_y: root.y + 300 - 50
+        height: 35
+        width: 410
+        hint_text: "Position"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: tin_number
+        font_size: 20
+        center_x: root.width + 25
+        center_y: root.y + 250 - 50
+        height: 35
+        width: 200
+        hint_text: "TIN Number"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: philhealth
+        font_size: 20
+        center_x: root.width + 235
+        center_y: root.y + 250 - 50
+        height: 35
+        width: 200
+        hint_text: "PhilHealth"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: remarks
+        font_size: 20
+        center_x: root.width + 445
+        center_y: root.y + 200 - 50
+        height: 35
+        width: 200
+        hint_text: "Remarks"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: social_security_number
+        font_size: 20
+        center_x: root.width + 25
+        center_y: root.y + 200 - 50
+        height: 35
+        width: 200
+        hint_text: "Social Security Number"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: account_number
+        font_size: 20
+        center_x: root.width + 235
+        center_y: root.y + 200 - 50
+        height: 35
+        width: 200
+        hint_text: "Account Number"
+        write_tab: False
+        multiline: False
+    Button:
+        id: faculty_records
+        font_size: 15
+        center_x: root.width + 450
+        center_y: root.y + 75
+        text: "Back to Faculty Records"
+        size: (250,40)
+        on_press: root.back_to_faculty_records()
     Button:
         id: create
         font_size: 15
