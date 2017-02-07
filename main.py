@@ -73,19 +73,49 @@ class FacultyRecordsWindow(Widget):
 class CreateWindow(Widget):
     def create(self, *args):
         student.nickname = self.ids.nickname
+        nickname_text = student.nickname.text
+
         student.first_name = self.ids.first_name
+        first_name_text = student.first_name.text
+
         student.middle_name = self.ids.middle_name
+        middle_name_text = student.middle_name.text
+
         student.last_name = self.ids.last_name
+        last_name_text = student.last_name.text
+
         student.address = self.ids.address
+        address_text = student.address.text
+
         student.birthday = self.ids.birthday
+        birthday_text = student.birthday.text
+
         student.sex = self.ids.sex
+        sex_text = student.sex.text
+
         student.date_of_enrollment = self.ids.date_of_enrollment
+        date_of_enrollment_text = student.date_of_enrollment.text
+
         student.group = self.ids.group
+        group_text = student.group.text
+
         student.guardian1_name = self.ids.guardianA
+        guardian1_name_text = student.guardian1_name.text
+
         student.guardian2_name = self.ids.guardianB
+        guardian2_name_text = student.guardian2_name.text
+
         student.contact_number1 = self.ids.contactA
+        contact_number1_text = student.contact_number1.text
+
         student.contact_number2 = self.ids.contactB
+        contact_number2_text = student.contact_number2.text
+
         student.UP_NonUP = self.ids.up_nonup
+        UP_NonUP_text = student.UP_NonUP.text
+
+        print(nickname_text, first_name_text, middle_name_text, last_name_text, address_text, birthday_text, sex_text, date_of_enrollment_text, group_text, guardian1_name_text, guardian2_name_text, contact_number1_text, contact_number2_text, UP_NonUP_text)
+
         self.clear_widgets()
         self.add_widget(StudentRecordsWindow())
     def back_to_student_records(self, *args):
