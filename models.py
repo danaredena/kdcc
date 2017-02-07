@@ -29,7 +29,7 @@ class Students(Base):
     guardian2_name = Column(String, nullable=True)
     contact_number1 = Column(String, nullable=False)
     contact_number2 = Column(String, nullable=True)
-    up_dependent = Column(Boolean, nullable=False)
+    up_dependent = Column(String, nullable=False)
 
 class Faculty(Base):
     __tablename__ = 'faculty'
