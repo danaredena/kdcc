@@ -81,6 +81,9 @@ class MainMenuWindow(Widget):
     def faculty_records(self, *args):
         self.clear_widgets()
         self.add_widget(FacultyRecordsWindow())
+    def daily_attendance(self, *args):
+        self.clear_widgets()
+        self.add_widget(DailyAttendanceWindow())
     def logout(self, *args):
         self.clear_widgets()
         self.add_widget(LoginWindow())
@@ -216,6 +219,11 @@ class CreateFacultyWindow(Widget):
     def back_to_faculty_records(self, *args):
         self.clear_widgets()
         self.add_widget(FacultyRecordsWindow())
+
+class DailyAttendanceWindow(Widget):
+    def main_menu(self, *args):
+        self.clear_widgets()
+        self.add_widget(MainMenuWindow())
 
 class KDCCApp(App):
     def build(self):
