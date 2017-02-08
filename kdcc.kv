@@ -137,6 +137,7 @@
         center_y: root.y + 560
         text: "Semester List"
         size: (150,50)
+		on_press: root.choose_semester()
     Button:
         id: home
         font_size: 15
@@ -311,6 +312,64 @@
         text: "Create"
         size: (250,40)
         on_press: root.create()
+
+
+<ChooseSemesterWindow>:
+    Button:
+        id: add_semester
+        font_size: 15
+        center_x: root.width
+        center_y: root.y + 75
+        text: "Start Semester"
+        size: (150,40)
+    Button:
+        id: view_summary
+        font_size: 15
+        center_x: root.width + 390
+        center_y: root.y + 560
+        text: "View Summary"
+        size: (150,50)
+        on_press: root.back_to_student_records()
+    Button:
+        id: semester_list
+        font_size: 15
+        center_x: root.width + 540
+        center_y: root.y + 560
+        text: "Semester List"
+        size: (150,50)
+    Button:
+        id: home
+        font_size: 15
+        center_x: root.width + 560
+        center_y: root.y + 75
+        text: "Back to Home"
+        size: (130,40)
+        on_press: root.main_menu()
+		
+	
+<SemesterListWindow>
+    Button:
+        id: enroll_student
+        font_size: 15
+        center_x: root.width
+        center_y: root.y + 75
+        text: "Enroll Student"
+        size: (150,40)
+    Button:
+        id: disenroll_student
+        font_size: 15
+        center_x: root.width + 150
+        center_y: root.y + 75
+        text: "Disenroll Student"
+		size: (150,40)
+    Button:
+        id: home
+        font_size: 15
+        center_x: root.width + 560
+        center_y: root.y + 75
+        text: "Back to Home"
+        size: (130,40)
+        on_press: root.main_menu()
 		
 
 <FacultyRecordsWindow>:

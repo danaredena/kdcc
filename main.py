@@ -123,6 +123,9 @@ class StudentRecordsWindow(Widget):
 
             delete_db(int(selection[0]), 0) #gets student_id, 0 - for student record
             self.student_list._trigger_reset_populate()
+    def choose_semester(self, *args):
+        self.clear_widgets()
+        self.add_widget(ChooseSemesterWindow())
 
 class CreateStudentWindow(Widget):
     def create(self, *args):
@@ -174,9 +177,23 @@ class CreateStudentWindow(Widget):
         #print(session.query(Students).all())
         self.clear_widgets()
         self.add_widget(StudentRecordsWindow())
+        
     def back_to_student_records(self, *args):
         self.clear_widgets()
         self.add_widget(StudentRecordsWindow())
+
+class ChooseSemesterWindow(Widget):
+    def main_menu(self, *args):
+        self.clear_widgets()
+        self.add_widget(MainMenuWindow())
+    def back_to_student_records(self, *args):
+        self.clear_widgets()
+        self.add_widget(StudentRecordsWindow())
+
+class SemesterListWindow(Widget):
+    def choose_semester(self, *args):
+        self.clear_widgets()
+        self.add_widget(ChooseSemesterWindow())
 
 class Facuty():
     def __init__(self):
