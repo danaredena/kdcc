@@ -3,6 +3,7 @@
 #: import ListAdapter kivy.adapters.listadapter.ListAdapter
 #: import ListItemButton kivy.uix.listview.ListItemButton
 
+
 <LoginWindow>:
     canvas.before:
         Color:
@@ -52,6 +53,7 @@
         color: (0,0,0,1)
         text: ""
 
+		
 <MainMenuWindow>:
     Button:
         id: student_records
@@ -94,6 +96,7 @@
         size: (150,50)
         on_press: root.logout()
 
+		
 <StudentRecordsWindow>:
     student_list: students_list_view
     Button:
@@ -150,61 +153,6 @@
         center_x: root.width + 285
         center_y: root.y + 400
 
-<FacultyRecordsWindow>:
-    faculty_list: faculty_list_view
-    Button:
-        id: create
-        font_size: 15
-        center_x: root.width
-        center_y: root.y + 75
-        text: "Create"
-        size: (100,40)
-        on_press: root.create()
-    Button:
-        id: edit
-        font_size: 15
-        center_x: root.width + 100
-        center_y: root.y + 75
-        text: "Edit"
-        size: (100,40)
-    Button:
-        id: delete
-        font_size: 15
-        center_x: root.width + 200
-        center_y: root.y + 75
-        text: "Delete"
-        size: (100,40)
-        on_press:root.delete_faculty()
-    Button:
-        id: view_summary
-        font_size: 15
-        center_x: root.width + 390
-        center_y: root.y + 560
-        text: "View Summary"
-        size: (150,50)
-        on_press: root.populate_list()
-    Button:
-        id: semester_list
-        font_size: 15
-        center_x: root.width + 540
-        center_y: root.y + 560
-        text: "Semester List"
-        size: (150,50)
-    Button:
-        id: home
-        font_size: 15
-        center_x: root.width + 560
-        center_y: root.y + 75
-        text: "Back to Home"
-        size: (130,40)
-        on_press: root.main_menu()
-    ListView:
-        id: faculty_list_view
-        adapter:
-            ListAdapter(data=[], cls=main.FacultyListButton)
-        width: 680
-        center_x: root.width + 285
-        center_y: root.y + 400
 
 <CreateStudentWindow>:
     TextInput:
@@ -363,7 +311,65 @@
         text: "Create"
         size: (250,40)
         on_press: root.create()
+		
 
+<FacultyRecordsWindow>:
+    faculty_list: faculty_list_view
+    Button:
+        id: create
+        font_size: 15
+        center_x: root.width
+        center_y: root.y + 75
+        text: "Create"
+        size: (100,40)
+        on_press: root.create()
+    Button:
+        id: edit
+        font_size: 15
+        center_x: root.width + 100
+        center_y: root.y + 75
+        text: "Edit"
+        size: (100,40)
+    Button:
+        id: delete
+        font_size: 15
+        center_x: root.width + 200
+        center_y: root.y + 75
+        text: "Delete"
+        size: (100,40)
+        on_press:root.delete_faculty()
+    Button:
+        id: view_summary
+        font_size: 15
+        center_x: root.width + 390
+        center_y: root.y + 560
+        text: "View Summary"
+        size: (150,50)
+        on_press: root.populate_list()
+    Button:
+        id: semester_list
+        font_size: 15
+        center_x: root.width + 540
+        center_y: root.y + 560
+        text: "Semester List"
+        size: (150,50)
+    Button:
+        id: home
+        font_size: 15
+        center_x: root.width + 560
+        center_y: root.y + 75
+        text: "Back to Home"
+        size: (130,40)
+        on_press: root.main_menu()
+    ListView:
+        id: faculty_list_view
+        adapter:
+            ListAdapter(data=[], cls=main.FacultyListButton)
+        width: 680
+        center_x: root.width + 285
+        center_y: root.y + 400
+
+		
 <CreateFacultyWindow>:
     TextInput:
         id: id_number
@@ -532,6 +538,7 @@
         size: (250,40)
         on_press: root.create()
 
+		
 <DailyAttendanceWindow>:
     Button:
         id: save
@@ -566,8 +573,8 @@
         size: (130,40)
         on_press: root.main_menu()
 
+		
 <FinanceSummaryWindow>:
-
 	TextInput:
         id: change_date1
         font_size: 20
