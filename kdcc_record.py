@@ -12,6 +12,7 @@ DBSession.configure(bind=engine)
 
 def fill():
     try:
+        '''
         #1: ADD USER 'admin'
         session = DBSession()
         new_user = User(username='admin', password='admin')
@@ -22,8 +23,8 @@ def fill():
 
         #2: ADD STUDENT (arbitrary) 'Diane'
         session = DBSession()
-        new_student = Students(nickname='Diane', first_name='Diane', middle_name='Yap', last_name='Red', address='Tandang Sora, Quezon City', birth_date='11/07/2010', sex='female', date_of_admission='02/01/2017', group='toddler', guardian1_name='Scarlett Red', contact_number1='09431234567', up_dependent='yes')
-        session.add(new_student)
+        new_faculty = Students(nickname='Diane', first_name='Diane', middle_name='Yap', last_name='Red', address='Tandang Sora, Quezon City', birth_date='11/07/2010', sex='female', date_of_admission='02/01/2017', group='toddler', guardian1_name='Scarlett Red', contact_number1='09431234567', up_dependent='yes')
+        session.add(new_faculty)
         session.commit()
 
         #3: ADD FACULTY (arbitrary) 'Bob'
@@ -31,6 +32,42 @@ def fill():
         new_student = Faculty(id_number = 909, first_name='Bob', middle_name='Dash', last_name='Parr', address='pixar', birth_date='04/09/1973', sex='male', date_of_employment='03/07/2015', position='Rogue', contact_number='09761234567', pers_tin='9302', pers_ssn='93043', pers_philhealth='340393', pers_accntnum='3094920')
         session.add(new_student)
         session.commit()
+
+        #4: ADD STUDENT (arbitrary) 'Ohm'
+        session = DBSession()
+        new_student = Students(nickname='Ohm', first_name='Ohm', middle_name='My', last_name='Gulay', address='Tandang Sora, Quezon City', birth_date='11/07/2008', sex='female', date_of_admission='02/07/2017', group='semi-adult', guardian1_name='Heidi Klum', contact_number1='09431299997', up_dependent='no')
+        session.add(new_student)
+        session.commit()
+
+        #5: ADD FACULTY (arbitrary) 'Lulu'
+        session = DBSession()
+        new_faculty = Faculty(id_number = 967, first_name='Lulu', middle_name='Lala', last_name='Lang', address='please', birth_date='04/09/1873', sex='female', date_of_employment='06/07/2015', position='Cook', contact_number='09766777567', pers_tin='9542', pers_ssn='9365', pers_philhealth='64640393', pers_accntnum='3640')
+        session.add(new_faculty)
+        session.commit()
+
+
+        #5: ADD SEMESTER (arbitrary) '1617A'
+        session = DBSession()
+        new_sem = Semester(sem_code='1516B')
+        session.add(new_sem)
+        new_sem = Semester(sem_code='1617A')
+        session.add(new_sem)
+        new_sem = Semester(sem_code='1617B')
+        session.add(new_sem)
+        session.commit()
+        '''
+        '''
+        #6: ADD ENROLLED (arbitrary) '1617A and Diane', '1516B' and 'Ohm'
+        session = DBSession()
+        new_enrolled = Enrolled(sem_code='1516B',student_id='')
+        session.add(new_enrolled)
+        new_sem = Semester(sem_code='1617A')
+        session.add(new_sem)
+        new_sem = Semester(sem_code='1617B')
+        session.add(new_sem)
+        session.commit()
+        '''
+
     except: #this part ensures na no drastic changes will happen in case something goes wrong
         session.rollback()
         raise
