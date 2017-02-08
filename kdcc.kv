@@ -6,45 +6,34 @@
 <LoginWindow>:
     canvas.before:
         Color:
-            rgba: (1,1,1,1)
+            rgba: (0.871, 0.725, 0.886,1)
         Rectangle:
             pos: self.pos
             size: self.size
-    Label:
-        text: "Login"
-        color: (0,0,0,1)
-        font_size: 60
-        center_x: root.x + 400
-        center_y: root.y + 500
-    Label:
-        id: username_label
-        text: "Username"
-        color: (0,0,0,1)
-        font_size: 30
-        center_x: root.x + 175
-        center_y: root.y + 400
+    Image:
+        source: 'logo.png'
+        nocache: True
+        id: logo_img
+        center_x: root.width/2
+        center_y: root.height/3 * 2 + 42
+        size: 250, 250
     TextInput:
         id: username_input
+        hint_text: 'Username'
         font_size: 20
-        center_x: root.x + 300
-        center_y: root.y + 430
+        center_x: root.width/2
+        center_y: root.height/2 - 10
         height: 35
         width: 300
         write_tab: False
         multiline: False
-    Label:
-        id: password_label
-        text: "Password"
-        color: (0,0,0,1)
-        font_size: 30
-        center_x: root.x + 175
-        center_y: root.y + 350
     TextInput:
         id: password_input
+        hint_text: 'Password'
         font_size: 20
         password: True
-        center_x: root.x + 300
-        center_y: root.y + 380
+        center_x: root.width/2
+        center_y: root.height/2 - 70
         height: 35
         width: 300
         write_tab: False
@@ -52,10 +41,10 @@
     Button:
         id: login_button
         font_size: 20
-        center_x: root.x + 375
-        center_y: root.y + 250
+        center_x: root.width/2
+        center_y: root.height/2 - 150
         text: "Login"
-        size: (150,100)
+        size: (150,50)
         on_press: root.login()
     Label:
         id: success
@@ -64,12 +53,6 @@
         text: ""
 
 <MainMenuWindow>:
-    canvas.before:
-        Color:
-            rgba: (1,1,1,1)
-        Rectangle:
-            pos: self.pos
-            size: self.size
     Button:
         id: student_records
         font_size: 15
@@ -113,12 +96,6 @@
 
 <StudentRecordsWindow>:
     student_list: students_list_view
-    canvas.before:
-        Color:
-            rgba: (1,1,1,1)
-        Rectangle:
-            pos: self.pos
-            size: self.size
     Button:
         id: create
         font_size: 15
@@ -175,12 +152,6 @@
 
 <FacultyRecordsWindow>:
     faculty_list: faculty_list_view
-    canvas.before:
-        Color:
-            rgba: (1,1,1,1)
-        Rectangle:
-            pos: self.pos
-            size: self.size
     Button:
         id: create
         font_size: 15
@@ -236,12 +207,6 @@
         center_y: root.y + 400
 
 <CreateStudentWindow>:
-    canvas.before:
-        Color:
-            rgba: (1,1,1,1)
-        Rectangle:
-            pos: self.pos
-            size: self.size
     TextInput:
         id: nickname
         font_size: 20
@@ -400,12 +365,6 @@
         on_press: root.create()
 
 <CreateFacultyWindow>:
-    canvas.before:
-        Color:
-            rgba: (1,1,1,1)
-        Rectangle:
-            pos: self.pos
-            size: self.size
     TextInput:
         id: id_number
         font_size: 20
@@ -574,12 +533,6 @@
         on_press: root.create()
 
 <DailyAttendanceWindow>:
-    canvas.before:
-        Color:
-            rgba: (1,1,1,1)
-        Rectangle:
-            pos: self.pos
-            size: self.size
     Button:
         id: save
         font_size: 15
@@ -612,14 +565,9 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
-		
+
 <FinanceSummaryWindow>:
-    canvas.before:
-        Color:
-            rgba: (1,1,1,1)
-        Rectangle:
-            pos: self.pos
-            size: self.size
+
 	TextInput:
         id: change_date1
         font_size: 20
