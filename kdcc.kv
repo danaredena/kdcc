@@ -101,6 +101,7 @@
         center_y: root.y + 250
         text: "Financial Semi-Monthly\n            Summary"
         size: (250,100)
+		on_press: root.finance_summary()
     Button:
         id: logout
         font_size: 15
@@ -573,7 +574,6 @@
         on_press: root.create()
 
 <DailyAttendanceWindow>:
-    student_list: students_list_view
     canvas.before:
         Color:
             rgba: (1,1,1,1)
@@ -612,10 +612,46 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
-    ListView:
-        id: students_list_view
-        adapter:
-            ListAdapter(data=[], cls=main.StudentListButton)
-        width: 680
-        center_x: root.width + 285
-        center_y: root.y + 400
+		
+<FinanceSummaryWindow>:
+    canvas.before:
+        Color:
+            rgba: (1,1,1,1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+	TextInput:
+        id: change_date1
+        font_size: 20
+        center_x: root.width + 100
+        center_y: root.y + 560
+        height: 35
+        width: 170
+        hint_text: "Change Date"
+        write_tab: False
+        multiline: False
+	TextInput:
+        id: change_date2
+        font_size: 20
+        center_x: root.width + 350
+        center_y: root.y + 560
+        height: 35
+        width: 170
+        hint_text: "Change Date"
+        write_tab: False
+        multiline: False
+    Button:
+        id: compute_payroll
+        font_size: 15
+        center_x: root.width + 540
+        center_y: root.y + 560
+        text: "Compute for Payroll"
+        size: (150,35)
+    Button:
+        id: home
+        font_size: 15
+        center_x: root.width + 560
+        center_y: root.y + 75
+        text: "Back to Home"
+        size: (130,40)
+        on_press: root.main_menu()

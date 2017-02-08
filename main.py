@@ -108,6 +108,9 @@ class MainMenuWindow(Widget):
     def daily_attendance(self, *args):
         self.clear_widgets()
         self.add_widget(DailyAttendanceWindow())
+    def finance_summary(self, *args):
+        self.clear_widgets()
+        self.add_widget(FinanceSummaryWindow())
     def logout(self, *args):
         self.clear_widgets()
         self.add_widget(LoginWindow())
@@ -285,6 +288,11 @@ class CreateFacultyWindow(Widget):
         self.add_widget(FacultyRecordsWindow())
 
 class DailyAttendanceWindow(Widget):
+    def main_menu(self, *args):
+        self.clear_widgets()
+        self.add_widget(MainMenuWindow())
+
+class FinanceSummaryWindow(Widget):
     def main_menu(self, *args):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
