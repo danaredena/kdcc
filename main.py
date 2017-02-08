@@ -46,7 +46,7 @@ def delete_db(id, sn_fn):
         except:
             session.rollback()
             raise
-    
+
 class Student():
     def __init__(self):
         self.nickname = None
@@ -112,6 +112,9 @@ class MainMenuWindow(Widget):
 class StudentListButton(ListItemButton):
     pass
 
+class FacultyListButton(ListItemButton):
+    pass
+
 class StudentRecordsWindow(Widget):
     student_list = ObjectProperty()
     def populate_list(self):
@@ -131,19 +134,36 @@ class StudentRecordsWindow(Widget):
         if self.student_list.adapter.selection:
             selection_obj = self.student_list.adapter.selection[0]
             selection = selection_obj.text
-            print(selection[0])
+            #print(selection[0])
             self.student_list.adapter.data.remove(selection)
 
             delete_db(int(selection[0]), 0) #gets student_id, 0 - for student record
             self.student_list._trigger_reset_populate()
 
 class FacultyRecordsWindow(Widget):
+    faculty_list = ObjectProperty()
+    def populate_list(self):
+        all_faculty = Faculty.query.all()
+        for faculty in all_faculty:
+            details = [str(faculty.faculty_id), faculty.id_number, faculty.first_name+' '+faculty.middle_name+' '+faculty.last_name, faculty.position, faculty.contact_number, faculty.birth_date, faculty.date_of_employment]
+            print(", ".join(details))
+            self.faculty_list.adapter.data.extend([", ".join(details)])
+        self.faculty_list._trigger_reset_populate()
     def main_menu(self, *args):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
     def create(self, *args):
         self.clear_widgets()
         self.add_widget(CreateFacultyWindow())
+    def delete_faculty(self):
+        if self.faculty_list.adapter.selection:
+            selection_obj = self.faculty_list.adapter.selection[0]
+            selection = selection_obj.text
+            #print(selection[0])
+            self.faculty_list.adapter.data.remove(selection)
+
+            delete_db(int(selection[0]), 1) #gets student_id, 0 - for student record
+            self.faculty_list._trigger_reset_populate()
 
 class CreateStudentWindow(Widget):
     def create(self, *args):
@@ -188,7 +208,6 @@ class CreateStudentWindow(Widget):
 
         student.up_dependent = self.ids.up_dependent
         up_dependent_text = student.up_dependent.text
-
 
         new_student = Students(nickname=nickname_text, first_name=first_name_text, middle_name=middle_name_text, last_name=last_name_text, address=address_text, birth_date=birth_date_text, sex=sex_text, date_of_admission=date_of_admission_text, group=group_text, guardian1_name=guardian1_name_text, guardian2_name=guardian2_name_text, contact_number1=contact_number1_text, contact_number2=contact_number2_text, up_dependent=up_dependent_text)
         print( add_db(new_student) )

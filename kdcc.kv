@@ -172,6 +172,7 @@
         center_y: root.y + 400
 
 <FacultyRecordsWindow>:
+    faculty_list: faculty_list_view
     canvas.before:
         Color:
             rgba: (1,1,1,1)
@@ -200,6 +201,7 @@
         center_y: root.y + 75
         text: "Delete"
         size: (100,40)
+        on_press:root.delete_faculty()
     Button:
         id: view_summary
         font_size: 15
@@ -207,6 +209,7 @@
         center_y: root.y + 560
         text: "View Summary"
         size: (150,50)
+        on_press: root.populate_list()
     Button:
         id: semester_list
         font_size: 15
@@ -222,6 +225,13 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
+    ListView:
+        id: faculty_list_view
+        adapter:
+            ListAdapter(data=[], cls=main.FacultyListButton)
+        width: 680
+        center_x: root.width + 285
+        center_y: root.y + 400
 
 <CreateStudentWindow>:
     canvas.before:
