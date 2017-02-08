@@ -56,20 +56,23 @@ def fill():
         session.add(new_sem)
         session.commit()
         '''
-        '''
-        #6: ADD ENROLLED (arbitrary) '1617A and Diane', '1516B' and 'Ohm'
+
+        #6: ADD ENROLLED (arbitrary) '1617A and Diane'
         session = DBSession()
-        new_enrolled = Enrolled(sem_code='1516B',student_id='')
+        new_enrolled = Enrolled(sem_code='1617A',student_id=1, payment_mode=0) #0 for semestral, 1 for monthly
         session.add(new_enrolled)
-        new_sem = Semester(sem_code='1617A')
-        session.add(new_sem)
-        new_sem = Semester(sem_code='1617B')
-        session.add(new_sem)
         session.commit()
-        '''
+
+        #7: ADD ENROLLED (arbitrary) '1516B and Ohm'
+        session = DBSession()
+        new_enrolled = Enrolled(sem_code='1516B',student_id=2, payment_mode=1)
+        session.add(new_enrolled)
+        session.commit()
+        
 
     except: #this part ensures na no drastic changes will happen in case something goes wrong
         session.rollback()
+        print('nu')
         raise
 
 fill()
