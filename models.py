@@ -15,11 +15,11 @@ class User(Base):
 class Students(Base):
     __tablename__ = 'student'
 
-    student_id = Column(Integer, nullable=False, primary_key=True, autoincrement=True)
+    student_id = Column(Integer, nullable=False, autoincrement=True)
     nickname = Column(String(30), nullable=False)
-    first_name = Column(String(70), nullable=False)
-    middle_name = Column(String(50), nullable=False)
-    last_name = Column(String(50), nullable=False)
+    first_name = Column(String(70), nullable=False, primary_key=True)
+    middle_name = Column(String(50), nullable=False, primary_key=True)
+    last_name = Column(String(50), nullable=False, primary_key=True)
     address = Column(String, nullable=False)
     birth_date = Column(String(10), nullable=False)
     age = Column(Integer, nullable=True) #autocompute na age; True muna
@@ -35,11 +35,11 @@ class Students(Base):
 class Faculty(Base):
     __tablename__ = 'faculty'
 
-    faculty_id = Column(Integer, nullable=False, primary_key=True, autoincrement=True)
+    faculty_id = Column(Integer, nullable=False, autoincrement=True)
     id_number = Column(String, nullable=False)
-    first_name = Column(String(70), nullable=False)
-    last_name = Column(String(50), nullable=False)
-    middle_name = Column(String(50), nullable=False)
+    first_name = Column(String(70), nullable=False, primary_key=True)
+    last_name = Column(String(50), nullable=False, primary_key=True)
+    middle_name = Column(String(50), nullable=False, primary_key=True)
     birth_date = Column(String(10), nullable=False)
     sex = Column(String(8), nullable=False)
     date_of_employment = Column(String, nullable=False)
@@ -98,6 +98,15 @@ class DailyAttendance(Base): #refresh everyday
     time_out = Column(String(5), nullable=True) #constraint military format
     minutes_late = Column(Integer, nullable=True) #constraint 0+
     ForeignKeyConstraint(['date', 'faculty_id'], ['day.date', 'faculty.faculty_id'])
+
+class MonthCutoff(Base):
+    __tablename__ = 'month'
+    month_id = Column(Integer, nullable=False, autoincrement=True)
+    start_date = Column(String(10), nullable=False, primary_key=True)
+    end_date = Column(String(10), nullable=False, primary_key=True)
+
+class MonthlyPayroll(Base):
+    __tablename__ = 'monthly_payroll'
 
 engine = create_engine('sqlite:///kdcc.db')
 db_session = scoped_session(sessionmaker(autocommit=False,
