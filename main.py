@@ -27,6 +27,26 @@ def add_db(addobject):
         session.rollback()
         raise
 
+#delete to database function
+def delete_db(id, sn_fn):
+    session = DBSession()
+    if sn_fn == 0:
+        try:
+            session.query(Students).filter(Students.student_id==id).delete()
+            session.commit()
+            return "Successfully deleted!"
+        except:
+            session.rollback()
+            raise
+    elif sn_fn == 1:
+        try:
+            session.query(Faculty).filter(Faculty.faculty_id==id).delete()
+            session.commit()
+            return "Successfully deleted!"
+        except:
+            session.rollback()
+            raise
+    
 class Student():
     def __init__(self):
         self.nickname = None
@@ -97,7 +117,7 @@ class StudentRecordsWindow(Widget):
     def populate_list(self):
         students = Students.query.all()
         for student in students:
-            details = [student.nickname, student.first_name+' '+student.middle_name+' '+student.last_name, student.group, student.birth_date, student.address, student.up_dependent, student.date_of_admission]
+            details = [str(student.student_id), student.nickname, student.first_name+' '+student.middle_name+' '+student.last_name, student.group, student.birth_date, student.address, student.up_dependent, student.date_of_admission]
             #print(", ".join(details))
             self.student_list.adapter.data.extend([", ".join(details)])
         self.student_list._trigger_reset_populate()
@@ -109,8 +129,12 @@ class StudentRecordsWindow(Widget):
         self.add_widget(CreateStudentWindow())
     def delete_student(self):
         if self.student_list.adapter.selection:
-            selection = self.student_list.adapter.selection[0].text
+            selection_obj = self.student_list.adapter.selection[0]
+            selection = selection_obj.text
+            print(selection[0])
             self.student_list.adapter.data.remove(selection)
+
+            delete_db(int(selection[0]), 0) #gets student_id, 0 - for student record
             self.student_list._trigger_reset_populate()
 
 class FacultyRecordsWindow(Widget):
