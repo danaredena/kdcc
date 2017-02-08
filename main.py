@@ -288,9 +288,20 @@ class CreateFacultyWindow(Widget):
         self.add_widget(FacultyRecordsWindow())
 
 class DailyAttendanceWindow(Widget):
+    '''
+    attn_list = ObjectProperty()
+    attn = Students.query.all()
+    for student in students:
+        details = [str(student.student_id), student.nickname, student.first_name+' '+student.middle_name+' '+student.last_name, student.group, student.birth_date, student.address, student.up_dependent, student.date_of_admission]
+        #print(", ".join(details))
+        student_list.adapter.data.extend([", ".join(details)])
+    student_list._trigger_reset_populate()
+    '''
+
     def main_menu(self, *args):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
+
 
 class FinanceSummaryWindow(Widget):
     def main_menu(self, *args):

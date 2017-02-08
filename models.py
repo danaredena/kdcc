@@ -58,6 +58,8 @@ class Semester(Base):
 
     sem_code = Column(String(10), nullable=False, primary_key=True)
 
+#NOTE: Foreign keys not working >.<
+
 class Enrolled(Base):
     __tablename__ = 'enrolled'
     sem_code = Column(String(10), nullable=False, primary_key=True)
@@ -87,13 +89,14 @@ class Day(Base):
     date = Column(String(10), nullable=False, primary_key=True) #should be strict format eg 10/13/2017 (will add constraint later)
     ForeignKeyConstraint(['sem_code'], ['semester.sem_code'])
 
-class DailyAttendance(Base):
+class DailyAttendance(Base): #refresh everyday
     __tablename__ = 'daily_attendance'
     date = Column(String(10), nullable=False, primary_key=True)
     faculty_id = Column(Integer, nullable=False, primary_key=True)
-    time_in = Column(String(5), nullable=False) #formatted din (will add constraints later)
-    time_out = Column(String(5), nullable=False) #constraint military format
-    minutes_late = Column(Integer, nullable=False) #constraint 0+
+    is_absent = Column(Boolean, nullable=True) #need to monitor this pa
+    time_in = Column(String(5), nullable=True) #formatted din (will add constraints later)
+    time_out = Column(String(5), nullable=True) #constraint military format
+    minutes_late = Column(Integer, nullable=True) #constraint 0+
     ForeignKeyConstraint(['date', 'faculty_id'], ['day.date', 'faculty.faculty_id'])
 
 engine = create_engine('sqlite:///kdcc.db')
