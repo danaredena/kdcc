@@ -103,6 +103,7 @@ class StudentListButton(ListItemButton):
 class StudentRecordsWindow(Widget):
     student_list = ObjectProperty()
     def populate_list(self):
+        del self.student_list.adapter.data[:]
         students = Students.query.all()
         for student in students:
             details = [str(student.student_id), student.nickname, student.first_name+' '+student.middle_name+' '+student.last_name, student.group, student.birth_date, student.address, student.up_dependent, student.date_of_admission]
@@ -221,10 +222,10 @@ class FacultyListButton(ListItemButton):
 class FacultyRecordsWindow(Widget):
     faculty_list = ObjectProperty()
     def populate_list(self):
+        del self.faculty_list.adapter.data[:]
         all_faculty = Faculty.query.all()
         for faculty in all_faculty:
             details = [str(faculty.faculty_id), faculty.id_number, faculty.first_name+' '+faculty.middle_name+' '+faculty.last_name, faculty.position, faculty.contact_number, faculty.birth_date, faculty.date_of_employment]
-            print(", ".join(details))
             self.faculty_list.adapter.data.extend([", ".join(details)])
         self.faculty_list._trigger_reset_populate()
     def main_menu(self, *args):
@@ -310,6 +311,7 @@ class DailyListButton(ListItemButton):
 class DailyAttendanceWindow(Widget):
     daily_list = ObjectProperty()
     def view_date(self):
+        del self.daily_list.adapter.data[:]
         all_daily = DailyAttendance.query.all()
         for daily in all_daily:
             #get faculty name
@@ -318,7 +320,6 @@ class DailyAttendanceWindow(Widget):
                 middle_name = faculty.middle_name
                 last_name = faculty.last_name
             details = [str(daily.faculty_id),  first_name+' '+middle_name+' '+last_name, str(daily.is_absent), str(daily.time_in), str(daily.time_out), str(daily.minutes_late)]
-            print(", ".join(details))
             self.daily_list.adapter.data.extend([", ".join(details)])
         self.daily_list._trigger_reset_populate()
     def main_menu(self, *args):
