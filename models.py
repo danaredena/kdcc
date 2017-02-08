@@ -15,11 +15,11 @@ class User(Base):
 class Students(Base):
     __tablename__ = 'student'
 
-    student_id = Column(Integer, nullable=False, autoincrement=True)
+    student_id = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
     nickname = Column(String(30), nullable=False)
-    first_name = Column(String(70), nullable=False, primary_key=True)
-    middle_name = Column(String(50), nullable=False, primary_key=True)
-    last_name = Column(String(50), nullable=False, primary_key=True)
+    first_name = Column(String(70), nullable=False)
+    middle_name = Column(String(50), nullable=False)
+    last_name = Column(String(50), nullable=False)
     address = Column(String, nullable=False)
     birth_date = Column(String(10), nullable=False)
     age = Column(Integer, nullable=True) #autocompute na age; True muna
@@ -35,11 +35,11 @@ class Students(Base):
 class Faculty(Base):
     __tablename__ = 'faculty'
 
-    faculty_id = Column(Integer, nullable=False, autoincrement=True)
+    faculty_id = Column(Integer, nullable=False, autoincrement=True, primary_key=True)
     id_number = Column(String, nullable=False)
-    first_name = Column(String(70), nullable=False, primary_key=True)
-    last_name = Column(String(50), nullable=False, primary_key=True)
-    middle_name = Column(String(50), nullable=False, primary_key=True)
+    first_name = Column(String(70), nullable=False)
+    last_name = Column(String(50), nullable=False)
+    middle_name = Column(String(50), nullable=False)
     birth_date = Column(String(10), nullable=False)
     sex = Column(String(8), nullable=False)
     date_of_employment = Column(String, nullable=False)
@@ -98,7 +98,7 @@ class DailyAttendance(Base): #refresh everyday
     time_out = Column(String(5), nullable=True) #constraint military format
     minutes_late = Column(Integer, nullable=True) #constraint 0+
     ForeignKeyConstraint(['date', 'faculty_id'], ['day.date', 'faculty.faculty_id'])
-
+'''
 class MonthCutoff(Base):
     __tablename__ = 'month'
     month_id = Column(Integer, nullable=False, autoincrement=True)
@@ -107,7 +107,7 @@ class MonthCutoff(Base):
 
 class MonthlyPayroll(Base):
     __tablename__ = 'monthly_payroll'
-
+'''
 engine = create_engine('sqlite:///kdcc.db')
 db_session = scoped_session(sessionmaker(autocommit=False,
                                      autoflush=False,

@@ -12,7 +12,7 @@ DBSession.configure(bind=engine)
 
 def fill():
     try:
-        
+
         #1: ADD USER 'admin'
         session = DBSession()
         new_user = User(username='admin', password='admin')
@@ -69,7 +69,7 @@ def fill():
         session.add(new_enrolled)
         session.commit()
 
-
+        '''
         #8: ADD DAYS (arbitrary) '02/01/2017 and 02/09/2017'
         session = DBSession()
         new_day = Day(sem_code='1617B',date='02/01/17')
@@ -85,7 +85,7 @@ def fill():
         new_daily = DailyAttendance(date='02/09/17', faculty_id=2, is_absent=0, time_in='10:30')
         session.add(new_daily)
         session.commit()
-
+        '''
 
     except: #this part ensures na no drastic changes will happen in case something goes wrong
         session.rollback()
