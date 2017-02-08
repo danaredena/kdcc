@@ -599,6 +599,7 @@
 
 		
 <DailyAttendanceWindow>:
+    daily_list: daily_list_view
     Button:
         id: save
         font_size: 15
@@ -623,6 +624,7 @@
         center_y: root.y + 560
         text: "View Previous Days"
         size: (150,35)
+        on_press: root.view_date()
     Button:
         id: home
         font_size: 15
@@ -631,6 +633,13 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
+    ListView:
+        id: daily_list_view
+        adapter:
+            ListAdapter(data=[], cls=main.DailyListButton)
+        width: 680
+        center_x: root.width + 285
+        center_y: root.y + 400    
 
 		
 <FinanceSummaryWindow>:
