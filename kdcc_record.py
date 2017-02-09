@@ -68,8 +68,7 @@ def fill():
         new_enrolled = Enrolled(sem_code='1516B',student_id=2, payment_mode=1)
         session.add(new_enrolled)
         session.commit()
-
-        
+        '''
         #8: ADD DAYS (arbitrary) '02/01/2017 and 02/09/2017'
         session = DBSession()
         new_day = Day(sem_code='1617B',date='02/01/17')
@@ -80,12 +79,20 @@ def fill():
 
         #9: ADD DAILY ATTENDANCE (arbitrary) '02/09/2017'
         session = DBSession()
-        new_daily = DailyAttendance(date='02/09/17', faculty_id=1, is_absent=0, time_in='07:30', time_out='18:00', minutes_late=15)
+        new_daily = MonthlyPayroll(date='02/09/17', faculty_id=1, is_absent=0, time_in='07:30', time_out='18:00', minutes_late=15)
         session.add(new_daily)
         new_daily = DailyAttendance(date='02/09/17', faculty_id=2, is_absent=0, time_in='10:30')
         session.add(new_daily)
         session.commit()
-        
+        '''
+        #10: ADD EMPLOYED (arbitrary) '1617B and Bob'
+        session = DBSession()
+        new_employed = Employed(sem_code='1617B',faculty_id=1)
+        session.add(new_employed)
+        new_employed = Employed(sem_code='1617B',faculty_id=2)
+        session.add(new_employed)
+        session.commit()
+
 
     except: #this part ensures na no drastic changes will happen in case something goes wrong
         session.rollback()

@@ -14,6 +14,7 @@ class User(Base):
 
 class Students(Base):
     __tablename__ = 'student'
+    __table_args__ = (UniqueConstraint('first_name','middle_name','last_name'),)
 
     student_id = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
     nickname = Column(String(30), nullable=False)
@@ -34,7 +35,7 @@ class Students(Base):
 
 class Faculty(Base):
     __tablename__ = 'faculty'
-
+    __table_args__ = (UniqueConstraint('first_name','middle_name','last_name'),)
     faculty_id = Column(Integer, nullable=False, autoincrement=True, primary_key=True)
     id_number = Column(String, nullable=False)
     first_name = Column(String(70), nullable=False)
@@ -82,13 +83,7 @@ class Employed(Base):
     sem_code = Column(String(10), nullable=False, primary_key=True)
     faculty_id = Column(Integer, nullable=False, primary_key=True)
     ForeignKeyConstraint(['sem_code', 'faculty_id'], ['semester.sem_code', 'faculty.faculty_id'])
-
-class Day(Base):
-    __tablename__ = 'day'
-    sem_code = Column(String(10), nullable=False)
-    date = Column(String(10), nullable=False, primary_key=True) #should be strict format eg 10/13/2017 (will add constraint later)
-    ForeignKeyConstraint(['sem_code'], ['semester.sem_code'])
-
+'''
 class DailyAttendance(Base): #refresh everyday
     __tablename__ = 'daily_attendance'
     date = Column(String(10), nullable=False, primary_key=True)
@@ -97,7 +92,29 @@ class DailyAttendance(Base): #refresh everyday
     time_in = Column(String(5), nullable=True) #formatted din (will add constraints later)
     time_out = Column(String(5), nullable=True) #constraint military format
     minutes_late = Column(Integer, nullable=True) #constraint 0+
-    ForeignKeyConstraint(['date', 'faculty_id'], ['day.date', 'faculty.faculty_id'])
+'''
+
+class MonthCutoff(Base):
+    __tablename__ = 'month'
+    __table_args__ = (UniqueConstraint('start_date','end_date'),)
+    monthcutoff_id = Column(Integer, nullable=False,primary_key=True, autoincrement=True)
+    sem_code = Column(String(10), nullable=False)
+    #ForeignKeyConstraint(['sem_code'], ['semester.sem_code'])
+    start_date = Column(String(10), nullable=False)
+    end_date = Column(String(10), nullable=False)
+
+class MonthlyPayroll(Base):
+    __tablename__ = 'monthly_payroll'
+    monthcutoff_id = Column(Integer, nullable=False)
+    date = Column(String(10), nullable=False, primary_key=True)
+    faculty_id = Column(Integer, nullable=False, primary_key=True)
+    is_absent = Column(Boolean, nullable=True) #need to monitor this pa
+    time_in = Column(String(5), nullable=True) #formatted din (will add constraints later)
+    time_out = Column(String(5), nullable=True) #constraint military format
+    minutes_late = Column(Integer, nullable=True) #constraint 0+
+    #ForeignKeyConstraint(['date', 'faculty_id'], ['day.date', 'faculty.faculty_id'])
+
+
 '''
 class MonthCutoff(Base):
     __tablename__ = 'month'
