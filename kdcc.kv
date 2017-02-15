@@ -1,4 +1,3 @@
-# Reference main.py
 #: import main main
 #: import ListAdapter kivy.adapters.listadapter.ListAdapter
 #: import ListItemButton kivy.uix.listview.ListItemButton
@@ -114,6 +113,7 @@
         center_y: root.y + 75
         text: "Edit"
         size: (100,40)
+        on_press: root.edit()
     Button:
         id: delete
         font_size: 15
@@ -312,6 +312,173 @@
         text: "Create"
         size: (250,40)
         on_press: root.create()
+
+
+<EditStudentWindow>:
+    name: 'editStudent'
+    TextInput:
+        id: nickname
+        font_size: 20
+        center_x: root.width + 25
+        center_y: root.y + 550 - 50
+        height: 35
+        width: 200
+        hint_text: "Nickname"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: last_name
+        font_size: 20
+        center_x: root.width + 25
+        center_y: root.y + 500 - 50
+        height: 35
+        width: 200
+        hint_text: "Last Name"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: first_name
+        font_size: 20
+        center_x: root.width + 235
+        center_y: root.y + 500 - 50
+        height: 35
+        width: 200
+        hint_text: "First Name"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: middle_name
+        font_size: 20
+        center_x: root.width + 445
+        center_y: root.y + 500 - 50
+        height: 35
+        width: 200
+        hint_text: "Middle Name"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: address
+        font_size: 20
+        center_x: root.width + 25
+        center_y: root.y + 450 - 50
+        height: 35
+        width: 600
+        hint_text: "Address"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: birth_date
+        font_size: 20
+        center_x: root.width + 25
+        center_y: root.y + 400 - 50
+        height: 35
+        width: 200
+        hint_text: "Birthday"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: sex
+        font_size: 20
+        center_x: root.width + 235
+        center_y: root.y + 400 - 50
+        height: 35
+        width: 200
+        hint_text: "Sex"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: date_of_admission
+        font_size: 20
+        center_x: root.width + 25
+        center_y: root.y + 350 - 50
+        height: 35
+        width: 200
+        hint_text: "Date of Enrollment"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: group
+        font_size: 20
+        center_x: root.width + 235
+        center_y: root.y + 350 - 50
+        height: 35
+        width: 200
+        hint_text: "Group"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: guardianA
+        font_size: 20
+        center_x: root.width + 25
+        center_y: root.y + 300 - 50
+        height: 35
+        width: 200
+        hint_text: "Guardian Name"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: contactA
+        font_size: 20
+        center_x: root.width + 235
+        center_y: root.y + 300 - 50
+        height: 35
+        width: 200
+        hint_text: "Contact Number"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: up_dependent
+        font_size: 20
+        center_x: root.width + 445
+        center_y: root.y + 300 - 50
+        height: 35
+        width: 200
+        hint_text: "UP/Non-UP"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: guardianB
+        font_size: 20
+        center_x: root.width + 25
+        center_y: root.y + 250 - 50
+        height: 35
+        width: 200
+        hint_text: "Guardian Name"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: contactB
+        font_size: 20
+        center_x: root.width + 235
+        center_y: root.y + 250 - 50
+        height: 35
+        width: 200
+        hint_text: "Contact Number"
+        write_tab: False
+        multiline: False
+    Button:
+        id: save
+        font_size: 15
+        center_x: root.width
+        center_y: root.y + 75
+        text: "Save"
+        size: (100,40)
+        #on_press: root.create()
+    Button:
+        id: cancel
+        font_size: 15
+        center_x: root.width + 100
+        center_y: root.y + 75
+        text: "Cancel"
+        size: (100,40)
+    Button:
+        id: back
+        font_size: 15
+        center_x: root.width + 560
+        center_y: root.y + 75
+        text: "Back"
+        size: (130,40)
+        on_press: root.back()
 
 
 <ChooseSemesterWindow>:

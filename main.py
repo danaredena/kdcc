@@ -17,6 +17,9 @@ DBSession = sessionmaker()
 DBSession.configure(bind=engine)
 session = DBSession()
 
+#globals huhu di ko magets kung paano yung pagsend ng value sa ibang windows TT
+studentId = int #for editing
+
 #insert to database function (for safety)
 def add_db(addobject):
     session = DBSession()
@@ -102,7 +105,8 @@ class StudentListButton(ListItemButton):
 
 class StudentRecordsWindow(Widget):
     student_list = ObjectProperty()
-    def populate_list(self):
+    def __init__(self, **kwargs):
+        super(StudentRecordsWindow, self).__init__(**kwargs)
         del self.student_list.adapter.data[:]
         students = Students.query.all()
         for student in students:
@@ -110,19 +114,29 @@ class StudentRecordsWindow(Widget):
             #print(", ".join(details))
             self.student_list.adapter.data.extend([", ".join(details)])
         self.student_list._trigger_reset_populate()
+
+    def populate_list(self, *args):
+        pass #walang mangyayari pag nasa same window
     def main_menu(self, *args):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
     def create(self, *args):
         self.clear_widgets()
         self.add_widget(CreateStudentWindow())
+    def edit(self):
+        if self.student_list.adapter.selection:
+            global studentid
+            selection_obj = self.student_list.adapter.selection[0]
+            selection = selection_obj.text
+            studentid = int(selection[0])
+            self.clear_widgets()
+            self.add_widget(EditStudentWindow())
     def delete_student(self):
         if self.student_list.adapter.selection:
             selection_obj = self.student_list.adapter.selection[0]
             selection = selection_obj.text
             #print(selection[0])
             self.student_list.adapter.data.remove(selection)
-
             delete_db(int(selection[0]), 0) #gets student_id, 0 - for student record
             self.student_list._trigger_reset_populate()
     def choose_semester(self, *args):
@@ -177,10 +191,15 @@ class CreateStudentWindow(Widget):
         new_student = Students(nickname=nickname_text, first_name=first_name_text, middle_name=middle_name_text, last_name=last_name_text, address=address_text, birth_date=birth_date_text, sex=sex_text, date_of_admission=date_of_admission_text, group=group_text, guardian1_name=guardian1_name_text, guardian2_name=guardian2_name_text, contact_number1=contact_number1_text, contact_number2=contact_number2_text, up_dependent=up_dependent_text)
         print( add_db(new_student) )
 
-        #print(session.query(Students).all())
+        print(session.query(Students).all())
         self.clear_widgets()
         self.add_widget(StudentRecordsWindow())
     def back_to_student_records(self, *args):
+        self.clear_widgets()
+        self.add_widget(StudentRecordsWindow())
+
+class EditStudentWindow(Widget):
+    def back(self):
         self.clear_widgets()
         self.add_widget(StudentRecordsWindow())
 
@@ -221,7 +240,8 @@ class FacultyListButton(ListItemButton):
 
 class FacultyRecordsWindow(Widget):
     faculty_list = ObjectProperty()
-    def populate_list(self):
+    def __init__(self, **kwargs):
+        super(FacultyRecordsWindow, self).__init__(**kwargs)
         del self.faculty_list.adapter.data[:]
         all_faculty = Faculty.query.all()
         for faculty in all_faculty:
@@ -229,6 +249,8 @@ class FacultyRecordsWindow(Widget):
             print(", ".join(details))
             self.faculty_list.adapter.data.extend([", ".join(details)])
         self.faculty_list._trigger_reset_populate()
+    def populate_list(self):
+        pass
     def main_menu(self, *args):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
@@ -312,7 +334,7 @@ class DailyAttendanceWindow(Widget):
     daily_list = ObjectProperty()
     def view_date(self):
         del self.daily_list.adapter.data[:]
-        all_daily = DailyAttendance.query.all()
+        all_daily = MonthlyPayroll.query.all()
         for daily in all_daily:
             #get faculty name
             for faculty in session.query(Faculty).filter_by(faculty_id=daily.faculty_id):
