@@ -463,7 +463,7 @@
         center_y: root.y + 75
         text: "Save"
         size: (100,40)
-        #on_press: root.create()
+        on_press: root.save()
     Button:
         id: cancel
         font_size: 15
@@ -471,6 +471,7 @@
         center_y: root.y + 75
         text: "Cancel"
         size: (100,40)
+        on_press: root.back()
     Button:
         id: back
         font_size: 15

@@ -52,18 +52,21 @@ def delete_db(id, sn_fn):
             raise
 
 class LoginWindow(Widget):
-    def login(self, *args):
-        username_input = self.ids.username_input
-        username_text = username_input.text
-        password_input = self.ids.password_input
-        password_text = password_input.text
-        for row in session.query(User).all():
-            if (row.username==username_text and row.password==password_text):
-                self.clear_widgets()
-                self.add_widget(MainMenuWindow())
-            else:
-                label = self.ids.success
-                label.text = "Invalid username or password."
+	def __init__(self, **kwargs):
+		super(LoginWindow, self).__init__(**kwargs)
+
+	def login(self, *args):
+		username_input = self.ids.username_input
+		username_text = username_input.text
+		password_input = self.ids.password_input
+		password_text = password_input.text
+		for row in session.query(User).all():
+		    if (row.username==username_text and row.password==password_text):
+		        self.clear_widgets()
+		        self.add_widget(MainMenuWindow())
+		    else:
+		        label = self.ids.success
+		        label.text = "Invalid username or password."
 
 class MainMenuWindow(Widget):
     def student_records(self, *args):
@@ -199,9 +202,36 @@ class CreateStudentWindow(Widget):
         self.add_widget(StudentRecordsWindow())
 
 class EditStudentWindow(Widget):
-    def back(self):
-        self.clear_widgets()
-        self.add_widget(StudentRecordsWindow())
+	def __init__(self, **kwargs):
+		super(EditStudentWindow, self).__init__(**kwargs)
+		global studentid
+		for student in session.query(Students).filter_by(student_id=studentid):
+			self.ids.nickname.text = student.nickname
+			self.ids.first_name.text = student.first_name
+			self.ids.middle_name.text = student.middle_name
+			self.ids.last_name.text = student.last_name
+			self.ids.address.text = student.address
+			self.ids.birth_date.text = student.birth_date
+			self.ids.sex.text = student.sex
+			self.ids.date_of_admission.text = student.date_of_admission
+			self.ids.group.text = student.group
+			self.ids.guardianA.text = student.guardian1_name
+			self.ids.guardianB.text = student.guardian2_name if student.guardian2_name else ''
+			self.ids.contactA.text = student.contact_number1
+			self.ids.contactB.text = student.contact_number2 if student.contact_number2 else ''
+			self.ids.up_dependent.text = student.up_dependent
+	def save(self):
+		#update db
+		print(self.ids.nickname.text)
+		print(studentid)
+		session.query(Students).filter_by(student_id=studentid).update(dict(nickname=self.ids.nickname.text, first_name=self.ids.first_name.text, middle_name=self.ids.middle_name.text, last_name=self.ids.last_name.text, address=self.ids.address.text, birth_date=self.ids.birth_date.text, sex=self.ids.sex.text, date_of_admission=self.ids.date_of_admission.text, group=self.ids.group.text, guardian1_name=self.ids.guardianA.text, guardian2_name=self.ids.guardianB.text, contact_number1=self.ids.contactA.text, contact_number2=self.ids.contactB.text, up_dependent=self.ids.up_dependent.text))
+		session.commit()
+		self.clear_widgets()
+		self.add_widget(StudentRecordsWindow())
+
+	def back(self):
+	    self.clear_widgets()
+	    self.add_widget(StudentRecordsWindow())
 
 class ChooseSemesterWindow(Widget):
     def main_menu(self, *args):
