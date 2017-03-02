@@ -48,6 +48,7 @@ class Faculty(Base):
     position = Column(String, nullable=False)
     contact_number = Column(String(11), nullable=False)
     remarks = Column(String, nullable=True)
+    monthly_rate = Column(Integer, nullable=False)
     #personal details
     pers_tin = Column(String, nullable=True)
     pers_ssn = Column(String, nullable=True)
@@ -83,16 +84,6 @@ class Employed(Base):
     sem_code = Column(String(10), nullable=False, primary_key=True)
     faculty_id = Column(Integer, nullable=False, primary_key=True)
     ForeignKeyConstraint(['sem_code', 'faculty_id'], ['semester.sem_code', 'faculty.faculty_id'])
-'''
-class DailyAttendance(Base): #refresh everyday
-    __tablename__ = 'daily_attendance'
-    date = Column(String(10), nullable=False, primary_key=True)
-    faculty_id = Column(Integer, nullable=False, primary_key=True)
-    is_absent = Column(Boolean, nullable=True) #need to monitor this pa
-    time_in = Column(String(5), nullable=True) #formatted din (will add constraints later)
-    time_out = Column(String(5), nullable=True) #constraint military format
-    minutes_late = Column(Integer, nullable=True) #constraint 0+
-'''
 
 class MonthCutoff(Base):
     __tablename__ = 'month'
@@ -103,8 +94,8 @@ class MonthCutoff(Base):
     start_date = Column(String(10), nullable=False)
     end_date = Column(String(10), nullable=False)
 
-class MonthlyPayroll(Base):
-    __tablename__ = 'monthly_payroll'
+class DailyAttendance(Base):
+    __tablename__ = 'daily_attendance'
     monthcutoff_id = Column(Integer, nullable=False)
     date = Column(String(10), nullable=False, primary_key=True)
     faculty_id = Column(Integer, nullable=False, primary_key=True)
@@ -114,17 +105,22 @@ class MonthlyPayroll(Base):
     minutes_late = Column(Integer, nullable=True) #constraint 0+
     #ForeignKeyConstraint(['date', 'faculty_id'], ['day.date', 'faculty.faculty_id'])
 
-
-'''
-class MonthCutoff(Base):
-    __tablename__ = 'month'
-    month_id = Column(Integer, nullable=False, autoincrement=True)
-    start_date = Column(String(10), nullable=False, primary_key=True)
-    end_date = Column(String(10), nullable=False, primary_key=True)
-
 class MonthlyPayroll(Base):
     __tablename__ = 'monthly_payroll'
-'''
+    monthcutoff_id = Column(Integer, nullable=False)
+    faculty_id = Column(Integer, nullable=False, primary_key=True)
+
+    ## SUMMARY PART
+    no_of_absences = Column(Integer, nullable=True)
+    #no of unpaid absences????
+    total_minutes_late = Column(Integer, nullable=True)
+    pending_deduc = Column(Integer, nullable=True)
+
+    ## COMPUTATIONAL PART
+    computed_deduc = Column(Integer, nullable=True)
+    computed_salary = Column(Integer, nullable=True)
+    #ForeignKeyConstraint(['date', 'faculty_id'], ['day.date', 'faculty.faculty_id'])
+
 engine = create_engine('sqlite:///kdcc.db')
 db_session = scoped_session(sessionmaker(autocommit=False,
                                      autoflush=False,
