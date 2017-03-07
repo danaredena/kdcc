@@ -108,6 +108,9 @@ class Student():
 class StudentListButton(ListItemButton):
     pass
 
+class SemesterListButton(ListItemButton):
+    pass
+
 class StudentRecordsWindow(Widget):
     student_list = ObjectProperty()
     def __init__(self, **kwargs):
@@ -235,6 +238,22 @@ class EditStudentWindow(Widget):
 	    self.add_widget(StudentRecordsWindow())
 
 class ChooseSemesterWindow(Widget):
+    
+    semester_list = ObjectProperty()
+    def __init__(self, **kwargs):
+        super(ChooseSemesterWindow, self).__init__(**kwargs)
+        del self.semester_list.adapter.data[:]
+        semester = Semester.query.all()
+        for semeser in semester:
+            details = [str("Please work")]
+            #details = [str(student.student_id), student.nickname, student.first_name+' '+student.middle_name+' '+student.last_name, student.group, student.birth_date, student.address, student.up_dependent, student.date_of_admission]
+            #print(", ".join(details))
+            self.semester_list.adapter.data.extend([", ".join(details)])
+        self.semester_list._trigger_reset_populate()
+
+    def populate_list(self, *args):
+        pass
+
     def main_menu(self, *args):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
@@ -243,6 +262,7 @@ class ChooseSemesterWindow(Widget):
           self.add_widget(StudentRecordsWindow())
 
 class SemesterListWindow(Widget):
+        
     def choose_semester(self, *args):
         self.clear_widgets()
         self.add_widget(ChooseSemesterWindow())

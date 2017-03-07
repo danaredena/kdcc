@@ -483,6 +483,7 @@
 
 
 <ChooseSemesterWindow>:
+	semester_list: semester_list_view
     Button:
         id: add_semester
         font_size: 15
@@ -505,6 +506,7 @@
         center_y: root.y + 560
         text: "Semester List"
         size: (150,50)
+		on_press: root.populate_list()
     Button:
         id: home
         font_size: 15
@@ -513,7 +515,13 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
-		
+	ListView:
+        id: semester_list_view
+        adapter:
+            ListAdapter(data=[], cls=main.SemesterListButton)
+        width: 680
+        center_x: root.width + 285
+        center_y: root.y + 400	
 	
 <SemesterListWindow>
     Button:
@@ -538,6 +546,7 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
+	
 		
 
 <FacultyRecordsWindow>:
