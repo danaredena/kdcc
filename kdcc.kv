@@ -1038,7 +1038,8 @@
         center_y: root.y + 400
 
 <FinanceSummaryWindow>:
-	TextInput:
+    finance_list: finance_list_view
+    TextInput:
         id: change_date1
         font_size: 20
         center_x: root.width + 100
@@ -1048,7 +1049,7 @@
         hint_text: "Change Date"
         write_tab: False
         multiline: False
-	TextInput:
+    TextInput:
         id: change_date2
         font_size: 20
         center_x: root.width + 350
@@ -1073,3 +1074,10 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
+    ListView:
+        id: finance_list_view
+        adapter:
+            ListAdapter(data=[], cls=main.FacultyListButton)
+        width: 680
+        center_x: root.width + 285
+        center_y: root.y + 400

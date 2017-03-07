@@ -458,10 +458,27 @@ class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kiv
         self.prev_list._trigger_reset_populate()
 
 class FinanceSummaryWindow(Widget):
+    finance_list = ObjectProperty()
+    def __init__(self, **kwargs):
+        super(FinanceSummaryWindow, self).__init__(**kwargs)
+        del self.finance_list.adapter.data[:]
+        items = MonthlyPayroll.query.all()
+        for item in items:
+            for teacher in session.query(Faculty).filter_by(faculty_id=item.faculty_id):
+                id_number = str(teacher.id_number)
+                first_name = teacher.first_name
+                middle_name = teacher.middle_name
+                last_name = teacher.last_name
+
+            details = [str(item.faculty_id), first_name+' '+middle_name[0]+'. '+last_name, str(item.no_of_absences), str(item.total_minutes_late), str(item.pending_deduc)]
+            #print(", ".join(details))
+            self.finance_list.adapter.data.extend([", ".join(details)])
+        self.finance_list._trigger_reset_populate()
+
     def main_menu(self, *args):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
-
+        
 class KDCCApp(App):
     def build(self):
         return LoginWindow()
