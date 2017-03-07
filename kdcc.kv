@@ -52,7 +52,7 @@
         color: (0,0,0,1)
         text: ""
 
-		
+
 <MainMenuWindow>:
     Button:
         id: student_records
@@ -95,7 +95,7 @@
         size: (150,50)
         on_press: root.logout()
 
-		
+
 <StudentRecordsWindow>:
     student_list: students_list_view
     Button:
@@ -521,8 +521,8 @@
             ListAdapter(data=[], cls=main.SemesterListButton)
         width: 680
         center_x: root.width + 285
-        center_y: root.y + 400	
-	
+        center_y: root.y + 400
+
 <SemesterListWindow>
     Button:
         id: enroll_student
@@ -546,8 +546,8 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
-	
-		
+
+
 
 <FacultyRecordsWindow>:
     faculty_list: faculty_list_view
@@ -606,7 +606,7 @@
         center_x: root.width + 285
         center_y: root.y + 400
 
-		
+
 <CreateFacultyWindow>:
     TextInput:
         id: id_number
@@ -977,7 +977,7 @@
         center_y: root.y + 560
         text: "View Previous Days"
         size: (150,35)
-        on_press: root.view_date()
+        on_press: root.prev_attendance()
     Button:
         id: home
         font_size: 15
@@ -992,9 +992,51 @@
             ListAdapter(data=[], cls=main.DailyListButton)
         width: 680
         center_x: root.width + 285
-        center_y: root.y + 400    
+        center_y: root.y + 400
 
-		
+<PrevAttendanceWindow>:
+    prev_list: prev_list_view
+    Button:
+        id: save
+        font_size: 15
+        center_x: root.width
+        center_y: root.y + 75
+        text: "Save"
+        size: (100,40)
+	TextInput:
+        id: change_date
+        font_size: 20
+        center_x: root.width + 360
+        center_y: root.y + 560
+        height: 35
+        width: 170
+        hint_text: "change_date"
+        write_tab: False
+        multiline: False
+    Button:
+        id: view_previous_days
+        font_size: 15
+        center_x: root.width + 540
+        center_y: root.y + 560
+        text: "View Previous Days"
+        size: (150,35)
+        on_press: root.prev_attendance()
+    Button:
+        id: home
+        font_size: 15
+        center_x: root.width + 560
+        center_y: root.y + 75
+        text: "Back to Home"
+        size: (130,40)
+        on_press: root.main_menu()
+    ListView:
+        id: prev_list_view
+        adapter:
+            ListAdapter(data=[], cls=main.DailyListButton)
+        width: 680
+        center_x: root.width + 285
+        center_y: root.y + 400
+
 <FinanceSummaryWindow>:
 	TextInput:
         id: change_date1

@@ -19,7 +19,7 @@ session = DBSession()
 
 #globals huhu di ko magets kung paano yung pagsend ng value sa ibang windows TT kaya global variable na lang gamitin natin hahahaha
 #for editing
-studentid = int 
+studentid = int
 facultyid = int
 
 #insert to database function (for safety)
@@ -225,7 +225,7 @@ class EditStudentWindow(Widget):
 			self.ids.contactA.text = student.contact_number1
 			self.ids.contactB.text = student.contact_number2 if student.contact_number2 else ''
 			self.ids.up_dependent.text = student.up_dependent
-	
+
 	def save(self):
 		#update db for students
 		session.query(Students).filter_by(student_id=studentid).update(dict(nickname=self.ids.nickname.text, first_name=self.ids.first_name.text, middle_name=self.ids.middle_name.text, last_name=self.ids.last_name.text, address=self.ids.address.text, birth_date=self.ids.birth_date.text, sex=self.ids.sex.text, date_of_admission=self.ids.date_of_admission.text, group=self.ids.group.text, guardian1_name=self.ids.guardianA.text, guardian2_name=self.ids.guardianB.text, contact_number1=self.ids.contactA.text, contact_number2=self.ids.contactB.text, up_dependent=self.ids.up_dependent.text))
@@ -238,7 +238,7 @@ class EditStudentWindow(Widget):
 	    self.add_widget(StudentRecordsWindow())
 
 class ChooseSemesterWindow(Widget):
-    
+
     semester_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(ChooseSemesterWindow, self).__init__(**kwargs)
@@ -262,7 +262,7 @@ class ChooseSemesterWindow(Widget):
           self.add_widget(StudentRecordsWindow())
 
 class SemesterListWindow(Widget):
-        
+
     def choose_semester(self, *args):
         self.clear_widgets()
         self.add_widget(ChooseSemesterWindow())
@@ -418,23 +418,44 @@ class EditFacultyWindow(Widget):
 
 class DailyListButton(ListItemButton):
     pass
+
 class DailyAttendanceWindow(Widget):
     daily_list = ObjectProperty()
-    def view_date(self):
+    def __init__(self, **kwargs):
+        super(DailyAttendanceWindow, self).__init__(**kwargs)
         del self.daily_list.adapter.data[:]
-        all_daily = MonthlyPayroll.query.all()
-        for daily in all_daily:
-            #get faculty name
-            for faculty in session.query(Faculty).filter_by(faculty_id=daily.faculty_id):
-                first_name = faculty.first_name
-                middle_name = faculty.middle_name
-                last_name = faculty.last_name
-            details = [str(daily.faculty_id),  first_name+' '+middle_name+' '+last_name, str(daily.is_absent), str(daily.time_in), str(daily.time_out), str(daily.minutes_late)]
+        all_faculty = Faculty.query.all()
+        for faculty in all_faculty:
+            details = [str(faculty.faculty_id), faculty.id_number, faculty.first_name+' '+faculty.last_name]
+            #print(", ".join(details))
             self.daily_list.adapter.data.extend([", ".join(details)])
         self.daily_list._trigger_reset_populate()
+
+    def prev_attendance(self):
+        self.clear_widgets()
+        self.add_widget(PrevAttendanceWindow())
+
+    def populate_list(self):
+        pass
     def main_menu(self, *args):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
+
+class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kivy
+    prev_list = ObjectProperty()
+    def __init__(self, **kwargs):
+        super(PrevAttendanceWindow, self).__init__(**kwargs)
+        del self.prev_list.adapter.data[:]
+        all_atten = DailyAttendance.query.all()
+        for atten in all_atten:
+            details = [str(atten.monthcutoff_id), atten.date, str(atten.faculty_id), str(atten.is_absent), atten.time_in, atten.time_out, str(atten.minutes_late)]
+            #print(details)
+            for x in range(len(details)):
+                if not details[x]:
+                    details[x] = ''
+            #print(details)
+            self.prev_list.adapter.data.extend([", ".join(details)])
+        self.prev_list._trigger_reset_populate()
 
 class FinanceSummaryWindow(Widget):
     def main_menu(self, *args):
