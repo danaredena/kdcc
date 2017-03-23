@@ -3,7 +3,28 @@ from sqlalchemy import *
 from sqlalchemy.orm import scoped_session, sessionmaker
 #from sqlalchemy import Column, String
 #from sqlalchemy import create_engine
+#from sqlalchemy.engine import Engine
+#from sqlalchemy import event
+'''
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
+from sqlite3 import Connection as SQLite3Connection
 
+@event.listens_for(Engine, "connect")
+def _set_sqlite_pragma(dbapi_connection, connection_record):
+    if isinstance(dbapi_connection, SQLite3Connection):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON;")
+        cursor.close()
+'''
+from sqlalchemy.engine import Engine
+from sqlalchemy import event
+
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
 Base = declarative_base()
 
 class User(Base):
@@ -77,6 +98,7 @@ class Enrolled(Base):
     month3_OR = Column(String, nullable=True)
     month4_pay = Column(String, nullable=True)
     month4_OR = Column(String, nullable=True)
+    #nine = sqlalchemy.orm.relationship(Nine, backref=sqlalchemy.orm.backref('seven'), uselist=False)
     ForeignKeyConstraint(['sem_code', 'student_id'], ['semester.sem_code', 'student.student_id'])
 
 class Employed(Base):
