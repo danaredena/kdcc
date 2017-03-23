@@ -1066,6 +1066,7 @@
         center_y: root.y + 560
         text: "Compute for Payroll"
         size: (150,35)
+        on_press: root.payroll()
     Button:
         id: home
         font_size: 15
@@ -1076,6 +1077,24 @@
         on_press: root.main_menu()
     ListView:
         id: finance_list_view
+        adapter:
+            ListAdapter(data=[], cls=main.FacultyListButton)
+        width: 680
+        center_x: root.width + 285
+        center_y: root.y + 400
+
+<PayrollWindow>:
+    payfaculty_list: payfaculty_list_view
+    Button:
+        id: home
+        font_size: 15
+        center_x: root.width + 560
+        center_y: root.y + 75
+        text: "Back to Home"
+        size: (130,40)
+        on_press: root.main_menu()
+    ListView:
+        id: payfaculty_list_view
         adapter:
             ListAdapter(data=[], cls=main.FacultyListButton)
         width: 680

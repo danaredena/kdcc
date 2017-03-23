@@ -478,7 +478,35 @@ class FinanceSummaryWindow(Widget):
     def main_menu(self, *args):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
-        
+
+    def payroll(self, *args):
+        self.clear_widgets()
+        self.add_widget(PayrollWindow())
+
+class PayrollWindow(Widget):
+    payfaculty_list = ObjectProperty()
+    def __init__(self, **kwargs):
+        super(PayrollWindow, self).__init__(**kwargs)
+        del self.payfaculty_list.adapter.data[:]
+        items = MonthlyPayroll.query.all()
+        for item in items:
+            for teacher in session.query(Faculty).filter_by(faculty_id=item.faculty_id):
+                id_number = str(teacher.id_number)
+                first_name = teacher.first_name
+                middle_name = teacher.middle_name
+                last_name = teacher.last_name
+                monthly_rate = teacher.monthly_rate
+
+            details = [str(item.faculty_id), first_name+' '+middle_name[0]+'. '+last_name, str(monthly_rate), str(item.computed_deduc), str(item.computed_salary), str(item.pending_deduc)]
+            #print(", ".join(details))
+            self.payfaculty_list.adapter.data.extend([", ".join(details)])
+        self.payfaculty_list._trigger_reset_populate()
+
+    def main_menu(self, *args):
+        self.clear_widgets()
+        self.add_widget(MainMenuWindow())
+
+
 class KDCCApp(App):
     def build(self):
         return LoginWindow()
