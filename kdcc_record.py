@@ -12,7 +12,7 @@ DBSession.configure(bind=engine)
 
 def fill():
     try:
-        
+        '''
         #1: ADD USER 'admin'
         session = DBSession()
         new_user = User(username='admin', password='admin')
@@ -92,7 +92,6 @@ def fill():
         session.add(new_daily)
         session.commit()
 
-
         #10: ADD MONTHLY PAYROLL (arbitrary) '02/09/2017'
         session = DBSession()
         new_payroll = MonthlyPayroll(monthcutoff_id=2, faculty_id=1, no_of_absences=0, total_minutes_late=15, pending_deduc=700, computed_deduc=100,computed_salary=9000)
@@ -101,8 +100,8 @@ def fill():
         session.add(new_payroll)
         session.commit()
 
+        '''
 
-        #11: ADD ANOTHER
     except: #this part ensures na no drastic changes will happen in case something goes wrong
         session.rollback()
         print('nu')

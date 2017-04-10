@@ -85,8 +85,8 @@ class Semester(Base):
 
 class Enrolled(Base):
     __tablename__ = 'enrolled'
-    sem_code = Column(String(10), nullable=False, primary_key=True)
-    student_id = Column(Integer, nullable=False, primary_key=True)
+    sem_code = Column(String(10), ForeignKey('semester.sem_code'), nullable=False, primary_key=True)
+    student_id = Column(Integer, ForeignKey('student.student_id'), nullable=False, primary_key=True)
     payment_mode = Column(Integer, nullable=False)
     semestral_pay = Column(String, nullable=True) #float
     semestral_OR = Column(String, nullable=True) #di pa ako sure dito kung standardized ung payments, will update next time
@@ -98,29 +98,26 @@ class Enrolled(Base):
     month3_OR = Column(String, nullable=True)
     month4_pay = Column(String, nullable=True)
     month4_OR = Column(String, nullable=True)
-    #nine = sqlalchemy.orm.relationship(Nine, backref=sqlalchemy.orm.backref('seven'), uselist=False)
-    ForeignKeyConstraint(['sem_code', 'student_id'], ['semester.sem_code', 'student.student_id'])
 
 class Employed(Base):
     __tablename__ = 'employed'
-    sem_code = Column(String(10), nullable=False, primary_key=True)
-    faculty_id = Column(Integer, nullable=False, primary_key=True)
-    ForeignKeyConstraint(['sem_code', 'faculty_id'], ['semester.sem_code', 'faculty.faculty_id'])
+    sem_code = Column(String(10), ForeignKey('semester.sem_code'), nullable=False, primary_key=True)
+    faculty_id = Column(Integer, ForeignKey('faculty.faculty_id'), nullable=False, primary_key=True)
 
 class MonthCutoff(Base):
     __tablename__ = 'month'
     __table_args__ = (UniqueConstraint('start_date','end_date'),)
-    monthcutoff_id = Column(Integer, nullable=False,primary_key=True, autoincrement=True)
-    sem_code = Column(String(10), nullable=False)
+    monthcutoff_id = Column(Integer, nullable=False, primary_key=True, autoincrement=True)
+    sem_code = Column(String(10), ForeignKey('semester.sem_code'), nullable=False)
     #ForeignKeyConstraint(['sem_code'], ['semester.sem_code'])
     start_date = Column(String(10), nullable=False)
     end_date = Column(String(10), nullable=False)
 
 class DailyAttendance(Base):
     __tablename__ = 'daily_attendance'
-    monthcutoff_id = Column(Integer, nullable=False)
+    monthcutoff_id = Column(Integer, ForeignKey('month.monthcutoff_id'), nullable=False)
     date = Column(String(10), nullable=False, primary_key=True)
-    faculty_id = Column(Integer, nullable=False, primary_key=True)
+    faculty_id = Column(Integer, ForeignKey('faculty.faculty_id'), nullable=False, primary_key=True)
     is_absent = Column(Boolean, nullable=True) #need to monitor this pa
     time_in = Column(String(5), nullable=True) #formatted din (will add constraints later)
     time_out = Column(String(5), nullable=True) #constraint military format
@@ -129,13 +126,13 @@ class DailyAttendance(Base):
 
 class MonthlyPayroll(Base):
     __tablename__ = 'monthly_payroll'
-    monthcutoff_id = Column(Integer, nullable=False)
-    faculty_id = Column(Integer, nullable=False, primary_key=True)
+    monthcutoff_id = Column(Integer, ForeignKey('month.monthcutoff_id'), nullable=False)
+    faculty_id = Column(Integer, ForeignKey('faculty.faculty_id'), nullable=False, primary_key=True)
 
     ## SUMMARY PART
     no_of_absences = Column(Integer, nullable=True)
     no_of_unpaid_absences = Column(Integer, nullable=True)
-    #no of unpaid absences????
+    #no of unpaid absences??
     total_minutes_late = Column(Integer, nullable=True)
     pending_deduc = Column(Integer, nullable=True)
 
