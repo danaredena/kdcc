@@ -7,12 +7,13 @@ from kivy.properties import ObjectProperty
 from kivy.uix.listview import ListItemButton
 from kivy.adapters.listadapter import ListAdapter
 from kivy.uix.label import Label
+from kivy.uix.dropdown import DropDown
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import *
-from kivy.uix.dropdown import DropDown
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import and_
+from models import *
 
 engine = create_engine('sqlite:///kdcc.db')
 DBSession = sessionmaker()
@@ -56,21 +57,21 @@ def delete_db(id, sn_fn):
             raise
 
 class LoginWindow(Widget):
-	def __init__(self, **kwargs):
-		super(LoginWindow, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(LoginWindow, self).__init__(**kwargs)
 
-	def login(self, *args):
-		username_input = self.ids.username_input
-		username_text = username_input.text
-		password_input = self.ids.password_input
-		password_text = password_input.text
-		for row in session.query(User).all():
-		    if (row.username==username_text and row.password==password_text):
-		        self.clear_widgets()
-		        self.add_widget(MainMenuWindow())
-		    else:
-		        label = self.ids.success
-		        label.text = "Invalid username or password."
+    def login(self, *args):
+        username_input = self.ids.username_input
+        username_text = username_input.text
+        password_input = self.ids.password_input
+        password_text = password_input.text
+        for row in session.query(User).all():
+            if (row.username==username_text and row.password==password_text):
+                self.clear_widgets()
+                self.add_widget(MainMenuWindow())
+            else:
+                label = self.ids.success
+                label.text = "Invalid username or password."
 
 class MainMenuWindow(Widget):
     def student_records(self, *args):
@@ -117,38 +118,53 @@ class SchoolyearListButton(ListItemButton):
 class StudentRecordsWindow(Widget):
     student_list = ObjectProperty()
     def __init__(self, **kwargs):
-        self.var = 0
-        self.layout = BoxLayout(pos=(400,400), orientation="vertical")
+        self.layout = BoxLayout(pos=(525,320), orientation="vertical", width=20)
         super(StudentRecordsWindow, self).__init__(**kwargs)
         del self.student_list.adapter.data[:]
         students = Students.query.all()
         for student in students:
-            details = [str(student.student_id), student.nickname, student.first_name+' '+student.middle_name+' '+student.last_name, student.group, student.birth_date, student.address, student.up_dependent, student.date_of_admission]
+            details = [student.last_name+', '+student.first_name+', '+student.middle_name]
             #print(", ".join(details))
             self.student_list.adapter.data.extend([", ".join(details)])
         self.student_list._trigger_reset_populate()
-        self.student_list.adapter.bind(on_selection_change=self.tryPrint)
+        self.student_list.adapter.bind(on_selection_change=self.printDetails)
 
     def populate_list(self, *args):
         pass #walang mangyayari pag nasa same window
-    def tryPrint(self, *args):
+    def printDetails(self, *args):
         self.layout.clear_widgets()
         self.remove_widget(self.layout)
-        x = Label(text="Eugene", font_size=20, color=(0,0,0,1))
-        y = Label(text="Kasilag", font_size=20, color=(0,0,0,1))
-        z = Label(text="Perez", font_size=20, color=(0,0,0,1))
-        if (self.var == 0):
-            self.layout.add_widget(x)
-            self.layout.add_widget(z)
-            self.layout.add_widget(y)
-            self.var = 1
-        else:
-            self.layout.add_widget(y)
-            self.layout.add_widget(z)
-            self.layout.add_widget(x)
-            self.var = 0
-        
-        self.add_widget(self.layout)
+        if self.student_list.adapter.selection:
+            selection_obj = self.student_list.adapter.selection[0]
+            selection = selection_obj.text
+            data = selection.split(',')
+        print(data)
+        lastname = data[0].strip(); firstname = data[1].strip(); middlename = data[2].strip()
+        print("lastname:", lastname)
+        for student in session.query(Students).filter_by(last_name=lastname):
+            nickname = student.nickname
+            print(nickname)
+            birthdate = student.birth_date
+            age = student.age
+            sex = student.sex
+            address = student.address
+            dateofadmission = student.date_of_admission
+            group = student.group
+            guardian1 = student.guardian1_name
+            guardian2 = student.guardian2_name
+            contactnumber1 = student.contact_number1
+            contactnumber2 = student.contact_number2
+            if not(contactnumber2): contactnumber2=''
+            else: contactnumber2 = '\n           ' + contactnumber2
+            if not(guardian2): guardian2 = ''
+            else: '\n            ' + guardian2
+            if not(age): age = ''
+            remarks = student.up_dependent
+            label_text = "Name: %s, %s, %s\nNickname: %s\nBirth date: %s\nAge: %s\nSex: %s\nAddress: %s\nDate of admission: %s\nGroup: %s\nGuardian/s: %s%s\nContact/s: %s%s\nRemarks: %s" %(lastname, firstname, middlename, nickname, birthdate, str(age), sex, address, dateofadmission, group, guardian1, guardian2, contactnumber1, contactnumber2, remarks)
+            print(label_text)
+            l = Label(text=label_text, font_size=18, color=(0,0,0,1))
+            self.layout.add_widget(l)
+            self.add_widget(self.layout)
         print("Change")
     def main_menu(self, *args):
         self.clear_widgets()
@@ -232,35 +248,35 @@ class CreateStudentWindow(Widget):
         self.add_widget(StudentRecordsWindow())
 
 class EditStudentWindow(Widget):
-	def __init__(self, **kwargs):
-		super(EditStudentWindow, self).__init__(**kwargs)
-		global studentid
-		for student in session.query(Students).filter_by(student_id=studentid):
-			self.ids.nickname.text = student.nickname
-			self.ids.first_name.text = student.first_name
-			self.ids.middle_name.text = student.middle_name
-			self.ids.last_name.text = student.last_name
-			self.ids.address.text = student.address
-			self.ids.birth_date.text = student.birth_date
-			self.ids.sex.text = student.sex
-			self.ids.date_of_admission.text = student.date_of_admission
-			self.ids.group.text = student.group
-			self.ids.guardianA.text = student.guardian1_name
-			self.ids.guardianB.text = student.guardian2_name if student.guardian2_name else ''
-			self.ids.contactA.text = student.contact_number1
-			self.ids.contactB.text = student.contact_number2 if student.contact_number2 else ''
-			self.ids.up_dependent.text = student.up_dependent
+    def __init__(self, **kwargs):
+        super(EditStudentWindow, self).__init__(**kwargs)
+        global studentid
+        for student in session.query(Students).filter_by(student_id=studentid):
+            self.ids.nickname.text = student.nickname
+            self.ids.first_name.text = student.first_name
+            self.ids.middle_name.text = student.middle_name
+            self.ids.last_name.text = student.last_name
+            self.ids.address.text = student.address
+            self.ids.birth_date.text = student.birth_date
+            self.ids.sex.text = student.sex
+            self.ids.date_of_admission.text = student.date_of_admission
+            self.ids.group.text = student.group
+            self.ids.guardianA.text = student.guardian1_name
+            self.ids.guardianB.text = student.guardian2_name if student.guardian2_name else ''
+            self.ids.contactA.text = student.contact_number1
+            self.ids.contactB.text = student.contact_number2 if student.contact_number2 else ''
+            self.ids.up_dependent.text = student.up_dependent
 
-	def save(self):
-		#update db for students
-		session.query(Students).filter_by(student_id=studentid).update(dict(nickname=self.ids.nickname.text, first_name=self.ids.first_name.text, middle_name=self.ids.middle_name.text, last_name=self.ids.last_name.text, address=self.ids.address.text, birth_date=self.ids.birth_date.text, sex=self.ids.sex.text, date_of_admission=self.ids.date_of_admission.text, group=self.ids.group.text, guardian1_name=self.ids.guardianA.text, guardian2_name=self.ids.guardianB.text, contact_number1=self.ids.contactA.text, contact_number2=self.ids.contactB.text, up_dependent=self.ids.up_dependent.text))
-		session.commit()
-		self.clear_widgets()
-		self.add_widget(StudentRecordsWindow())
+    def save(self):
+        #update db for students
+        session.query(Students).filter_by(student_id=studentid).update(dict(nickname=self.ids.nickname.text, first_name=self.ids.first_name.text, middle_name=self.ids.middle_name.text, last_name=self.ids.last_name.text, address=self.ids.address.text, birth_date=self.ids.birth_date.text, sex=self.ids.sex.text, date_of_admission=self.ids.date_of_admission.text, group=self.ids.group.text, guardian1_name=self.ids.guardianA.text, guardian2_name=self.ids.guardianB.text, contact_number1=self.ids.contactA.text, contact_number2=self.ids.contactB.text, up_dependent=self.ids.up_dependent.text))
+        session.commit()
+        self.clear_widgets()
+        self.add_widget(StudentRecordsWindow())
 
-	def back(self):
-	    self.clear_widgets()
-	    self.add_widget(StudentRecordsWindow())
+    def back(self):
+        self.clear_widgets()
+        self.add_widget(StudentRecordsWindow())
 
 class ChooseSchoolyearWindow(Widget):
 
@@ -429,33 +445,33 @@ class CreateFacultyWindow(Widget):
         self.add_widget(FacultyRecordsWindow())
 
 class EditFacultyWindow(Widget):
-	def __init__(self, **kwargs):
-		super(EditFacultyWindow, self).__init__(**kwargs)
-		global facultyid
-		for teacher in session.query(Faculty).filter_by(faculty_id=facultyid):
-			self.ids.id_number.text = str(teacher.id_number)
-			self.ids.first_name.text = teacher.first_name
-			self.ids.middle_name.text = teacher.middle_name
-			self.ids.last_name.text = teacher.last_name
-			self.ids.address.text = teacher.address
-			self.ids.birth_date.text = teacher.birth_date
-			self.ids.sex.text = teacher.sex
-			self.ids.date_of_employment.text = teacher.date_of_employment
-			self.ids.position.text = teacher.position
-			self.ids.contact_number.text = teacher.contact_number
-			self.ids.tin_number.text = teacher.pers_tin if teacher.pers_tin else ''
-			self.ids.social_security_number.text = teacher.pers_ssn if teacher.pers_ssn else ''
-			self.ids.philhealth.text = teacher.pers_philhealth if teacher.pers_philhealth else ''
-			self.ids.account_number.text = teacher.pers_accntnum if teacher.pers_accntnum else ''
-			self.ids.remarks.text = teacher.remarks if teacher.remarks else ''
-	def save(self):
-		session.query(Faculty).filter_by(faculty_id=facultyid).update(dict(id_number = self.ids.id_number.text, first_name = self.ids.first_name.text, middle_name = self.ids.middle_name.text, last_name = self.ids.last_name.text, address = self.ids.address.text, birth_date = self.ids.birth_date.text, sex = self.ids.sex.text, date_of_employment = self.ids.date_of_employment.text, position = self.ids.position.text, contact_number = self.ids.contact_number.text, pers_tin = self.ids.tin_number.text, pers_ssn = self.ids.social_security_number.text, pers_philhealth = self.ids.philhealth.text, pers_accntnum = self.ids.account_number.text, remarks = self.ids.remarks.text))
-		session.commit()
-		self.clear_widgets()
-		self.add_widget(FacultyRecordsWindow())
-	def back(self):
-	    self.clear_widgets()
-	    self.add_widget(FacultyRecordsWindow())
+    def __init__(self, **kwargs):
+        super(EditFacultyWindow, self).__init__(**kwargs)
+        global facultyid
+        for teacher in session.query(Faculty).filter_by(faculty_id=facultyid):
+            self.ids.id_number.text = str(teacher.id_number)
+            self.ids.first_name.text = teacher.first_name
+            self.ids.middle_name.text = teacher.middle_name
+            self.ids.last_name.text = teacher.last_name
+            self.ids.address.text = teacher.address
+            self.ids.birth_date.text = teacher.birth_date
+            self.ids.sex.text = teacher.sex
+            self.ids.date_of_employment.text = teacher.date_of_employment
+            self.ids.position.text = teacher.position
+            self.ids.contact_number.text = teacher.contact_number
+            self.ids.tin_number.text = teacher.pers_tin if teacher.pers_tin else ''
+            self.ids.social_security_number.text = teacher.pers_ssn if teacher.pers_ssn else ''
+            self.ids.philhealth.text = teacher.pers_philhealth if teacher.pers_philhealth else ''
+            self.ids.account_number.text = teacher.pers_accntnum if teacher.pers_accntnum else ''
+            self.ids.remarks.text = teacher.remarks if teacher.remarks else ''
+    def save(self):
+        session.query(Faculty).filter_by(faculty_id=facultyid).update(dict(id_number = self.ids.id_number.text, first_name = self.ids.first_name.text, middle_name = self.ids.middle_name.text, last_name = self.ids.last_name.text, address = self.ids.address.text, birth_date = self.ids.birth_date.text, sex = self.ids.sex.text, date_of_employment = self.ids.date_of_employment.text, position = self.ids.position.text, contact_number = self.ids.contact_number.text, pers_tin = self.ids.tin_number.text, pers_ssn = self.ids.social_security_number.text, pers_philhealth = self.ids.philhealth.text, pers_accntnum = self.ids.account_number.text, remarks = self.ids.remarks.text))
+        session.commit()
+        self.clear_widgets()
+        self.add_widget(FacultyRecordsWindow())
+    def back(self):
+        self.clear_widgets()
+        self.add_widget(FacultyRecordsWindow())
 
 class DailyListButton(ListItemButton):
     pass
