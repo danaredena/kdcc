@@ -125,7 +125,7 @@
     Button:
         id: view_summary
         font_size: 15
-        center_x: root.width + 390
+        center_x: root.width
         center_y: root.y + 560
         text: "View Summary"
         size: (150,50)
@@ -133,7 +133,7 @@
     Button:
         id: schoolyear_list
         font_size: 15
-        center_x: root.width + 540
+        center_x: root.width + 150
         center_y: root.y + 560
         text: "Schoolyear List"
         size: (150,50)
@@ -150,9 +150,9 @@
         id: students_list_view
         adapter:
             ListAdapter(data=[], cls=main.StudentListButton)
-        width: 680
+        width: 300
         height: 400
-        center_x: root.width + 285
+        x: 50
         center_y: root.y + 290
 
 

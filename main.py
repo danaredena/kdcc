@@ -6,6 +6,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ObjectProperty
 from kivy.uix.listview import ListItemButton
 from kivy.adapters.listadapter import ListAdapter
+from kivy.uix.label import Label
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -112,9 +113,12 @@ class StudentListButton(ListItemButton):
 class SchoolyearListButton(ListItemButton):
     pass
 
+
 class StudentRecordsWindow(Widget):
     student_list = ObjectProperty()
     def __init__(self, **kwargs):
+        self.var = 0
+        self.layout = BoxLayout(pos=(400,400), orientation="vertical")
         super(StudentRecordsWindow, self).__init__(**kwargs)
         del self.student_list.adapter.data[:]
         students = Students.query.all()
@@ -128,6 +132,23 @@ class StudentRecordsWindow(Widget):
     def populate_list(self, *args):
         pass #walang mangyayari pag nasa same window
     def tryPrint(self, *args):
+        self.layout.clear_widgets()
+        self.remove_widget(self.layout)
+        x = Label(text="Eugene", font_size=20, color=(0,0,0,1))
+        y = Label(text="Kasilag", font_size=20, color=(0,0,0,1))
+        z = Label(text="Perez", font_size=20, color=(0,0,0,1))
+        if (self.var == 0):
+            self.layout.add_widget(x)
+            self.layout.add_widget(z)
+            self.layout.add_widget(y)
+            self.var = 1
+        else:
+            self.layout.add_widget(y)
+            self.layout.add_widget(z)
+            self.layout.add_widget(x)
+            self.var = 0
+        
+        self.add_widget(self.layout)
         print("Change")
     def main_menu(self, *args):
         self.clear_widgets()
