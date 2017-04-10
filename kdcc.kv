@@ -492,6 +492,14 @@
         center_y: root.y + 75
         text: "Start Schoolyear"
         size: (150,40)
+		on_press: root.create_schoolyear()
+	Button:
+        id: open
+        font_size: 15
+        center_x: root.width + 150
+        center_y: root.y + 75
+        text: "Open"
+        size: (100,40)
     Button:
         id: view_summary
         font_size: 15
@@ -524,6 +532,34 @@
         height: 400
         center_x: root.width + 285
         center_y: root.y + 290
+
+<CreateSchoolyearWindow>
+	TextInput:
+        id: schoolyear_code
+        font_size: 20
+        center_x: root.width + 25
+        center_y: root.y + 400 - 50
+        height: 35
+        width: 200
+        hint_text: "Schoolyear Code"
+        write_tab: False
+        multiline: False
+	Button:
+        id: student_records
+        font_size: 15
+        center_x: root.width + 450
+        center_y: root.y + 75
+        text: "Back to Student Records"
+        size: (250,40)
+        on_press: root.back_to_choose_schoolyear()
+    Button:
+        id: create
+        font_size: 15
+        center_x: root.width + 25
+        center_y: root.y + 75
+        text: "Create"
+        size: (250,40)
+        on_press: root.create()		
 
 <SchoolyearListWindow>
     Button:
@@ -585,13 +621,6 @@
         text: "View Summary"
         size: (150,50)
         on_press: root.populate_list()
-    Button:
-        id: schoolyear_list
-        font_size: 15
-        center_x: root.width + 540
-        center_y: root.y + 560
-        text: "Schoolyear List"
-        size: (150,50)
     Button:
         id: home
         font_size: 15

@@ -258,6 +258,24 @@ class ChooseSchoolyearWindow(Widget):
     def back_to_student_records(self, *args):
           self.clear_widgets()
           self.add_widget(StudentRecordsWindow())
+    def create_schoolyear(self, *args):
+        self.clear_widgets()
+        self.add_widget(CreateSchoolyearWindow())
+
+class CreateSchoolyearWindow(Widget):
+    def create(self, *args):
+        schoolyear.schoolyear_code = self.ids.schoolyear_code
+        schoolyear_code_text = schoolyear.schoolyear_code.text
+
+        new_schoolyear = Schoolyear(schoolyear_code = schoolyear_code_text)
+        print( add_db(new_schoolyear) )
+
+        self.clear_widgets()
+        self.add_widget(ChooseSchoolyearWindow())
+        
+    def back_to_choose_schoolyear(self, *args):
+          self.clear_widgets()
+          self.add_widget(ChooseSchoolyearWindow()) 
 
 class SchoolyearListWindow(Widget):
 
@@ -511,5 +529,6 @@ class KDCCApp(App):
 
 student = Student()
 faculty = Faculty()
+schoolyear = Schoolyear()
 if __name__ == '__main__':
     KDCCApp().run()
