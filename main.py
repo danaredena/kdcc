@@ -123,7 +123,7 @@ class StudentRecordsWindow(Widget):
         del self.student_list.adapter.data[:]
         students = Students.query.all()
         for student in students:
-            details = [student.last_name+', '+student.first_name+', '+student.middle_name]
+            details = [student.last_name+', '+student.first_name+' '+student.middle_name]
             #print(", ".join(details))
             self.student_list.adapter.data.extend([", ".join(details)])
         self.student_list._trigger_reset_populate()
@@ -137,9 +137,9 @@ class StudentRecordsWindow(Widget):
         if self.student_list.adapter.selection:
             selection_obj = self.student_list.adapter.selection[0]
             selection = selection_obj.text
-            data = selection.split(',')
+            data = selection.split(' ')
         print(data)
-        lastname = data[0].strip(); firstname = data[1].strip(); middlename = data[2].strip()
+        lastname = data[0][:-1]; firstname = data[1]; middlename = data[2]
         print("lastname:", lastname)
         for student in session.query(Students).filter_by(last_name=lastname):
             nickname = student.nickname
@@ -170,7 +170,7 @@ class StudentRecordsWindow(Widget):
                         index -= 1
                     address = address[:index] + "\n" + address[index+1:]
 
-            label_text = "Name: %s, %s, %s\nNickname: %s\nBirth date: %s\nAge: %s\nSex: %s\nAddress: %s\nDate of admission: %s\nGroup: %s\nGuardian/s: %s%s\nContact/s: %s%s\nRemarks: %s" %(lastname, firstname, middlename, nickname, birthdate, str(age), sex, address, dateofadmission, group, guardian1, guardian2, contactnumber1, contactnumber2, remarks)
+            label_text = "Name: %s, %s %s\nNickname: %s\nBirth date: %s\nAge: %s\nSex: %s\nAddress: %s\nDate of admission: %s\nGroup: %s\nGuardian/s: %s%s\nContact/s: %s%s\nRemarks: %s" %(lastname, firstname, middlename, nickname, birthdate, str(age), sex, address, dateofadmission, group, guardian1, guardian2, contactnumber1, contactnumber2, remarks)
             print(label_text)
             l = Label(text=label_text, font_size=18, color=(0,0,0,1))
             self.layout.add_widget(l)
@@ -187,16 +187,24 @@ class StudentRecordsWindow(Widget):
             global studentid
             selection_obj = self.student_list.adapter.selection[0]
             selection = selection_obj.text
-            studentid = int(selection[0])
+            #studentid = int(selection[0])
+            data = selection.split(' ')
+            lastname = data[0][:-1]; firstname = data[1]; middlename = data[2]
+            get = session.query(Students.student_id).filter_by(last_name=lastname, first_name=firstname, middle_name=middlename)
+            studentid = get[0][0]
+
             self.clear_widgets()
             self.add_widget(EditStudentWindow())
     def delete_student(self):
         if self.student_list.adapter.selection:
             selection_obj = self.student_list.adapter.selection[0]
             selection = selection_obj.text
-            #print(selection[0])
+            data = selection.split(' ')
+            lastname = data[0][:-1]; firstname = data[1]; middlename = data[2]
+            get = session.query(Students.student_id).filter_by(last_name=lastname, first_name=firstname, middle_name=middlename)
+            studentid = get[0][0]
             self.student_list.adapter.data.remove(selection)
-            delete_db(int(selection[0]), 0) #gets student_id, 0 - for student record
+            delete_db(get[0][0], 0) #gets student_id, 0 - for student record
             self.student_list._trigger_reset_populate()
     def choose_schoolyear(self, *args):
         self.clear_widgets()
@@ -323,10 +331,10 @@ class CreateSchoolyearWindow(Widget):
 
         self.clear_widgets()
         self.add_widget(ChooseSchoolyearWindow())
-        
+
     def back_to_choose_schoolyear(self, *args):
           self.clear_widgets()
-          self.add_widget(ChooseSchoolyearWindow()) 
+          self.add_widget(ChooseSchoolyearWindow())
 
 class SchoolyearListWindow(Widget):
 
