@@ -160,6 +160,16 @@ class StudentRecordsWindow(Widget):
             else: '\n            ' + guardian2
             if not(age): age = ''
             remarks = student.up_dependent
+            #address
+            if (len(address) > 31):
+                if (address[31] == " "):
+                    address = address[:31] + "\n" + address[32:]
+                else:
+                    index = 31
+                    while (address[index] != " "):
+                        index -= 1
+                    address = address[:index] + "\n" + address[index+1:]
+
             label_text = "Name: %s, %s, %s\nNickname: %s\nBirth date: %s\nAge: %s\nSex: %s\nAddress: %s\nDate of admission: %s\nGroup: %s\nGuardian/s: %s%s\nContact/s: %s%s\nRemarks: %s" %(lastname, firstname, middlename, nickname, birthdate, str(age), sex, address, dateofadmission, group, guardian1, guardian2, contactnumber1, contactnumber2, remarks)
             print(label_text)
             l = Label(text=label_text, font_size=18, color=(0,0,0,1))
