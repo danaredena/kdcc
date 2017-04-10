@@ -69,7 +69,7 @@ class Faculty(Base):
     position = Column(String, nullable=False)
     contact_number = Column(String(11), nullable=False)
     remarks = Column(String, nullable=True)
-    monthly_rate = Column(Integer, nullable=False)
+    monthly_rate = Column(Integer, nullable=True)
     #personal details
     pers_tin = Column(String, nullable=True)
     pers_ssn = Column(String, nullable=True)

@@ -521,8 +521,9 @@
         adapter:
             ListAdapter(data=[], cls=main.SemesterListButton)
         width: 680
+        height: 400
         center_x: root.width + 285
-        center_y: root.y + 400
+        center_y: root.y + 290
 
 <SemesterListWindow>
     Button:
@@ -604,8 +605,9 @@
         adapter:
             ListAdapter(data=[], cls=main.FacultyListButton)
         width: 680
+        height: 400
         center_x: root.width + 285
-        center_y: root.y + 400
+        center_y: root.y + 290
 
 
 <CreateFacultyWindow>:
@@ -710,6 +712,16 @@
         write_tab: False
         multiline: False
     TextInput:
+        id: monthly_rate
+        font_size: 20
+        center_x: root.width + 445
+        center_y: root.y + 300 - 50
+        height: 35
+        width: 200
+        hint_text: "Monthly Rate"
+        write_tab: False
+        multiline: False
+    TextInput:
         id: tin_number
         font_size: 20
         center_x: root.width + 25
@@ -730,16 +742,6 @@
         write_tab: False
         multiline: False
     TextInput:
-        id: remarks
-        font_size: 20
-        center_x: root.width + 445
-        center_y: root.y + 200 - 50
-        height: 35
-        width: 200
-        hint_text: "Remarks"
-        write_tab: False
-        multiline: False
-    TextInput:
         id: social_security_number
         font_size: 20
         center_x: root.width + 25
@@ -757,6 +759,16 @@
         height: 35
         width: 200
         hint_text: "Account Number"
+        write_tab: False
+        multiline: False
+    TextInput:
+        id: remarks
+        font_size: 20
+        center_x: root.width + 445
+        center_y: root.y + 200 - 50
+        height: 35
+        width: 200
+        hint_text: "Remarks"
         write_tab: False
         multiline: False
     Button:
@@ -878,6 +890,16 @@
         write_tab: False
         multiline: False
     TextInput:
+        id: monthly_rate
+        font_size: 20
+        center_x: root.width + 445
+        center_y: root.y + 300 - 50
+        height: 35
+        width: 200
+        hint_text: "Monthly Rate"
+        write_tab: False
+        multiline: False
+    TextInput:
         id: tin_number
         font_size: 20
         center_x: root.width + 25
@@ -992,8 +1014,9 @@
         adapter:
             ListAdapter(data=[], cls=main.DailyListButton)
         width: 680
+        height: 400
         center_x: root.width + 285
-        center_y: root.y + 400
+        center_y: root.y + 290
 
 <PrevAttendanceWindow>:
     prev_list: prev_list_view
@@ -1035,8 +1058,9 @@
         adapter:
             ListAdapter(data=[], cls=main.DailyListButton)
         width: 680
+        height: 400
         center_x: root.width + 285
-        center_y: root.y + 400
+        center_y: root.y + 290
 
 <FinanceSummaryWindow>:
     finance_list: finance_list_view
@@ -1081,8 +1105,9 @@
         adapter:
             ListAdapter(data=[], cls=main.FacultyListButton)
         width: 680
+        height: 400
         center_x: root.width + 285
-        center_y: root.y + 400
+        center_y: root.y + 290
 
 <PayrollWindow>:
     payfaculty_list: payfaculty_list_view
@@ -1099,5 +1124,6 @@
         adapter:
             ListAdapter(data=[], cls=main.FacultyListButton)
         width: 680
+        height: 400
         center_x: root.width + 285
-        center_y: root.y + 400
+        center_y: root.y + 290
