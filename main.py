@@ -127,6 +127,8 @@ class StudentRecordsWindow(Widget):
 
     def populate_list(self, *args):
         pass #walang mangyayari pag nasa same window
+    def tryPrint(self, *args):
+        print("Change")
     def main_menu(self, *args):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
