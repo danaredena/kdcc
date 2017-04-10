@@ -76,16 +76,16 @@ class Faculty(Base):
     pers_philhealth = Column(String, nullable=True)
     pers_accntnum = Column(String, nullable=True)
 
-class Semester(Base):
-    __tablename__ = 'semester'
+class Schoolyear(Base):
+    __tablename__ = 'schoolyear'
 
-    sem_code = Column(String(10), nullable=False, primary_key=True)
+    schoolyear_code = Column(String(10), nullable=False, primary_key=True)
 
 #NOTE: Foreign keys not working >.<
 
 class Enrolled(Base):
     __tablename__ = 'enrolled'
-    sem_code = Column(String(10), ForeignKey('semester.sem_code'), nullable=False, primary_key=True)
+    schoolyear_code = Column(String(10), ForeignKey('schoolyear.schoolyear_code'), nullable=False, primary_key=True)
     student_id = Column(Integer, ForeignKey('student.student_id'), nullable=False, primary_key=True)
     payment_mode = Column(Integer, nullable=False)
     semestral_pay = Column(String, nullable=True) #float
@@ -101,15 +101,15 @@ class Enrolled(Base):
 
 class Employed(Base):
     __tablename__ = 'employed'
-    sem_code = Column(String(10), ForeignKey('semester.sem_code'), nullable=False, primary_key=True)
+    schoolyear_code = Column(String(10), ForeignKey('schoolyear.schoolyear_code'), nullable=False, primary_key=True)
     faculty_id = Column(Integer, ForeignKey('faculty.faculty_id'), nullable=False, primary_key=True)
 
 class MonthCutoff(Base):
     __tablename__ = 'month'
     __table_args__ = (UniqueConstraint('start_date','end_date'),)
     monthcutoff_id = Column(Integer, nullable=False, primary_key=True, autoincrement=True)
-    sem_code = Column(String(10), ForeignKey('semester.sem_code'), nullable=False)
-    #ForeignKeyConstraint(['sem_code'], ['semester.sem_code'])
+    schoolyear_code = Column(String(10), ForeignKey('schoolyear.schoolyear_code'), nullable=False)
+    #ForeignKeyConstraint(['schoolyear_code'], ['schoolyear.schoolyear_code'])
     start_date = Column(String(10), nullable=False)
     end_date = Column(String(10), nullable=False)
 

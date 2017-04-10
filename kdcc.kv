@@ -131,13 +131,13 @@
         size: (150,50)
         on_press: root.populate_list()
     Button:
-        id: semester_list
+        id: schoolyear_list
         font_size: 15
         center_x: root.width + 540
         center_y: root.y + 560
-        text: "Semester List"
+        text: "Schoolyear List"
         size: (150,50)
-		on_press: root.choose_semester()
+		on_press: root.choose_schoolyear()
     Button:
         id: home
         font_size: 15
@@ -483,14 +483,14 @@
         on_press: root.back()
 
 
-<ChooseSemesterWindow>:
-	semester_list: semester_list_view
+<ChooseSchoolyearWindow>:
+	schoolyear_list: schoolyear_list_view
     Button:
-        id: add_semester
+        id: add_schoolyear
         font_size: 15
         center_x: root.width
         center_y: root.y + 75
-        text: "Start Semester"
+        text: "Start Schoolyear"
         size: (150,40)
     Button:
         id: view_summary
@@ -501,11 +501,11 @@
         size: (150,50)
         on_press: root.back_to_student_records()
     Button:
-        id: semester_list
+        id: schoolyear_list
         font_size: 15
         center_x: root.width + 540
         center_y: root.y + 560
-        text: "Semester List"
+        text: "Schoolyear List"
         size: (150,50)
 		on_press: root.populate_list()
     Button:
@@ -517,15 +517,15 @@
         size: (130,40)
         on_press: root.main_menu()
 	ListView:
-        id: semester_list_view
+        id: schoolyear_list_view
         adapter:
-            ListAdapter(data=[], cls=main.SemesterListButton)
+            ListAdapter(data=[], cls=main.SchoolyearListButton)
         width: 680
         height: 400
         center_x: root.width + 285
         center_y: root.y + 290
 
-<SemesterListWindow>
+<SchoolyearListWindow>
     Button:
         id: enroll_student
         font_size: 15
@@ -586,11 +586,11 @@
         size: (150,50)
         on_press: root.populate_list()
     Button:
-        id: semester_list
+        id: schoolyear_list
         font_size: 15
         center_x: root.width + 540
         center_y: root.y + 560
-        text: "Semester List"
+        text: "Schoolyear List"
         size: (150,50)
     Button:
         id: home

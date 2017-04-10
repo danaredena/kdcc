@@ -12,7 +12,7 @@ DBSession.configure(bind=engine)
 
 def fill():
     try:
-        '''
+        #'''
         #1: ADD USER 'admin'
         session = DBSession()
         new_user = User(username='admin', password='admin')
@@ -45,42 +45,42 @@ def fill():
         session.add(new_faculty)
         session.commit()
 
-        #5: ADD SEMESTER (arbitrary) '1617A'
+        #5: ADD SCHOOLYEAR (arbitrary) '1617'
         session = DBSession()
-        new_sem = Semester(sem_code='1516B')
+        new_sem = Schoolyear(schoolyear_code='1415')
         session.add(new_sem)
-        new_sem = Semester(sem_code='1617A')
+        new_sem = Schoolyear(schoolyear_code='1516')
         session.add(new_sem)
-        new_sem = Semester(sem_code='1617B')
+        new_sem = Schoolyear(schoolyear_code='1617')
         session.add(new_sem)
         session.commit()
 
 
         #6: ADD ENROLLED (arbitrary) '1617A and Diane'
         session = DBSession()
-        new_enrolled = Enrolled(sem_code='1617A',student_id=1, payment_mode=0) #0 for semestral, 1 for monthly
+        new_enrolled = Enrolled(schoolyear_code='1617',student_id=1, payment_mode=0) #0 for semestral, 1 for monthly
         session.add(new_enrolled)
         session.commit()
 
         #7: ADD ENROLLED (arbitrary) '1516B and Ohm'
         session = DBSession()
-        new_enrolled = Enrolled(sem_code='1516B',student_id=2, payment_mode=1)
+        new_enrolled = Enrolled(schoolyear_code='1516',student_id=2, payment_mode=1)
         session.add(new_enrolled)
         session.commit()
 
         #8: ADD EMPLOYED (arbitrary) '1617B and Bob'
         session = DBSession()
-        new_employed = Employed(sem_code='1617B',faculty_id=1)
+        new_employed = Employed(schoolyear_code='1617',faculty_id=1)
         session.add(new_employed)
-        new_employed = Employed(sem_code='1617B',faculty_id=2)
+        new_employed = Employed(schoolyear_code='1617',faculty_id=2)
         session.add(new_employed)
         session.commit()
 
         #9: ADD CUTOFF PAYROLL
         session = DBSession()
-        new_cutoff = MonthCutoff(sem_code='1617B',start_date='03/01/17', end_date='03/15/17')
+        new_cutoff = MonthCutoff(schoolyear_code='1617',start_date='03/01/17', end_date='03/15/17')
         session.add(new_cutoff)
-        new_cutoff =  MonthCutoff(sem_code='1617B',start_date='03/16/17', end_date='03/31/17')
+        new_cutoff =  MonthCutoff(schoolyear_code='1617',start_date='03/16/17', end_date='03/31/17')
         session.add(new_cutoff)
         session.commit()
 
@@ -100,7 +100,7 @@ def fill():
         session.add(new_payroll)
         session.commit()
 
-        '''
+        #'''
 
     except: #this part ensures na no drastic changes will happen in case something goes wrong
         session.rollback()

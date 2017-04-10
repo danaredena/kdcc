@@ -108,7 +108,7 @@ class Student():
 class StudentListButton(ListItemButton):
     pass
 
-class SemesterListButton(ListItemButton):
+class SchoolyearListButton(ListItemButton):
     pass
 
 class StudentRecordsWindow(Widget):
@@ -147,9 +147,9 @@ class StudentRecordsWindow(Widget):
             self.student_list.adapter.data.remove(selection)
             delete_db(int(selection[0]), 0) #gets student_id, 0 - for student record
             self.student_list._trigger_reset_populate()
-    def choose_semester(self, *args):
+    def choose_schoolyear(self, *args):
         self.clear_widgets()
-        self.add_widget(ChooseSemesterWindow())
+        self.add_widget(ChooseSchoolyearWindow())
 
 
 class CreateStudentWindow(Widget):
@@ -237,19 +237,17 @@ class EditStudentWindow(Widget):
 	    self.clear_widgets()
 	    self.add_widget(StudentRecordsWindow())
 
-class ChooseSemesterWindow(Widget):
+class ChooseSchoolyearWindow(Widget):
 
-    semester_list = ObjectProperty()
+    schoolyear_list = ObjectProperty()
     def __init__(self, **kwargs):
-        super(ChooseSemesterWindow, self).__init__(**kwargs)
-        del self.semester_list.adapter.data[:]
-        semester = Semester.query.all()
-        for semeser in semester:
-            details = [str("Please work")]
-            #details = [str(student.student_id), student.nickname, student.first_name+' '+student.middle_name+' '+student.last_name, student.group, student.birth_date, student.address, student.up_dependent, student.date_of_admission]
-            #print(", ".join(details))
-            self.semester_list.adapter.data.extend([", ".join(details)])
-        self.semester_list._trigger_reset_populate()
+        super(ChooseSchoolyearWindow, self).__init__(**kwargs)
+        del self.schoolyear_list.adapter.data[:]
+        schoolyear = Schoolyear.query.all()
+        for schoolyear in schoolyear:
+            details = [schoolyear.schoolyear_code]
+            self.schoolyear_list.adapter.data.extend([", ".join(details)])
+        self.schoolyear_list._trigger_reset_populate()
 
     def populate_list(self, *args):
         pass
@@ -261,11 +259,11 @@ class ChooseSemesterWindow(Widget):
           self.clear_widgets()
           self.add_widget(StudentRecordsWindow())
 
-class SemesterListWindow(Widget):
+class SchoolyearListWindow(Widget):
 
-    def choose_semester(self, *args):
+    def choose_schoolyear(self, *args):
         self.clear_widgets()
-        self.add_widget(ChooseSemesterWindow())
+        self.add_widget(ChooseSchoolyearWindow())
 
 class Facuty():
     def __init__(self):
@@ -280,7 +278,6 @@ class Facuty():
         self.date_of_employment = None
         self.position = None
         self.contact_number = None
-        self.monthly_rate = None
         self.pers_tin = None
         self.pers_ssn = None
         self.pers_philhealth = None
@@ -359,9 +356,6 @@ class CreateFacultyWindow(Widget):
         faculty.position = self.ids.position
         f_position_text = faculty.position.text
 
-        faculty.monthly_rate = self.ids.monthly_rate
-        f_monthlyrate_text = faculty.monthly_rate.text
-
         faculty.contact_number = self.ids.contact_number
         f_contact_number_text = faculty.contact_number.text
 
@@ -380,7 +374,7 @@ class CreateFacultyWindow(Widget):
         faculty.remarks = self.ids.remarks
         f_remarks_text = faculty.remarks.text
 
-        new_faculty = Faculty(id_number = f_id_number_text, first_name=f_first_name_text, middle_name=f_middle_name_text, last_name=f_last_name_text, address=f_address_text, birth_date=f_birth_date_text, sex=f_sex_text, date_of_employment=f_date_of_employment_text, position=f_position_text, monthly_rate=f_monthlyrate_text, contact_number=f_contact_number_text, pers_tin=f_pers_tin_text, pers_ssn=f_pers_ssn_text, pers_philhealth=f_pers_philhealth_text, pers_accntnum=f_pers_accntnum_text, remarks=f_remarks_text)
+        new_faculty = Faculty(id_number = f_id_number_text, first_name=f_first_name_text, middle_name=f_middle_name_text, last_name=f_last_name_text, address=f_address_text, birth_date=f_birth_date_text, sex=f_sex_text, date_of_employment=f_date_of_employment_text, position=f_position_text, contact_number=f_contact_number_text, pers_tin=f_pers_tin_text, pers_ssn=f_pers_ssn_text, pers_philhealth=f_pers_philhealth_text, pers_accntnum=f_pers_accntnum_text, remarks=f_remarks_text)
         #print(new_faculty.id_number, new_faculty.first_name, new_faculty.middle_name, new_faculty.last_name, new_faculty.address, new_faculty.birth_date, new_faculty.sex, new_faculty.date_of_employment, new_faculty.position, new_faculty.contact_number, new_faculty.pers_tin, new_faculty.pers_ssn, new_faculty.pers_philhealth, new_faculty.pers_accntnum, new_faculty.remarks)
         print( add_db(new_faculty) )
 
@@ -392,35 +386,33 @@ class CreateFacultyWindow(Widget):
         self.add_widget(FacultyRecordsWindow())
 
 class EditFacultyWindow(Widget):
-    def __init__(self, **kwargs):
-        super(EditFacultyWindow, self).__init__(**kwargs)
-        global facultyid
-        for teacher in session.query(Faculty).filter_by(faculty_id=facultyid):
-            self.ids.id_number.text = str(teacher.id_number)
-            self.ids.first_name.text = teacher.first_name
-            self.ids.middle_name.text = teacher.middle_name
-            self.ids.last_name.text = teacher.last_name
-            self.ids.address.text = teacher.address
-            self.ids.birth_date.text = teacher.birth_date
-            self.ids.sex.text = teacher.sex
-            self.ids.date_of_employment.text = teacher.date_of_employment
-            self.ids.monthly_rate.text = teacher.monthly_rate if teacher.monthly_rate else ''
-            self.ids.position.text = teacher.position
-            self.ids.contact_number.text = teacher.contact_number
-            self.ids.tin_number.text = teacher.pers_tin if teacher.pers_tin else ''
-            self.ids.social_security_number.text = teacher.pers_ssn if teacher.pers_ssn else ''
-            self.ids.philhealth.text = teacher.pers_philhealth if teacher.pers_philhealth else ''
-            self.ids.account_number.text = teacher.pers_accntnum if teacher.pers_accntnum else ''
-            self.ids.remarks.text = teacher.remarks if teacher.remarks else ''
-	
-    def save(self):
-        session.query(Faculty).filter_by(faculty_id=facultyid).update(dict(id_number = self.ids.id_number.text, first_name = self.ids.first_name.text, middle_name = self.ids.middle_name.text, last_name = self.ids.last_name.text, address = self.ids.address.text, birth_date = self.ids.birth_date.text, sex = self.ids.sex.text, date_of_employment = self.ids.date_of_employment.text, position = self.ids.position.text, monthly_rate=self.ids.monthly_rate.text,contact_number = self.ids.contact_number.text, pers_tin = self.ids.tin_number.text, pers_ssn = self.ids.social_security_number.text, pers_philhealth = self.ids.philhealth.text, pers_accntnum = self.ids.account_number.text, remarks = self.ids.remarks.text))
-        session.commit()
-        self.clear_widgets()
-        self.add_widget(FacultyRecordsWindow())
-    def back(self):
-        self.clear_widgets()
-        self.add_widget(FacultyRecordsWindow())
+	def __init__(self, **kwargs):
+		super(EditFacultyWindow, self).__init__(**kwargs)
+		global facultyid
+		for teacher in session.query(Faculty).filter_by(faculty_id=facultyid):
+			self.ids.id_number.text = str(teacher.id_number)
+			self.ids.first_name.text = teacher.first_name
+			self.ids.middle_name.text = teacher.middle_name
+			self.ids.last_name.text = teacher.last_name
+			self.ids.address.text = teacher.address
+			self.ids.birth_date.text = teacher.birth_date
+			self.ids.sex.text = teacher.sex
+			self.ids.date_of_employment.text = teacher.date_of_employment
+			self.ids.position.text = teacher.position
+			self.ids.contact_number.text = teacher.contact_number
+			self.ids.tin_number.text = teacher.pers_tin if teacher.pers_tin else ''
+			self.ids.social_security_number.text = teacher.pers_ssn if teacher.pers_ssn else ''
+			self.ids.philhealth.text = teacher.pers_philhealth if teacher.pers_philhealth else ''
+			self.ids.account_number.text = teacher.pers_accntnum if teacher.pers_accntnum else ''
+			self.ids.remarks.text = teacher.remarks if teacher.remarks else ''
+	def save(self):
+		session.query(Faculty).filter_by(faculty_id=facultyid).update(dict(id_number = self.ids.id_number.text, first_name = self.ids.first_name.text, middle_name = self.ids.middle_name.text, last_name = self.ids.last_name.text, address = self.ids.address.text, birth_date = self.ids.birth_date.text, sex = self.ids.sex.text, date_of_employment = self.ids.date_of_employment.text, position = self.ids.position.text, contact_number = self.ids.contact_number.text, pers_tin = self.ids.tin_number.text, pers_ssn = self.ids.social_security_number.text, pers_philhealth = self.ids.philhealth.text, pers_accntnum = self.ids.account_number.text, remarks = self.ids.remarks.text))
+		session.commit()
+		self.clear_widgets()
+		self.add_widget(FacultyRecordsWindow())
+	def back(self):
+	    self.clear_widgets()
+	    self.add_widget(FacultyRecordsWindow())
 
 class DailyListButton(ListItemButton):
     pass
@@ -501,9 +493,9 @@ class PayrollWindow(Widget):
                 first_name = teacher.first_name
                 middle_name = teacher.middle_name
                 last_name = teacher.last_name
-                monthly_rate = teacher.monthly_rate
+                monthly_rate = teacher
 
-            details = [str(item.faculty_id), first_name+' '+middle_name[0]+'. '+last_name, str(monthly_rate), str(item.computed_deduc), str(item.computed_salary), str(item.pending_deduc)]
+            details = [str(item.faculty_id), first_name+' '+middle_name[0]+'. '+last_name, str(item.monthly_rate), str(item.computed_deduc), str(item.computed_salary), str(item.pending_deduc)]
             #print(", ".join(details))
             self.payfaculty_list.adapter.data.extend([", ".join(details)])
         self.payfaculty_list._trigger_reset_populate()
