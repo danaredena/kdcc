@@ -5,6 +5,7 @@ from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ObjectProperty
 from kivy.uix.listview import ListItemButton
+from kivy.adapters.listadapter import ListAdapter
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -122,6 +123,7 @@ class StudentRecordsWindow(Widget):
             #print(", ".join(details))
             self.student_list.adapter.data.extend([", ".join(details)])
         self.student_list._trigger_reset_populate()
+        self.student_list.adapter.bind(on_selection_change=self.tryPrint)
 
     def populate_list(self, *args):
         pass #walang mangyayari pag nasa same window
