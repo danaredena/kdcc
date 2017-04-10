@@ -27,6 +27,7 @@
         width: 300
         write_tab: False
         multiline: False
+        on_text_validate: root.login()
     TextInput:
         id: password_input
         hint_text: 'Password'
@@ -38,6 +39,7 @@
         width: 300
         write_tab: False
         multiline: False
+        on_text_validate: root.login()
     Button:
         id: login_button
         font_size: 20
