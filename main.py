@@ -123,7 +123,15 @@ class StudentRecordsWindow(Widget):
         del self.student_list.adapter.data[:]
         students = Students.query.all()
         for student in students:
-            details = [student.last_name+', '+student.first_name+' '+student.middle_name]
+            middle_name = student.middle_name.split(" ")
+            middle_init = middle_name[0][0] 
+            if (len(middle_name) > 1):
+                for i in range(len(middle_name) - 1):
+                    middle_init += "." + middle_name[i+1][0]
+            else:
+                middle_init += "."
+            details = [student.last_name+",  "+student.first_name+"  "+middle_init]
+
             #print(", ".join(details))
             self.student_list.adapter.data.extend([", ".join(details)])
         self.student_list._trigger_reset_populate()
@@ -137,15 +145,16 @@ class StudentRecordsWindow(Widget):
         if self.student_list.adapter.selection:
             selection_obj = self.student_list.adapter.selection[0]
             selection = selection_obj.text
-            data = selection.split(' ')
+            data = selection.split("  ")
         else:
             return
         print(data)
-        lastname = data[0][:-1]; firstname = data[1]; middlename = data[2]
+        lastname = data[0][:-1]; firstname = data[1]
         print("lastname:", lastname)
         for student in session.query(Students).filter_by(last_name=lastname):
             nickname = student.nickname
             print(nickname)
+            middlename = student.middle_name
             birthdate = student.birth_date
             age = student.age
             sex = student.sex
@@ -190,7 +199,7 @@ class StudentRecordsWindow(Widget):
             selection_obj = self.student_list.adapter.selection[0]
             selection = selection_obj.text
             #studentid = int(selection[0])
-            data = selection.split(' ')
+            data = selection.split("  ")
             lastname = data[0][:-1]; firstname = data[1]; middlename = data[2]
             get = session.query(Students.student_id).filter_by(last_name=lastname, first_name=firstname, middle_name=middlename)
             studentid = get[0][0]
@@ -293,7 +302,7 @@ class EditStudentWindow(Widget):
 
     def save(self):
         #update db for students
-        session.query(Students).filter_by(student_id=studentid).update(dict(nickname=self.ids.nickname.text, first_name=self.ids.first_name.text, middle_name=self.ids.middle_name.text, last_name=self.ids.last_name.text, sufix=self.ids.suffix.text, address=self.ids.address.text, birth_date=self.ids.birth_date.text, sex=self.ids.sex.text, date_of_admission=self.ids.date_of_admission.text, group=self.ids.group.text, guardian1_name=self.ids.guardianA.text, guardian2_name=self.ids.guardianB.text, contact_number1=self.ids.contactA.text, contact_number2=self.ids.contactB.text, up_dependent=self.ids.up_dependent.text))
+        session.query(Students).filter_by(student_id=studentid).update(dict(nickname=self.ids.nickname.text, first_name=self.ids.first_name.text, middle_name=self.ids.middle_name.text, last_name=self.ids.last_name.text, suffix=self.ids.suffix.text, address=self.ids.address.text, birth_date=self.ids.birth_date.text, sex=self.ids.sex.text, date_of_admission=self.ids.date_of_admission.text, group=self.ids.group.text, guardian1_name=self.ids.guardianA.text, guardian2_name=self.ids.guardianB.text, contact_number1=self.ids.contactA.text, contact_number2=self.ids.contactB.text, up_dependent=self.ids.up_dependent.text))
         session.commit()
         self.clear_widgets()
         self.add_widget(StudentRecordsWindow())
