@@ -63,6 +63,7 @@ class Faculty(Base):
     first_name = Column(String(70), nullable=False)
     last_name = Column(String(50), nullable=False)
     middle_name = Column(String(50), nullable=False)
+    suffix = Column(String(5), nullable=True)
     birth_date = Column(String(10), nullable=False)
     sex = Column(String(8), nullable=False)
     date_of_employment = Column(String, nullable=False)
