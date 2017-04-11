@@ -390,6 +390,8 @@ class FacultyRecordsWindow(Widget):
             selection_obj = self.faculty_list.adapter.selection[0]
             selection = selection_obj.text
             data = selection.split(' ')
+        else:
+            return
         print(data)
         lastname = data[0][:-1]; firstname = data[1]; middlename = data[2]
         print("lastname:", lastname)
