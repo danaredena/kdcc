@@ -463,6 +463,9 @@ class CreateFacultyWindow(Widget):
         faculty.last_name = self.ids.last_name
         f_last_name_text = faculty.last_name.text
 
+        faculty.suffix = self.ids.suffix
+        f_suffix_text = faculty.suffix.text
+
         faculty.address = self.ids.address
         f_address_text = faculty.address.text
 
@@ -496,7 +499,7 @@ class CreateFacultyWindow(Widget):
         faculty.remarks = self.ids.remarks
         f_remarks_text = faculty.remarks.text
 
-        new_faculty = Faculty(id_number = f_id_number_text, first_name=f_first_name_text, middle_name=f_middle_name_text, last_name=f_last_name_text, address=f_address_text, birth_date=f_birth_date_text, sex=f_sex_text, date_of_employment=f_date_of_employment_text, position=f_position_text, contact_number=f_contact_number_text, pers_tin=f_pers_tin_text, pers_ssn=f_pers_ssn_text, pers_philhealth=f_pers_philhealth_text, pers_accntnum=f_pers_accntnum_text, remarks=f_remarks_text)
+        new_faculty = Faculty(id_number = f_id_number_text, first_name=f_first_name_text, middle_name=f_middle_name_text, last_name=f_last_name_text, suffix=f_suffix_text, address=f_address_text, birth_date=f_birth_date_text, sex=f_sex_text, date_of_employment=f_date_of_employment_text, position=f_position_text, contact_number=f_contact_number_text, pers_tin=f_pers_tin_text, pers_ssn=f_pers_ssn_text, pers_philhealth=f_pers_philhealth_text, pers_accntnum=f_pers_accntnum_text, remarks=f_remarks_text)
         #print(new_faculty.id_number, new_faculty.first_name, new_faculty.middle_name, new_faculty.last_name, new_faculty.address, new_faculty.birth_date, new_faculty.sex, new_faculty.date_of_employment, new_faculty.position, new_faculty.contact_number, new_faculty.pers_tin, new_faculty.pers_ssn, new_faculty.pers_philhealth, new_faculty.pers_accntnum, new_faculty.remarks)
         print( add_db(new_faculty) )
 
@@ -516,6 +519,7 @@ class EditFacultyWindow(Widget):
             self.ids.first_name.text = teacher.first_name
             self.ids.middle_name.text = teacher.middle_name
             self.ids.last_name.text = teacher.last_name
+            self.ids.suffix.text = teacher.suffix
             self.ids.address.text = teacher.address
             self.ids.birth_date.text = teacher.birth_date
             self.ids.sex.text = teacher.sex
