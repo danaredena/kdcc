@@ -42,6 +42,7 @@ class Students(Base):
     first_name = Column(String(70), nullable=False)
     middle_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
+    suffix = Column(String(5), nullable=True)
     address = Column(String, nullable=False)
     birth_date = Column(String(10), nullable=False)
     age = Column(Integer, nullable=True) #autocompute na age; True muna
