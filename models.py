@@ -1,22 +1,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import *
 from sqlalchemy.orm import scoped_session, sessionmaker
-#from sqlalchemy import Column, String
-#from sqlalchemy import create_engine
-#from sqlalchemy.engine import Engine
-#from sqlalchemy import event
-'''
-from sqlalchemy import event
-from sqlalchemy.engine import Engine
-from sqlite3 import Connection as SQLite3Connection
 
-@event.listens_for(Engine, "connect")
-def _set_sqlite_pragma(dbapi_connection, connection_record):
-    if isinstance(dbapi_connection, SQLite3Connection):
-        cursor = dbapi_connection.cursor()
-        cursor.execute("PRAGMA foreign_keys=ON;")
-        cursor.close()
-'''
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
 
@@ -48,7 +33,7 @@ class Students(Base):
     age = Column(Integer, nullable=True) #autocompute na age; True muna
     sex = Column(String(8), nullable=False)
     date_of_admission = Column(String, nullable=False)
-    group = Column(String(20), nullable=True)
+    #group = Column(String(20), nullable=True)
     guardian1_name = Column(String, nullable=False)
     guardian2_name = Column(String, nullable=True)
     contact_number1 = Column(String, nullable=False)
@@ -83,16 +68,13 @@ class Schoolyear(Base):
 
     schoolyear_code = Column(String(10), nullable=False, primary_key=True)
 
-#NOTE: Foreign keys not working >.<
-
 class Enrolled(Base):
     __tablename__ = 'enrolled'
     schoolyear_code = Column(String(10), ForeignKey('schoolyear.schoolyear_code'), nullable=False, primary_key=True)
     student_id = Column(Integer, ForeignKey('student.student_id'), nullable=False, primary_key=True)
     payment_mode = Column(Integer, nullable=False)
-    semestral_pay = Column(String, nullable=True) #float
-    semestral_OR = Column(String, nullable=True) #di pa ako sure dito kung standardized ung payments, will update next time
-    month1_pay = Column(String, nullable=True)
+    semestral_pay = Column(String, nullable=True)
+    semestral_OR = Column(String, nullable=True)
     month1_OR = Column(String, nullable=True)
     month2_pay = Column(String, nullable=True)
     month2_OR = Column(String, nullable=True)
@@ -111,7 +93,6 @@ class MonthCutoff(Base):
     __table_args__ = (UniqueConstraint('start_date','end_date'),)
     monthcutoff_id = Column(Integer, nullable=False, primary_key=True, autoincrement=True)
     schoolyear_code = Column(String(10), ForeignKey('schoolyear.schoolyear_code'), nullable=False)
-    #ForeignKeyConstraint(['schoolyear_code'], ['schoolyear.schoolyear_code'])
     start_date = Column(String(10), nullable=False)
     end_date = Column(String(10), nullable=False)
 
@@ -124,7 +105,6 @@ class DailyAttendance(Base):
     time_in = Column(String(5), nullable=True) #formatted din (will add constraints later)
     time_out = Column(String(5), nullable=True) #constraint military format
     minutes_late = Column(Integer, nullable=True) #constraint 0+
-    #ForeignKeyConstraint(['date', 'faculty_id'], ['day.date', 'faculty.faculty_id'])
 
 class MonthlyPayroll(Base):
     __tablename__ = 'monthly_payroll'
@@ -141,7 +121,6 @@ class MonthlyPayroll(Base):
     ## COMPUTATIONAL PART
     computed_deduc = Column(Integer, nullable=True)
     computed_salary = Column(Integer, nullable=True)
-    #ForeignKeyConstraint(['date', 'faculty_id'], ['day.date', 'faculty.faculty_id'])
 
 engine = create_engine('sqlite:///kdcc.db')
 db_session = scoped_session(sessionmaker(autocommit=False,

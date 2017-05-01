@@ -23,7 +23,7 @@ def fill():
 
         #2: ADD STUDENT (arbitrary) 'Diane'
         session = DBSession()
-        new_faculty = Students(nickname='Diane', first_name='Diane', middle_name='Yap', last_name='Red', suffix='Jr.', address='Tandang Sora, Quezon City', birth_date='11/07/2010', sex='female', date_of_admission='02/01/2017', group='toddler', guardian1_name='Scarlett Red', contact_number1='09431234567', up_dependent='yes')
+        new_faculty = Students(nickname='Diane', first_name='Diane', middle_name='Yap', last_name='Red', suffix='Jr.', address='Tandang Sora, Quezon City', birth_date='11/07/2010', sex='female', date_of_admission='02/01/2017',guardian1_name='Scarlett Red', contact_number1='09431234567', up_dependent='yes')
         session.add(new_faculty)
         session.commit()
 
@@ -35,7 +35,7 @@ def fill():
 
         #4: ADD STUDENT (arbitrary) 'Ohm'
         session = DBSession()
-        new_student = Students(nickname='Ohm', first_name='Ohm', middle_name='My', last_name='Gulay',  suffix='III', address='Tandang Sora, Quezon City', birth_date='11/07/2008', sex='female', date_of_admission='02/07/2017', group='semi-adult', guardian1_name='Heidi Klum', contact_number1='09431299997', up_dependent='no')
+        new_student = Students(nickname='Ohm', first_name='Ohm', middle_name='My', last_name='Gulay',  suffix='III', address='Tandang Sora, Quezon City', birth_date='11/07/2008', sex='female', date_of_admission='02/07/2017', guardian1_name='Heidi Klum', contact_number1='09431299997', up_dependent='no')
         session.add(new_student)
         session.commit()
 

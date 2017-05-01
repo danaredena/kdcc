@@ -393,7 +393,7 @@ class StudentRecordsWindow(Widget):
         scroll.do_scroll_x = True
 
         '''pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
-        
+
         add_row_btn = Button(text="Add Row", on_press=pp)
         del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
         upt_row_btn = Button(text="Update Row")
@@ -404,7 +404,7 @@ class StudentRecordsWindow(Widget):
 
         self.layout.add_widget(scroll)
         self.add_widget(self.layout)
-        
+
     def main_menu(self, *args):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
@@ -843,25 +843,47 @@ class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kiv
 #FINANCIAL-PAYROLL
 class FinanceSummaryWindow(Widget):
     finance_list = ObjectProperty()
-    #root = BoxLayout(orientation="horizontal")
     def __init__(self, **kwargs):
-
-        self.add_widget(scroll)
-        self.add_widget(btn_grid)
         super(FinanceSummaryWindow, self).__init__(**kwargs)
-        del self.finance_list.adapter.data[:]
+        self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
+        self.data = []
+        items = MonthlyPayroll.query.all()
         items = MonthlyPayroll.query.all()
         for item in items:
+
             for teacher in session.query(Faculty).filter_by(faculty_id=item.faculty_id):
                 id_number = str(teacher.id_number)
                 first_name = teacher.first_name
                 middle_name = teacher.middle_name
                 last_name = teacher.last_name
+                monthly_rate = teacher.monthly_rate
+            self.data.append([id_number, last_name+", "+first_name+" "+middle_name, str(monthly_rate), str(item.computed_deduc),  str(item.pending_deduc), str(item.computed_salary)])
 
-            details = [str(item.faculty_id), first_name+' '+middle_name[0]+'. '+last_name, str(item.no_of_absences), str(item.total_minutes_late), str(item.pending_deduc)]
-            #print(", ".join(details))
-            self.finance_list.adapter.data.extend([", ".join(details)])
-        self.finance_list._trigger_reset_populate()
+        header = ['Faculty ID', 'Name', 'Monthly\n  Rate', ' Computed\nDeductions', '  Pending\nDeductions', 'Computed\n Salary']
+        self.col_size = [0.14, 0.29, 0.14, 0.14, 0.14, 0.14]
+        #body_alignment = ["center", "left", "right", "right"]
+        self.body_alignment = ["center", "center", "center", "center", "center", "center"]
+
+        self.grid = DataGrid(header, self.data, self.body_alignment, self.col_size)
+        self.grid.rows = 10
+
+        scroll = ScrollView(size_hint=(1, 1), size=(400, 500000), scroll_y=0, pos_hint={'center_x':.5, 'center_y':.5})
+        scroll.add_widget(self.grid)
+        scroll.do_scroll_y = True
+        scroll.do_scroll_x = True
+
+        '''pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
+
+        add_row_btn = Button(text="Add Row", on_press=pp)
+        del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
+        upt_row_btn = Button(text="Update Row")
+        slct_all_btn = Button(text="Select All", on_press=partial(self.grid.select_all))
+        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))'''
+
+        show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))
+
+        self.layout.add_widget(scroll)
+        self.add_widget(self.layout)
 
     def main_menu(self, *args):
         self.clear_widgets()
@@ -870,6 +892,7 @@ class FinanceSummaryWindow(Widget):
     def payroll(self, *args):
         self.clear_widgets()
         self.add_widget(PayrollWindow())
+
 
 
 class PayrollWindow(Widget):
