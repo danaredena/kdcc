@@ -13,15 +13,13 @@
         source: 'logo.png'
         nocache: True
         id: logo_img
-        center_x: root.width/2
-        center_y: root.height/3 * 2 + 42
+        pos: 275, 310
         size: 250, 250
     TextInput:
         id: username_input
         hint_text: 'Username'
         font_size: 20
-        center_x: root.width/2
-        center_y: root.height/2 - 10
+        pos: 250, 265
         height: 35
         width: 300
         write_tab: False
@@ -32,8 +30,7 @@
         hint_text: 'Password'
         font_size: 20
         password: True
-        center_x: root.width/2
-        center_y: root.height/2 - 70
+        pos: 250, 205
         height: 35
         width: 300
         write_tab: False
@@ -42,8 +39,7 @@
     Button:
         id: login_button
         font_size: 20
-        center_x: root.width/2
-        center_y: root.height/2 - 150
+        pos: 325, 125
         text: "Login"
         size: (150,50)
         on_press: root.login()
