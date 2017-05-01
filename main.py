@@ -62,7 +62,7 @@ class HeaderLabel(Label):
 
 counter = 0
 studentid = 0
-label = Label(text='', halign="left")
+label = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
 
 class DataGrid(GridLayout):
     def add_row(self, row_data, row_align, cols_size, instance, **kwargs):
@@ -393,7 +393,7 @@ class StudentRecordsWindow(Widget):
     student_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(StudentRecordsWindow, self).__init__(**kwargs)
-        self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
+        self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
         students = Students.query.all()
         for student in students:
