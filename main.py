@@ -28,10 +28,236 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import and_
 from models import *
 
+import json
+import pprint
+import functools
+#kivy.require('1.7.1')
+
+from functools import partial
+
 engine = create_engine('sqlite:///kdcc.db')
 DBSession = sessionmaker()
 DBSession.configure(bind=engine)
 session = DBSession()
+
+class CLabel(ToggleButton):
+    bgcolor = ListProperty([1,1,1])
+
+class HeaderLabel(Label):
+    bgcolor = ListProperty([0.108,0.476,0.611])
+
+
+#data_json = open('data.json')
+#data = json.load(data_json)
+
+counter = 0
+class DataGrid(GridLayout):
+    def add_row(self, row_data, row_align, cols_size, instance, **kwargs):
+        global counter
+        self.rows += 1
+        #self.rows = 2
+        ##########################################################
+        def change_on_press(self):
+            childs = self.parent.children
+            for ch in childs:
+                if (ch.id == self.id):
+                    print( ch.id)
+                    print( len(ch.id))
+                    row_n = 0
+                    if (len(ch.id) == 11):
+                        row_n = ch.id[4:5]
+                    else:
+                        row_n = ch.id[4:6]
+                    for c in childs:
+                        #ETO UNG NAG-IIBA UNG KULANG NG ROWS
+                        if ('row_'+str(row_n)+'_col_0') == c.id:
+                            if c.state == "normal":
+                                c.state="down"
+                            else:
+                                c.state="normal"
+                        if ('row_'+str(row_n)+'_col_1') == c.id:
+                            if c.state == "normal":
+                                c.state="down"
+                            else:
+                                c.state="normal"
+                        if ('row_'+str(row_n)+'_col_2') == c.id:
+                            if c.state == "normal":
+                                c.state="down"
+                            else:
+                                c.state="normal"
+                        if ('row_'+str(row_n)+'_col_3') == c.id:
+                            if c.state == "normal":
+                                c.state="down"
+                            else:
+                                c.state="normal"
+                        if ('row_'+str(row_n)+'_col_4') == c.id:
+                            if c.state == "normal":
+                                c.state="down"
+                            else:
+                                c.state="normal"
+                        if ('row_'+str(row_n)+'_col_5') == c.id:
+                            if c.state == "normal":
+                                c.state="down"
+                            else:
+                                c.state="normal"
+
+        def change_on_release(self):
+            if (self.state == "normal"):
+                self.state = "down"
+            else:
+                self.state = "normal"
+        ##########################################################
+        n = 0
+        for item in row_data:
+            cell = CLabel(text=('[color=000000]' + item + '[/color]'),
+                                        background_normal="background_normal.png",
+                                        background_down="background_pressed.png",
+                                        halign=row_align[n],
+                                        markup=True,
+                                        on_press=partial(change_on_press),
+                                        on_release=partial(change_on_release),
+                                        text_size=(0, None),
+                                        size_hint_x=cols_size[n],
+                                        size_hint_y=None,
+                                        height=40,
+                                        id=("row_" + str(counter) + "_col_" + str(n)))
+            cell_width = Window.size[0] * cell.size_hint_x
+            cell.text_size=(cell_width - 30, None)
+            cell.texture_update()
+            self.add_widget(cell)
+            n+=1
+        counter += 1
+        #self.rows += 1
+    def remove_row(self, n_cols, instance, **kwargs):
+        childs = self.parent.children
+        selected = 0
+        for ch in childs:
+            for c in reversed(ch.children):
+                if c.id != "Header_Label":
+                    if c.state == "down":
+                        self.remove_widget(c)
+                        print( str(c.id) + '   -   ' + str(c.state))
+                        selected += 1
+        if selected == 0:
+            for ch in childs:
+                count_01 = n_cols
+                count_02 = 0
+                count = 0
+                while (count < n_cols):
+                    if n_cols != len(ch.children):
+                        for c in ch.children:
+                            if c.id != "Header_Label":
+                                print( "Length: " + str(len(ch.children)))
+                                print( "N_cols: " + str(n_cols + 1))
+
+                                self.remove_widget(c)
+                                count += 1
+                                break
+                            else:
+                                break
+                    else:
+                        break
+
+    def select_all(self, instance, **kwargs):
+        childs = self.parent.children
+        for ch in childs:
+            for c in ch.children:
+                if c.id != "Header_Label":
+                    c.state = "down"
+
+    def unselect_all(self, instance, **kwargs):
+        childs = self.parent.children
+        for ch in childs:
+            for c in ch.children:
+                if c.id != "Header_Label":
+                    c.state = "normal"
+
+    def show_log(self, instance, **kwargs):
+        childs = self.parent.children
+        for ch in childs:
+            for c in ch.children:
+                if c.id != "Header_Label":
+                    print( str(c.id) + '   -   ' + str(c.state) +  '   -   ' + str(c.text))
+
+    def __init__(self, header_data, body_data, b_align, cols_size, **kwargs):
+        super(DataGrid, self).__init__(**kwargs)
+        self.size_hint_y=None
+        self.bind(minimum_height=self.setter('height'))
+        self.cols = len(header_data)
+        self.rows = len(body_data) + 1
+        self.spacing = [1,1]
+        n = 0
+        for hcell in header_data:
+            header_str = "[b]" + str(hcell) + "[/b]"
+            self.add_widget(HeaderLabel(text=header_str,
+                                                                    markup=True,
+                                                                    size_hint_y=None,
+                                                                    height=40,
+                                                                    id="Header_Label",
+                                                                    size_hint_x=cols_size[n]))
+            n+=1
+        for d in body_data:
+            print( d)
+            self.add_row(d, b_align, cols_size, self)
+
+
+
+
+
+###
+'''
+def modal_insert(self):
+    lbl1 = Label(text='ID', id="lbl")
+    lbl2 = Label(text='Nome', id="lbl")
+    lbl3 = Label(text='Preco', id="lbl")
+    lbl4 = Label(text='IVA', id="lbl")
+    txt1 = TextInput(text='000', id="txtinp")
+    txt2 = TextInput(text='Product Name', id="txtinp")
+    txt3 = TextInput(text='123.45', id="txtinp")
+    txt4 = TextInput(text='23', id="txtinp")
+
+    insertion_grid = GridLayout(cols=2)
+    insertion_grid.add_widget(lbl1)
+    insertion_grid.add_widget(txt1)
+    insertion_grid.add_widget(lbl2)
+    insertion_grid.add_widget(txt2)
+    insertion_grid.add_widget(lbl3)
+    insertion_grid.add_widget(txt3)
+    insertion_grid.add_widget(lbl4)
+    insertion_grid.add_widget(txt4)
+    # create content and assign to the view
+
+    content = Button(text='Close me!')
+
+    modal_layout = BoxLayout(orientation="vertical")
+    modal_layout.add_widget(insertion_grid)
+
+    def insert_def(self):
+        input_list = []
+        for text_inputs in reversed(self.parent.children[2].children):
+            if text_inputs.id == "txtinp":
+                input_list.append(text_inputs.text)
+        print( input_list)
+        grid.add_row(input_list, body_alignment, col_size, self)
+        # print( view
+        # view.dismiss
+
+
+    insert_btn = Button(text="Insert", on_press=insert_def)
+    modal_layout.add_widget(insert_btn)
+    modal_layout.add_widget(content)
+
+    view = ModalView(auto_dismiss=False)
+
+    view.add_widget(modal_layout)
+    # bind the on_press event of the button to the dismiss function
+    content.bind(on_press=view.dismiss)
+    insert_btn.bind(on_release=view.dismiss)
+
+    view.open()
+
+add_custom_row = Button(text="Add Custom Row", on_press=modal_insert)
+'''
 
 #globals huhu di ko magets kung paano yung pagsend ng value sa ibang windows TT kaya global variable na lang gamitin natin hahahaha
 #for editing
@@ -131,75 +357,47 @@ class SchoolyearListButton(ListItemButton):
 class StudentRecordsWindow(Widget):
     student_list = ObjectProperty()
     def __init__(self, **kwargs):
-        self.layout = BoxLayout(pos=(525,320), orientation="vertical", width=20)
         super(StudentRecordsWindow, self).__init__(**kwargs)
-        del self.student_list.adapter.data[:]
-        students = Students.query.all()
-        for student in students:
-            middle_name = student.middle_name.split(" ")
-            middle_init = middle_name[0][0]
-            if (len(middle_name) > 1):
-                for i in range(len(middle_name) - 1):
-                    middle_init += "." + middle_name[i+1][0]
-            else:
-                middle_init += "."
-            details = [student.last_name+",  "+student.first_name+"  "+middle_init]
+        self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
+        self.data = []
+        items = MonthlyPayroll.query.all()
+        for item in items:
+            for teacher in session.query(Faculty).filter_by(faculty_id=item.faculty_id):
+                id_number = str(teacher.id_number)
+                first_name = teacher.first_name
+                middle_name = teacher.middle_name
+                last_name = teacher.last_name
+                monthly_rate = teacher.monthly_rate
+            self.data.append([id_number, last_name+","+first_name+" "+middle_name, str(monthly_rate), str(item.computed_deduc), str(item.computed_salary), str(item.pending_deduc)])
+            print(id_number, first_name, middle_name, last_name)
+        print(self.data)
 
-            #print(", ".join(details))
-            self.student_list.adapter.data.extend([", ".join(details)])
-        self.student_list._trigger_reset_populate()
-        self.student_list.adapter.bind(on_selection_change=self.printDetails)
+        header = ['ID', 'Name', 'Monthly Rate','Computed Deduction', 'Computed Salary', 'Pending Deduction']
+        self.col_size = [0.1, 0.5, 0.2, 0.2, 0.2, 0.2]
+        #body_alignment = ["center", "left", "right", "right"]
+        self.body_alignment = ["center", "center", "center", "center", "center", "center"]
 
-    def populate_list(self, *args):
-        pass #walang mangyayari pag nasa same window
-    def printDetails(self, *args):
-        self.layout.clear_widgets()
-        self.remove_widget(self.layout)
-        if self.student_list.adapter.selection:
-            selection_obj = self.student_list.adapter.selection[0]
-            selection = selection_obj.text
-            data = selection.split("  ")
-        else:
-            return
-        print(data)
-        lastname = data[0][:-1]; firstname = data[1]
-        print("lastname:", lastname)
-        for student in session.query(Students).filter_by(last_name=lastname):
-            nickname = student.nickname
-            print(nickname)
-            middlename = student.middle_name
-            birthdate = student.birth_date
-            age = student.age
-            sex = student.sex
-            address = student.address
-            dateofadmission = student.date_of_admission
-            group = student.group
-            guardian1 = student.guardian1_name
-            guardian2 = student.guardian2_name
-            contactnumber1 = student.contact_number1
-            contactnumber2 = student.contact_number2
-            if not(contactnumber2): contactnumber2=''
-            else: contactnumber2 = '\n           ' + contactnumber2
-            if not(guardian2): guardian2 = ''
-            else: '\n            ' + guardian2
-            if not(age): age = ''
-            remarks = student.up_dependent
-            #address
-            if (len(address) > 31):
-                if (address[31] == " "):
-                    address = address[:31] + "\n" + address[32:]
-                else:
-                    index = 31
-                    while (address[index] != " "):
-                        index -= 1
-                    address = address[:index] + "\n" + address[index+1:]
+        self.grid = DataGrid(header, self.data, self.body_alignment, self.col_size)
+        self.grid.rows = 10
 
-            label_text = "Name: %s, %s %s\nNickname: %s\nBirth date: %s\nAge: %s\nSex: %s\nAddress: %s\nDate of admission: %s\nGroup: %s\nGuardian/s: %s%s\nContact/s: %s%s\nRemarks: %s" %(lastname, firstname, middlename, nickname, birthdate, str(age), sex, address, dateofadmission, group, guardian1, guardian2, contactnumber1, contactnumber2, remarks)
-            print(label_text)
-            l = Label(text=label_text, font_size=18, color=(0,0,0,1))
-            self.layout.add_widget(l)
-            self.add_widget(self.layout)
-        print("Change")
+        scroll = ScrollView(size_hint=(1, 1), size=(400, 500000), scroll_y=0, pos_hint={'center_x':.5, 'center_y':.5})
+        scroll.add_widget(self.grid)
+        scroll.do_scroll_y = True
+        scroll.do_scroll_x = False
+
+        pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
+        '''
+        add_row_btn = Button(text="Add Row", on_press=pp)
+        del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
+        upt_row_btn = Button(text="Update Row")
+        slct_all_btn = Button(text="Select All", on_press=partial(self.grid.select_all))
+        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))'''
+
+        show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))
+
+        self.layout.add_widget(scroll)
+        self.add_widget(self.layout)
+
     def main_menu(self, *args):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
@@ -643,282 +841,6 @@ class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kiv
         self.prev_list._trigger_reset_populate()
 
 #FINANCIAL-PAYROLL
-
-class CLabel(ToggleButton):
-    bgcolor = ListProperty([1,1,1])
-
-class HeaderLabel(Label):
-    bgcolor = ListProperty([0.108,0.476,0.611])
-
-
-#data_json = open('data.json')
-#data = json.load(data_json)
-data = []
-items = MonthlyPayroll.query.all()
-for item in items:
-
-    for teacher in session.query(Faculty).filter_by(faculty_id=item.faculty_id):
-        id_number = str(teacher.id_number)
-        first_name = teacher.first_name
-        middle_name = teacher.middle_name
-        last_name = teacher.last_name
-        monthly_rate = teacher.monthly_rate
-    data.append([id_number, last_name+","+first_name+" "+middle_name, str(monthly_rate), str(item.computed_deduc), str(item.computed_salary), str(item.pending_deduc)])
-    print(id_number, first_name, middle_name, last_name)
-
-#print("LALALALA", items)
-
-print(data)
-
-header = ['ID', 'Name', 'Monthly Rate','Computed Deduction', 'Computed Salary', 'Pending Deduction']
-col_size = [0.1, 0.5, 0.2, 0.2, 0.2, 0.2]
-#body_alignment = ["center", "left", "right", "right"]
-body_alignment = ["center", "center", "center", "center", "center", "center"]
-
-products_list = []
-
-counter = 0
-class DataGrid(GridLayout):
-    def add_row(self, row_data, row_align, cols_size, instance, **kwargs):
-        global counter
-        self.rows += 1
-        #self.rows = 2
-        ##########################################################
-        def change_on_press(self):
-            childs = self.parent.children
-            for ch in childs:
-                if (ch.id == self.id):
-                    print( ch.id)
-                    print( len(ch.id))
-                    row_n = 0
-                    if (len(ch.id) == 11):
-                        row_n = ch.id[4:5]
-                    else:
-                        row_n = ch.id[4:6]
-                    for c in childs:
-                        #ETO UNG NAG-IIBA UNG KULANG NG ROWS
-                        if ('row_'+str(row_n)+'_col_0') == c.id:
-                            if c.state == "normal":
-                                c.state="down"
-                            else:
-                                c.state="normal"
-                        if ('row_'+str(row_n)+'_col_1') == c.id:
-                            if c.state == "normal":
-                                c.state="down"
-                            else:
-                                c.state="normal"
-                        if ('row_'+str(row_n)+'_col_2') == c.id:
-                            if c.state == "normal":
-                                c.state="down"
-                            else:
-                                c.state="normal"
-                        if ('row_'+str(row_n)+'_col_3') == c.id:
-                            if c.state == "normal":
-                                c.state="down"
-                            else:
-                                c.state="normal"
-                        if ('row_'+str(row_n)+'_col_4') == c.id:
-                            if c.state == "normal":
-                                c.state="down"
-                            else:
-                                c.state="normal"
-                        if ('row_'+str(row_n)+'_col_5') == c.id:
-                            if c.state == "normal":
-                                c.state="down"
-                            else:
-                                c.state="normal"
-
-        def change_on_release(self):
-            if (self.state == "normal"):
-                self.state = "down"
-            else:
-                self.state = "normal"
-        ##########################################################
-        n = 0
-        for item in row_data:
-            cell = CLabel(text=('[color=000000]' + item + '[/color]'),
-                                        background_normal="background_normal.png",
-                                        background_down="background_pressed.png",
-                                        halign=row_align[n],
-                                        markup=True,
-                                        on_press=partial(change_on_press),
-                                        on_release=partial(change_on_release),
-                                        text_size=(0, None),
-                                        size_hint_x=cols_size[n],
-                                        size_hint_y=None,
-                                        height=40,
-                                        id=("row_" + str(counter) + "_col_" + str(n)))
-            cell_width = Window.size[0] * cell.size_hint_x
-            cell.text_size=(cell_width - 30, None)
-            cell.texture_update()
-            self.add_widget(cell)
-            n+=1
-        counter += 1
-        #self.rows += 1
-    def remove_row(self, n_cols, instance, **kwargs):
-        childs = self.parent.children
-        selected = 0
-        for ch in childs:
-            for c in reversed(ch.children):
-                if c.id != "Header_Label":
-                    if c.state == "down":
-                        self.remove_widget(c)
-                        print( str(c.id) + '   -   ' + str(c.state))
-                        selected += 1
-        if selected == 0:
-            for ch in childs:
-                count_01 = n_cols
-                count_02 = 0
-                count = 0
-                while (count < n_cols):
-                    if n_cols != len(ch.children):
-                        for c in ch.children:
-                            if c.id != "Header_Label":
-                                print( "Length: " + str(len(ch.children)))
-                                print( "N_cols: " + str(n_cols + 1))
-
-                                self.remove_widget(c)
-                                count += 1
-                                break
-                            else:
-                                break
-                    else:
-                        break
-
-    def select_all(self, instance, **kwargs):
-        childs = self.parent.children
-        for ch in childs:
-            for c in ch.children:
-                if c.id != "Header_Label":
-                    c.state = "down"
-
-    def unselect_all(self, instance, **kwargs):
-        childs = self.parent.children
-        for ch in childs:
-            for c in ch.children:
-                if c.id != "Header_Label":
-                    c.state = "normal"
-
-    def show_log(self, instance, **kwargs):
-        childs = self.parent.children
-        for ch in childs:
-            for c in ch.children:
-                if c.id != "Header_Label":
-                    print( str(c.id) + '   -   ' + str(c.state) +  '   -   ' + str(c.text))
-
-    def __init__(self, header_data, body_data, b_align, cols_size, **kwargs):
-        super(DataGrid, self).__init__(**kwargs)
-        self.size_hint_y=None
-        self.bind(minimum_height=self.setter('height'))
-        self.cols = len(header_data)
-        self.rows = len(body_data) + 1
-        self.spacing = [1,1]
-        n = 0
-        for hcell in header_data:
-            header_str = "[b]" + str(hcell) + "[/b]"
-            self.add_widget(HeaderLabel(text=header_str,
-                                                                    markup=True,
-                                                                    size_hint_y=None,
-                                                                    height=40,
-                                                                    id="Header_Label",
-                                                                    size_hint_x=cols_size[n]))
-            n+=1
-
-
-
-grid = DataGrid(header, data, body_alignment, col_size)
-grid.rows = 10
-
-scroll = ScrollView(size_hint=(1, 1), size=(400, 500000), scroll_y=0, pos_hint={'center_x':.5, 'center_y':.5})
-scroll.add_widget(grid)
-scroll.do_scroll_y = True
-scroll.do_scroll_x = False
-
-pp = partial(grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], body_alignment, col_size)
-add_row_btn = Button(text="Add Row", on_press=pp)
-del_row_btn = Button(text="Delete Row", on_press=partial(grid.remove_row, len(header)))
-upt_row_btn = Button(text="Update Row")
-slct_all_btn = Button(text="Select All", on_press=partial(grid.select_all))
-unslct_all_btn = Button(text="Unselect All", on_press=partial(grid.unselect_all))
-
-show_grid_log = Button(text="Show log", on_press=partial(grid.show_log))
-
-###
-def modal_insert(self):
-    lbl1 = Label(text='ID', id="lbl")
-    lbl2 = Label(text='Nome', id="lbl")
-    lbl3 = Label(text='Preco', id="lbl")
-    lbl4 = Label(text='IVA', id="lbl")
-    txt1 = TextInput(text='000', id="txtinp")
-    txt2 = TextInput(text='Product Name', id="txtinp")
-    txt3 = TextInput(text='123.45', id="txtinp")
-    txt4 = TextInput(text='23', id="txtinp")
-
-    insertion_grid = GridLayout(cols=2)
-    insertion_grid.add_widget(lbl1)
-    insertion_grid.add_widget(txt1)
-    insertion_grid.add_widget(lbl2)
-    insertion_grid.add_widget(txt2)
-    insertion_grid.add_widget(lbl3)
-    insertion_grid.add_widget(txt3)
-    insertion_grid.add_widget(lbl4)
-    insertion_grid.add_widget(txt4)
-    # create content and assign to the view
-
-    content = Button(text='Close me!')
-
-    modal_layout = BoxLayout(orientation="vertical")
-    modal_layout.add_widget(insertion_grid)
-
-    def insert_def(self):
-        input_list = []
-        for text_inputs in reversed(self.parent.children[2].children):
-            if text_inputs.id == "txtinp":
-                input_list.append(text_inputs.text)
-        print( input_list)
-        grid.add_row(input_list, body_alignment, col_size, self)
-        # print( view
-        # view.dismiss
-
-
-    insert_btn = Button(text="Insert", on_press=insert_def)
-    modal_layout.add_widget(insert_btn)
-    modal_layout.add_widget(content)
-
-    view = ModalView(auto_dismiss=False)
-
-    view.add_widget(modal_layout)
-    # bind the on_press event of the button to the dismiss function
-    content.bind(on_press=view.dismiss)
-    insert_btn.bind(on_release=view.dismiss)
-
-    view.open()
-
-add_custom_row = Button(text="Add Custom Row", on_press=modal_insert)
-
-
-def fill_data(self):
-    for d in data:
-        print( d)
-        grid.add_row(d, body_alignment, col_size, self)
-
-fill_data_btn = Button(text="JSON fill", on_press=partial(fill_data))
-
-btn_grid = BoxLayout(orientation="vertical")
-#fill_data()
-
-btn_grid.add_widget(fill_data_btn)
-'''
-btn_grid.add_widget(add_row_btn)
-btn_grid.add_widget(del_row_btn)
-btn_grid.add_widget(upt_row_btn)
-btn_grid.add_widget(slct_all_btn)
-btn_grid.add_widget(unslct_all_btn)
-btn_grid.add_widget(show_grid_log)
-btn_grid.add_widget(add_custom_row)'''
-
-
-
 class FinanceSummaryWindow(Widget):
     finance_list = ObjectProperty()
     #root = BoxLayout(orientation="horizontal")
