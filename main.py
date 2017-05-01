@@ -370,22 +370,19 @@ class StudentRecordsWindow(Widget):
         super(StudentRecordsWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
         self.data = []
-        items = MonthlyPayroll.query.all()
+        items = Students.query.all()
         for item in items:
-            for teacher in session.query(Faculty).filter_by(faculty_id=item.faculty_id):
-                id_number = str(teacher.id_number)
-                first_name = teacher.first_name
-                middle_name = teacher.middle_name
-                last_name = teacher.last_name
-                monthly_rate = teacher.monthly_rate
-            self.data.append([id_number, last_name+","+first_name+" "+middle_name, str(monthly_rate), str(item.computed_deduc), str(item.computed_salary), str(item.pending_deduc)])
-            print(id_number, first_name, middle_name, last_name)
+            for student in session.query(Students).filter_by(student_id=item.student_id):
+                first_name = student.first_name
+                middle_name = student.middle_name
+                last_name = student.last_name
+            self.data.append([last_name+", "+first_name+" "+middle_name])
         print(self.data)
 
-        header = ['ID', 'Name', 'Monthly Rate','Computed Deduction', 'Computed Salary', 'Pending Deduction']
-        self.col_size = [0.1, 0.5, 0.2, 0.2, 0.2, 0.2]
+        header = ['Name']
+        self.col_size = [0.5]
         #body_alignment = ["center", "left", "right", "right"]
-        self.body_alignment = ["center", "center", "center", "center", "center", "center"]
+        self.body_alignment = ["center"]
 
         self.grid = DataGrid(header, self.data, self.body_alignment, self.col_size)
         self.grid.rows = 10
@@ -393,10 +390,10 @@ class StudentRecordsWindow(Widget):
         scroll = ScrollView(size_hint=(1, 1), size=(400, 500000), scroll_y=0, pos_hint={'center_x':.5, 'center_y':.5})
         scroll.add_widget(self.grid)
         scroll.do_scroll_y = True
-        scroll.do_scroll_x = False
+        scroll.do_scroll_x = True
 
-        pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
-        '''
+        '''pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
+        
         add_row_btn = Button(text="Add Row", on_press=pp)
         del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
         upt_row_btn = Button(text="Update Row")
@@ -407,7 +404,7 @@ class StudentRecordsWindow(Widget):
 
         self.layout.add_widget(scroll)
         self.add_widget(self.layout)
-
+        
     def main_menu(self, *args):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
