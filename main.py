@@ -60,6 +60,8 @@ class HeaderLabel(Label):
 #data_json = open('data.json')
 #data = json.load(data_json)
 
+studentid = 0
+label = Label(text='', halign="left")
 counter = 0
 class DataGrid(GridLayout):
     def add_row(self, row_data, row_align, cols_size, instance, **kwargs):
@@ -69,6 +71,30 @@ class DataGrid(GridLayout):
         #self.rows = 2
         ##########################################################
         def change_on_press(self):
+            global studentid
+            studentid = row_data[-1]
+            for student in session.query(Students).filter_by(student_id=studentid):
+                nickname = student.nickname
+                firstname = student.first_name
+                middlename = student.middle_name
+                lastname = student.last_name
+                suffix = ' '+student.suffix if student.suffix else ''
+                birthdate = student.birth_date
+                age = student.age if student.age else ''
+                sex = student.sex
+                address = student.address
+                dateofadmission = student.date_of_admission
+                guardian1 = student.guardian1_name
+                guardian2 = student.guardian2_name
+                contactnumber1 = student.contact_number1
+                contactnumber2 = student.contact_number2
+                remarks = student.up_dependent
+                guardians = guardian1 + " (" + contactnumber1 + ")"
+                if guardian2:
+                    guardians += ", " + guardian2
+                if contactnumber2:
+                    guardians += " (" + contactnumber2 + ")"
+                label.text = "Name: %s%s, %s %s\nNickname: %s\nBirth date: %s\nAge: %s\nSex: %s\nAddress: %s\nDate of admission: %s\nGuardian/s: %s\nUP/Non-UP: %s" %(lastname, suffix, firstname, middlename, nickname, birthdate, str(age), sex, address, dateofadmission, guardians, remarks)
             childs = self.parent.children
             for ch in childs:
                 if (ch.id == self.id):
@@ -273,8 +299,6 @@ add_custom_row = Button(text="Add Custom Row", on_press=modal_insert)
 
 #globals huhu di ko magets kung paano yung pagsend ng value sa ibang windows TT kaya global variable na lang gamitin natin hahahaha
 #for editing
-studentid = int
-facultyid = int
 
 #insert to database function (for safety)
 def add_db(addobject):
@@ -395,11 +419,16 @@ class StudentRecordsWindow(Widget):
         del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
         upt_row_btn = Button(text="Update Row")
         slct_all_btn = Button(text="Select All", on_press=partial(self.grid.select_all))
-        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))'''
+        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))
 
-        show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))
+        show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))'''
+
+        label.bind(size=label.setter('text_size'))
+        label_grid = BoxLayout(orientation="vertical")
+        label_grid.add_widget(label)
 
         self.layout.add_widget(scroll)
+        self.layout.add_widget(label_grid)
         self.add_widget(self.layout)
 
     def main_menu(self, *args):
