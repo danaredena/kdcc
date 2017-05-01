@@ -35,6 +35,16 @@ import functools
 
 from functools import partial
 
+###########################################################
+#    _  _     ________   ________ __      __ __________   #
+# __| || |__ /  _____/  /  _____//  \    /  \\______   \  #
+# \   __   //   \  ___ /   \  ___\   \/\/   / |     ___/  #
+#  |  ||  | \    \_\  \\    \_\  \\        /  |    |      #
+# /_  ~~  _\ \______  / \______  / \__/\  /   |____|      #
+#   |_||_|          \/         \/       \/                #
+#                                                         #
+###########################################################
+
 engine = create_engine('sqlite:///kdcc.db')
 DBSession = sessionmaker()
 DBSession.configure(bind=engine)
@@ -591,56 +601,49 @@ class FacultyListButton(ListItemButton):
     pass
 
 class FacultyRecordsWindow(Widget):
+
     faculty_list = ObjectProperty()
     def __init__(self, **kwargs):
-        self.layout = BoxLayout(pos=(525,320), orientation="vertical", width=20)
         super(FacultyRecordsWindow, self).__init__(**kwargs)
-        del self.faculty_list.adapter.data[:]
-        all_faculty = Faculty.query.all()
-        for faculty in all_faculty:
-            details = [faculty.last_name+', '+faculty.first_name+' '+faculty.middle_name]
-            #print(", ".join(details))
-            self.faculty_list.adapter.data.extend([", ".join(details)])
-        self.faculty_list._trigger_reset_populate()
-        self.faculty_list.adapter.bind(on_selection_change=self.printDetails)
-    def printDetails(self, *args):
-        self.layout.clear_widgets()
-        self.remove_widget(self.layout)
-        if self.faculty_list.adapter.selection:
-            selection_obj = self.faculty_list.adapter.selection[0]
-            selection = selection_obj.text
-            data = selection.split(' ')
-        else:
-            return
-        print(data)
-        lastname = data[0][:-1]; firstname = data[1]; middlename = data[2]
-        print("lastname:", lastname)
-        for faculty in session.query(Faculty).filter_by(last_name=lastname):
-            address = faculty.address
-            birthdate = faculty.birth_date
-            sex = faculty.sex
-            doe = faculty.date_of_employment
-            contact_number = faculty.contact_number
-            position = faculty.position
-            monthly_rate = faculty.monthly_rate
-            tin_number = faculty.pers_tin
-            philhealth = faculty.pers_philhealth
-            social_security_number = faculty.pers_ssn
-            account_number = faculty.pers_accntnum
-            remarks = faculty.remarks
-            if (len(address) > 31):
-                if (address[31] == " "):
-                    address = address[:31] + "\n" + address[32:]
-                else:
-                    index = 31
-                    while (address[index] != " "):
-                        index -= 1
-                    address = address[:index] + "\n" + address[index+1:]
-            label_text = ("Name: %s, %s %s\nAddress: %s\nBirthdate: %s\nSex: %s\nDate of Employment: %s\nContact Number: %s\nPosition: %s\nMonthly Rate: %s\nPhilHealth: %s\nSocial Security Number: %s\nAccount Number: %s\nRemarks: %s") % (lastname, firstname, middlename, address, birthdate, sex, doe, contact_number, position, monthly_rate, philhealth, social_security_number, account_number, remarks)
-            print(label_text)
-            l = Label(text=label_text, font_size=18, color=(0,0,0,1))
-            self.layout.add_widget(l)
-            self.add_widget(self.layout)
+        self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
+        self.data = []
+        items = MonthlyPayroll.query.all()
+        for item in items:
+            for teacher in session.query(Faculty).filter_by(faculty_id=item.faculty_id):
+                id_number = str(teacher.id_number)
+                first_name = teacher.first_name
+                middle_name = teacher.middle_name
+                last_name = teacher.last_name
+                monthly_rate = teacher.monthly_rate
+            self.data.append([id_number, last_name+","+first_name+" "+middle_name, str(monthly_rate), str(item.computed_deduc), str(item.computed_salary), str(item.pending_deduc)])
+            print(id_number, first_name, middle_name, last_name)
+        print(self.data)
+
+        header = ['ID', 'Name', 'Monthly Rate','Computed Deduction', 'Computed Salary', 'Pending Deduction']
+        self.col_size = [0.1, 0.5, 0.2, 0.2, 0.2, 0.2]
+        #body_alignment = ["center", "left", "right", "right"]
+        self.body_alignment = ["center", "center", "center", "center", "center", "center"]
+
+        self.grid = DataGrid(header, self.data, self.body_alignment, self.col_size)
+        self.grid.rows = 10
+
+        scroll = ScrollView(size_hint=(1, 1), size=(400, 500000), scroll_y=0, pos_hint={'center_x':.5, 'center_y':.5})
+        scroll.add_widget(self.grid)
+        scroll.do_scroll_y = True
+        scroll.do_scroll_x = False
+
+        pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
+        '''
+        add_row_btn = Button(text="Add Row", on_press=pp)
+        del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
+        upt_row_btn = Button(text="Update Row")
+        slct_all_btn = Button(text="Select All", on_press=partial(self.grid.select_all))
+        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))'''
+
+        show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))
+
+        self.layout.add_widget(scroll)
+        self.add_widget(self.layout)
 
     def populate_list(self):
         pass
