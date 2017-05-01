@@ -60,9 +60,10 @@ class HeaderLabel(Label):
 #data_json = open('data.json')
 #data = json.load(data_json)
 
+counter = 0
 studentid = 0
 label = Label(text='', halign="left")
-counter = 0
+
 class DataGrid(GridLayout):
     def add_row(self, row_data, row_align, cols_size, instance, **kwargs):
         print(row_data)
@@ -95,6 +96,7 @@ class DataGrid(GridLayout):
                 if contactnumber2:
                     guardians += " (" + contactnumber2 + ")"
                 label.text = "Name: %s%s, %s %s\nNickname: %s\nBirth date: %s\nAge: %s\nSex: %s\nAddress: %s\nDate of admission: %s\nGuardian/s: %s\nUP/Non-UP: %s" %(lastname, suffix, firstname, middlename, nickname, birthdate, str(age), sex, address, dateofadmission, guardians, remarks)
+
             childs = self.parent.children
             for ch in childs:
                 if (ch.id == self.id):
@@ -296,9 +298,6 @@ def modal_insert(self):
 
 add_custom_row = Button(text="Add Custom Row", on_press=modal_insert)
 '''
-
-#globals huhu di ko magets kung paano yung pagsend ng value sa ibang windows TT kaya global variable na lang gamitin natin hahahaha
-#for editing
 
 #insert to database function (for safety)
 def add_db(addobject):
