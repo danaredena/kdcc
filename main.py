@@ -118,7 +118,7 @@ class DataGrid(GridLayout):
                 self.state = "normal"
         ##########################################################
         n = 0
-        for item in row_data:
+        for item in row_data[:-1]:
             cell = CLabel(text=('[color=000000]' + item + '[/color]'),
                                         background_normal="background_normal.png",
                                         background_down="background_pressed.png",
@@ -847,6 +847,7 @@ class FinanceSummaryWindow(Widget):
         super(FinanceSummaryWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
         self.data = []
+        self.faculty_id_list = []
         items = MonthlyPayroll.query.all()
         items = MonthlyPayroll.query.all()
         for item in items:
@@ -857,7 +858,8 @@ class FinanceSummaryWindow(Widget):
                 middle_name = teacher.middle_name
                 last_name = teacher.last_name
                 monthly_rate = teacher.monthly_rate
-            self.data.append([id_number, last_name+", "+first_name+" "+middle_name, str(monthly_rate), str(item.computed_deduc),  str(item.pending_deduc), str(item.computed_salary)])
+                faculty_id = teacher.faculty_id
+            self.data.append([id_number, last_name+", "+first_name+" "+middle_name, str(monthly_rate), str(item.computed_deduc),  str(item.pending_deduc), str(item.computed_salary), str(faculty_id)])
 
         header = ['Faculty ID', 'Name', 'Monthly\n  Rate', ' Computed\nDeductions', '  Pending\nDeductions', 'Computed\n Salary']
         self.col_size = [0.14, 0.29, 0.14, 0.14, 0.14, 0.14]
