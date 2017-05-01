@@ -793,6 +793,37 @@ class DailyAttendanceWindow(Widget):
             self.daily_list.adapter.data.extend([", ".join(details)])
         self.daily_list._trigger_reset_populate()
         self.daily_list.adapter.bind(on_selection_change=self.printDetails)
+        ##
+        self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
+        self.data = []
+        all_faculty = Faculty.query.all()
+        for faculty in all_faculty:
+            self.data.append([faculty.id_number, faculty.last_name+', '+faculty.first_name+' '+faculty.middle_name, str(faculty.faculty_id)])
+
+        header = ['ID Number', 'Name']
+        self.col_size = [0.33, 0.67] #fractions - add to 1
+        self.body_alignment = ["center", "center"]
+
+        self.grid = DataGrid(header, self.data, self.body_alignment, self.col_size)
+        self.grid.rows = 10
+
+        scroll = ScrollView(size_hint=(1, 1), size=(400, 500000), scroll_y=0, pos_hint={'center_x':.5, 'center_y':.5})
+        scroll.add_widget(self.grid)
+        scroll.do_scroll_y = True
+        scroll.do_scroll_x = False
+
+        pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
+        '''
+        add_row_btn = Button(text="Add Row", on_press=pp)
+        del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
+        upt_row_btn = Button(text="Update Row")
+        slct_all_btn = Button(text="Select All", on_press=partial(self.grid.select_all))
+        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))'''
+
+        show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))
+
+        self.layout.add_widget(scroll)
+        self.add_widget(self.layout)
     def printDetails(self, *args):
         self.layout.clear_widgets()
         self.remove_widget(self.layout)
