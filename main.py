@@ -62,7 +62,9 @@ class HeaderLabel(Label):
 
 counter = 0
 studentid = 0
-label = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
+facultyid = 0
+label_student = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
+label_faculty = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
 
 class DataGrid(GridLayout):
     def add_row(self, row_data, row_align, cols_size, instance, **kwargs):
@@ -73,29 +75,51 @@ class DataGrid(GridLayout):
         ##########################################################
         def change_on_press(self):
             global studentid
-            studentid = row_data[-1]
-            for student in session.query(Students).filter_by(student_id=studentid):
-                nickname = student.nickname
-                firstname = student.first_name
-                middlename = student.middle_name
-                lastname = student.last_name
-                suffix = ' '+student.suffix if student.suffix else ''
-                birthdate = student.birth_date
-                age = student.age if student.age else ''
-                sex = student.sex
-                address = student.address
-                dateofadmission = student.date_of_admission
-                guardian1 = student.guardian1_name
-                guardian2 = student.guardian2_name
-                contactnumber1 = student.contact_number1
-                contactnumber2 = student.contact_number2
-                remarks = student.up_dependent
-                guardians = guardian1 + " (" + contactnumber1 + ")"
-                if guardian2:
-                    guardians += ", " + guardian2
-                if contactnumber2:
-                    guardians += " (" + contactnumber2 + ")"
-                label.text = "Name: %s%s, %s %s\nNickname: %s\nBirth date: %s\nAge: %s\nSex: %s\nAddress: %s\nDate of admission: %s\nGuardian/s: %s\nUP/Non-UP: %s" %(lastname, suffix, firstname, middlename, nickname, birthdate, str(age), sex, address, dateofadmission, guardians, remarks)
+            global facultyid
+            if (studentid):
+                studentid = row_data[-1]
+                for student in session.query(Students).filter_by(student_id=studentid):
+                    nickname = student.nickname
+                    firstname = student.first_name
+                    middlename = student.middle_name
+                    lastname = student.last_name
+                    suffix = ' '+student.suffix if student.suffix else ''
+                    birthdate = student.birth_date
+                    age = student.age if student.age else ''
+                    sex = student.sex
+                    address = student.address
+                    dateofadmission = student.date_of_admission
+                    guardian1 = student.guardian1_name
+                    guardian2 = student.guardian2_name
+                    contactnumber1 = student.contact_number1
+                    contactnumber2 = student.contact_number2
+                    remarks = student.up_dependent
+                    guardians = guardian1 + " (" + contactnumber1 + ")"
+                    if guardian2:
+                        guardians += ", " + guardian2
+                    if contactnumber2:
+                        guardians += " (" + contactnumber2 + ")"
+                    label_student.text = "Name: %s%s, %s %s\nNickname: %s\nBirth date: %s\nAge: %s\nSex: %s\nAddress: %s\nDate of admission: %s\nGuardian/s: %s\nUP/Non-UP: %s" %(lastname, suffix, firstname, middlename, nickname, birthdate, str(age), sex, address, dateofadmission, guardians, remarks)
+            elif facultyid:
+                facultyid = row_data[-1]
+                for faculty in session.query(Faculty).filter_by(faculty_id=facultyid):
+                    firstname = faculty.first_name
+                    middlename = faculty.middle_name
+                    lastname = faculty.last_name
+                    suffix = ' '+faculty.suffix if faculty.suffix else ''
+                    address = faculty.address
+                    birthdate = faculty.birth_date
+                    sex = faculty.sex
+                    doe = faculty.date_of_employment
+                    contact_number = faculty.contact_number
+                    position = faculty.position
+                    monthly_rate = faculty.monthly_rate if faculty.monthly_rate else ''
+                    tin_number = faculty.pers_tin if faculty.pers_tin else ''
+                    philhealth = faculty.pers_philhealth if faculty.pers_philhealth else ''
+                    social_security_number = faculty.pers_ssn if faculty.pers_ssn else ''
+                    account_number = faculty.pers_accntnum if faculty.pers_accntnum else ''
+                    remarks = faculty.remarks if faculty.remarks else ''
+                    label_faculty.text = ("Name: %s, %s %s\nAddress: %s\nBirthdate: %s\nSex: %s\nDate of Employment: %s\nContact Number: %s\nPosition: %s\nMonthly Rate: %s\nTin number: %s\nPhilHealth: %s\nSocial Security Number: %s\nAccount Number: %s\nRemarks: %s") % (lastname, firstname, middlename, address, birthdate, sex, doe, contact_number, position, monthly_rate, tin_number, philhealth, social_security_number, account_number, remarks)
 
             childs = self.parent.children
             for ch in childs:
@@ -388,10 +412,13 @@ class StudentListButton(ListItemButton):
 class SchoolyearListButton(ListItemButton):
     pass
 
-
 class StudentRecordsWindow(Widget):
     student_list = ObjectProperty()
     def __init__(self, **kwargs):
+        global studentid
+        global facultyid
+        studentid = -1
+        facultyid = 0
         super(StudentRecordsWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
@@ -410,7 +437,7 @@ class StudentRecordsWindow(Widget):
         scroll = ScrollView(size_hint=(1, 1), size=(400, 500000), scroll_y=0, pos_hint={'center_x':.5, 'center_y':.5})
         scroll.add_widget(self.grid)
         scroll.do_scroll_y = True
-        scroll.do_scroll_x = True
+        scroll.do_scroll_x = False
 
         '''pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
 
@@ -422,15 +449,18 @@ class StudentRecordsWindow(Widget):
 
         show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))'''
 
-        label.bind(size=label.setter('text_size'))
-        label_grid = BoxLayout(orientation="vertical")
-        label_grid.add_widget(label)
+        label_student.bind(size=label_student.setter('text_size'))
+        self.label_grid = BoxLayout(orientation="vertical")
+        self.label_grid.add_widget(label_student)
 
         self.layout.add_widget(scroll)
-        self.layout.add_widget(label_grid)
+        self.layout.add_widget(self.label_grid)
         self.add_widget(self.layout)
 
     def main_menu(self, *args):
+        global label_student
+        label_student.text = ''
+        self.label_grid.remove_widget(label_student)
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
     def create(self, *args):
@@ -627,7 +657,11 @@ class FacultyRecordsWindow(Widget):
     faculty_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(FacultyRecordsWindow, self).__init__(**kwargs)
-        self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
+        global studentid
+        global facultyid
+        studentid = 0
+        facultyid = -1
+        self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
         all_faculty = Faculty.query.all()
         for faculty in all_faculty:
@@ -645,22 +679,29 @@ class FacultyRecordsWindow(Widget):
         scroll.do_scroll_y = True
         scroll.do_scroll_x = False
 
-        pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
-        '''
+        '''pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
+        
         add_row_btn = Button(text="Add Row", on_press=pp)
         del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
         upt_row_btn = Button(text="Update Row")
         slct_all_btn = Button(text="Select All", on_press=partial(self.grid.select_all))
-        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))'''
+        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))
 
-        show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))
+        show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))'''
+        label_faculty.bind(size=label_faculty.setter('text_size'))
+        self.label_grid = BoxLayout(orientation="vertical")
+        self.label_grid.add_widget(label_faculty)
 
         self.layout.add_widget(scroll)
+        self.layout.add_widget(self.label_grid)
         self.add_widget(self.layout)
 
     def populate_list(self):
         pass
     def main_menu(self, *args):
+        global label_faculty
+        self.label_grid.remove_widget(label_faculty)
+        label_faculty.text = ''
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
     def create(self, *args):
@@ -683,6 +724,7 @@ class FacultyRecordsWindow(Widget):
 
             delete_db(int(selection[0]), 1) #gets student_id, 0 - for student record
             self.faculty_list._trigger_reset_populate()
+
 
 class CreateFacultyWindow(Widget):
     def create(self, *args):
