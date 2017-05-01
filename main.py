@@ -464,6 +464,9 @@ class StudentRecordsWindow(Widget):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
     def create(self, *args):
+        global label_student
+        label_student.text = ''
+        self.label_grid.remove_widget(label_student)
         self.clear_widgets()
         self.add_widget(CreateStudentWindow())
     def edit(self):
@@ -473,6 +476,9 @@ class StudentRecordsWindow(Widget):
         self.clear_widgets()
         self.add_widget(EditStudentWindow())
     def delete_student(self):
+        global label_student
+        label_student.text = ''
+        self.label_grid.remove_widget(label_student)
         if self.student_list.adapter.selection:
             selection_obj = self.student_list.adapter.selection[0]
             selection = selection_obj.text
@@ -484,6 +490,9 @@ class StudentRecordsWindow(Widget):
             delete_db(get[0][0], 0) #gets student_id, 0 - for student record
             self.student_list._trigger_reset_populate()
     def choose_schoolyear(self, *args):
+        global label_student
+        label_student.text = ''
+        self.label_grid.remove_widget(label_student)
         self.clear_widgets()
         self.add_widget(ChooseSchoolyearWindow())
 
@@ -688,8 +697,6 @@ class FacultyRecordsWindow(Widget):
         self.layout.add_widget(self.label_grid)
         self.add_widget(self.layout)
 
-    def populate_list(self):
-        pass
     def main_menu(self, *args):
         global label_faculty
         self.label_grid.remove_widget(label_faculty)
@@ -697,17 +704,21 @@ class FacultyRecordsWindow(Widget):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
     def create(self, *args):
+        global label_faculty
+        self.label_grid.remove_widget(label_faculty)
+        label_faculty.text = ''
         self.clear_widgets()
         self.add_widget(CreateFacultyWindow())
     def edit(self):
-        if self.faculty_list.adapter.selection:
-            global facultyid
-            selection_obj = self.faculty_list.adapter.selection[0]
-            selection = selection_obj.text
-            facultyid = int(selection[0])
-            self.clear_widgets()
-            self.add_widget(EditFacultyWindow())
+        global label_faculty
+        self.label_grid.remove_widget(label_faculty)
+        label_faculty.text = ''
+        self.clear_widgets()
+        self.add_widget(EditFacultyWindow())
     def delete_faculty(self):
+        global label_faculty
+        self.label_grid.remove_widget(label_faculty)
+        label_faculty.text = ''
         if self.faculty_list.adapter.selection:
             selection_obj = self.faculty_list.adapter.selection[0]
             selection = selection_obj.text
