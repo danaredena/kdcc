@@ -1040,12 +1040,13 @@
 <DailyAttendanceWindow>:
     daily_list: daily_list_view
     Button:
-        id: save
+        id: home
         font_size: 15
         center_x: root.width
         center_y: root.y + 75
-        text: "Save"
-        size: (100,40)
+        text: "Back to Home"
+        size: (130,40)
+        on_press: root.main_menu()
 	TextInput:
         id: change_date
         font_size: 20
@@ -1065,22 +1066,20 @@
         size: (150,35)
         on_press: root.prev_attendance()
     Button:
-        id: home
+        id: save
         font_size: 15
         center_x: root.width + 560
         center_y: root.y + 75
-        text: "Back to Home"
-        size: (130,40)
-        on_press: root.main_menu()
+        text: "Save"
+        size: (100,40)
     ListView:
         id: daily_list_view
         adapter:
             ListAdapter(data=[], cls=main.DailyListButton)
-        width: 680
+        width: 300
         height: 400
-        center_x: root.width + 285
+        x: 50
         center_y: root.y + 290
-
 <PrevAttendanceWindow>:
     prev_list: prev_list_view
     Button:

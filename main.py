@@ -557,24 +557,61 @@ class DailyListButton(ListItemButton):
 class DailyAttendanceWindow(Widget):
     daily_list = ObjectProperty()
     def __init__(self, **kwargs):
+        self.layout = BoxLayout(pos=(525,320), orientation="vertical", width=20)
         super(DailyAttendanceWindow, self).__init__(**kwargs)
         del self.daily_list.adapter.data[:]
         all_faculty = Faculty.query.all()
         for faculty in all_faculty:
-            details = [str(faculty.faculty_id), faculty.id_number, faculty.first_name+' '+faculty.last_name]
-            #print(", ".join(details))
+            details = [faculty.last_name+', '+faculty.first_name+' '+faculty.middle_name]
             self.daily_list.adapter.data.extend([", ".join(details)])
         self.daily_list._trigger_reset_populate()
+        self.daily_list.adapter.bind(on_selection_change=self.printDetails)
+    def printDetails(self, *args):
+        self.layout.clear_widgets()
+        self.remove_widget(self.layout)
+        if self.daily_list.adapter.selection:
+            selection_obj = self.daily_list.adapter.selection[0]
+            selection = selection_obj.text
+            data = selection.split(' ')
+        else:
+            return
+        print(data)
+        lastname = data[0][:-1]; firstname = data[1]; middlename = data[2]
+        print("lastname:", lastname)
+        for faculty in session.query(Faculty).filter_by(last_name=lastname):
+            address = faculty.address
+            birthdate = faculty.birth_date
+            sex = faculty.sex
+            doe = faculty.date_of_employment
+            contact_number = faculty.contact_number
+            position = faculty.position
+            monthly_rate = faculty.monthly_rate
+            tin_number = faculty.pers_tin
+            philhealth = faculty.pers_philhealth
+            social_security_number = faculty.pers_ssn
+            account_number = faculty.pers_accntnum
+            remarks = faculty.remarks
+            if (len(address) > 31):
+                if (address[31] == " "):
+                    address = address[:31] + "\n" + address[32:]
+                else:
+                    index = 31
+                    while (address[index] != " "):
+                        index -= 1
+                    address = address[:index] + "\n" + address[index+1:]
+            label_text = ("Name: %s, %s %s\nAddress: %s\nBirthdate: %s\nSex: %s\nDate of Employment: %s\nContact Number: %s\nPosition: %s\nMonthly Rate: %s\nPhilHealth: %s\nSocial Security Number: %s\nAccount Number: %s\nRemarks: %s") % (lastname, firstname, middlename, address, birthdate, sex, doe, contact_number, position, monthly_rate, philhealth, social_security_number, account_number, remarks)
+            print(label_text)
+            l = Label(text=label_text, font_size=18, color=(0,0,0,1))
+            self.layout.add_widget(l)
+            self.add_widget(self.layout)
+
+    def main_menu(self, *args):
+        self.clear_widgets()
+        self.add_widget(MainMenuWindow())
 
     def prev_attendance(self):
         self.clear_widgets()
         self.add_widget(PrevAttendanceWindow())
-
-    def populate_list(self):
-        pass
-    def main_menu(self, *args):
-        self.clear_widgets()
-        self.add_widget(MainMenuWindow())
 
 class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kivy
     prev_list = ObjectProperty()
