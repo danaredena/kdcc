@@ -195,6 +195,10 @@ class DataGrid(GridLayout):
         counter += 1
         #self.rows += 1
     def remove_row(self, n_cols, instance, **kwargs):
+        label_student.text = ''
+        label_faculty.text = ''
+        if studentid: delete_db(studentid, 0)
+
         childs = self.parent.children
         selected = 0
         for ch in childs:
@@ -458,6 +462,8 @@ class StudentRecordsWindow(Widget):
         self.layout.add_widget(scroll)
         self.layout.add_widget(self.label_grid)
         self.add_widget(self.layout)
+        del_row_btn = Button(text="Delete", on_press=partial(self.grid.remove_row, len(header)), font_size=15, pos=(250,25), size=(100,40))
+        self.add_widget(del_row_btn)
 
     def main_menu(self, *args):
         global label_student
@@ -477,20 +483,6 @@ class StudentRecordsWindow(Widget):
         self.label_grid.remove_widget(label_student)
         self.clear_widgets()
         self.add_widget(EditStudentWindow())
-    def delete_student(self):
-        global label_student
-        label_student.text = ''
-        self.label_grid.remove_widget(label_student)
-        if self.student_list.adapter.selection:
-            selection_obj = self.student_list.adapter.selection[0]
-            selection = selection_obj.text
-            data = selection.split(' ')
-            lastname = data[0][:-1]; firstname = data[1]; middlename = data[2]
-            get = session.query(Students.student_id).filter_by(last_name=lastname, first_name=firstname, middle_name=middlename)
-            studentid = get[0][0]
-            self.student_list.adapter.data.remove(selection)
-            delete_db(get[0][0], 0) #gets student_id, 0 - for student record
-            self.student_list._trigger_reset_populate()
     def choose_schoolyear(self, *args):
         global label_student
         label_student.text = ''

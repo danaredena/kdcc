@@ -74,7 +74,7 @@
         center_y: root.y + 250
         text: "Daily Attendance"
         size: (250,100)
-		on_press: root.daily_attendance()
+        on_press: root.daily_attendance()
     Button:
         id: finance_summary
         font_size: 15
@@ -82,7 +82,7 @@
         center_y: root.y + 250
         text: "Financial Semi-Monthly\n            Summary"
         size: (250,100)
-		on_press: root.finance_summary()
+        on_press: root.finance_summary()
     Button:
         id: logout
         font_size: 15
@@ -112,14 +112,6 @@
         size: (100,40)
         on_press: root.edit()
     Button:
-        id: delete
-        font_size: 15
-        center_x: root.width + 200
-        center_y: root.y + 75
-        text: "Delete"
-        size: (100,40)
-        on_press:root.delete_student()
-    Button:
         id: view_summary
         font_size: 15
         center_x: root.width
@@ -134,7 +126,7 @@
         center_y: root.y + 560
         text: "Schoolyear List"
         size: (150,50)
-		on_press: root.choose_schoolyear()
+        on_press: root.choose_schoolyear()
     Button:
         id: home
         font_size: 15
@@ -194,7 +186,7 @@
         hint_text: "Middle Name"
         write_tab: False
         multiline: False
-	TextInput:
+    TextInput:
         id: suffix
         font_size: 20
         center_x: root.width + 25
@@ -354,7 +346,7 @@
         hint_text: "Middle Name"
         write_tab: False
         multiline: False
-	TextInput:
+    TextInput:
         id: suffix
         font_size: 20
         center_x: root.width + 25
@@ -481,7 +473,7 @@
 
 
 <ChooseSchoolyearWindow>:
-	schoolyear_list: schoolyear_list_view
+    schoolyear_list: schoolyear_list_view
     Button:
         id: add_schoolyear
         font_size: 15
@@ -489,8 +481,8 @@
         center_y: root.y + 75
         text: "Start Schoolyear"
         size: (150,40)
-		on_press: root.create_schoolyear()
-	Button:
+        on_press: root.create_schoolyear()
+    Button:
         id: open
         font_size: 15
         center_x: root.width + 150
@@ -512,7 +504,7 @@
         center_y: root.y + 560
         text: "Schoolyear List"
         size: (150,50)
-		on_press: root.populate_list()
+        on_press: root.populate_list()
     Button:
         id: home
         font_size: 15
@@ -521,7 +513,7 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
-	ListView:
+    ListView:
         id: schoolyear_list_view
         adapter:
             ListAdapter(data=[], cls=main.SchoolyearListButton)
@@ -531,7 +523,7 @@
         center_y: root.y + 290
 
 <CreateSchoolyearWindow>
-	TextInput:
+    TextInput:
         id: schoolyear_code
         font_size: 20
         center_x: root.width + 25
@@ -541,7 +533,7 @@
         hint_text: "Schoolyear Code"
         write_tab: False
         multiline: False
-	Button:
+    Button:
         id: student_records
         font_size: 15
         center_x: root.width + 450
@@ -572,7 +564,7 @@
         center_x: root.width + 150
         center_y: root.y + 75
         text: "Disenroll Student"
-		size: (150,40)
+        size: (150,40)
     Button:
         id: home
         font_size: 15
@@ -669,7 +661,7 @@
         hint_text: "Middle Name"
         write_tab: False
         multiline: False
-	TextInput:
+    TextInput:
         id: suffix
         font_size: 20
         center_x: root.width + 25
@@ -857,7 +849,7 @@
         hint_text: "Middle Name"
         write_tab: False
         multiline: False
-	TextInput:
+    TextInput:
         id: suffix
         font_size: 20
         center_x: root.width + 25
@@ -1022,7 +1014,7 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
-	TextInput:
+    TextInput:
         id: change_date
         font_size: 20
         center_x: root.width + 360
@@ -1064,7 +1056,7 @@
         center_y: root.y + 75
         text: "Save"
         size: (100,40)
-	TextInput:
+    TextInput:
         id: change_date
         font_size: 20
         center_x: root.width + 360

@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import *
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker, relationship, backref
 
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
@@ -14,9 +14,64 @@ Base = declarative_base()
 
 class User(Base):
     __tablename__ = 'users'
-
     username = Column(String(20), nullable=False, primary_key=True)
     password = Column(String(20), nullable=False)
+
+class Enrolled(Base):
+    __tablename__ = 'enrolled'
+    schoolyear_code = Column(String(10), ForeignKey('schoolyear.schoolyear_code'), nullable=False, primary_key=True)
+    student_id = Column(Integer, ForeignKey('student.student_id', ondelete='CASCADE'), nullable=False, primary_key=True)
+    payment_mode = Column(Integer, nullable=False)
+    semestral_pay = Column(String, nullable=True)
+    semestral_OR = Column(String, nullable=True)
+    month1_OR = Column(String, nullable=True)
+    month2_pay = Column(String, nullable=True)
+    month2_OR = Column(String, nullable=True)
+    month3_pay = Column(String, nullable=True)
+    month3_OR = Column(String, nullable=True)
+    month4_pay = Column(String, nullable=True)
+    month4_OR = Column(String, nullable=True)
+
+class Employed(Base):
+    __tablename__ = 'employed'
+    schoolyear_code = Column(String(10), ForeignKey('schoolyear.schoolyear_code'), nullable=False, primary_key=True)
+    faculty_id = Column(Integer, ForeignKey('faculty.faculty_id', ondelete='CASCADE'), nullable=False, primary_key=True)
+
+class MonthCutoff(Base):
+    __tablename__ = 'month'
+    __table_args__ = (UniqueConstraint('start_date','end_date'),)
+    monthcutoff_id = Column(Integer, nullable=False, primary_key=True, autoincrement=True)
+    schoolyear_code = Column(String(10), ForeignKey('schoolyear.schoolyear_code'), nullable=False)
+    start_date = Column(String(10), nullable=False)
+    end_date = Column(String(10), nullable=False)
+
+class DailyAttendance(Base):
+    __tablename__ = 'daily_attendance'
+    monthcutoff_id = Column(Integer, ForeignKey('month.monthcutoff_id'), nullable=False)
+    date = Column(String(10), nullable=False, primary_key=True)
+    faculty_id = Column(Integer, ForeignKey('faculty.faculty_id'), nullable=False, primary_key=True)
+    is_absent = Column(Float, nullable=True) #float: 1 - whole day; 0.5 - halfday; 0 - not absent
+    is_unpaid_absent = Column(Float, nullable=True) #float: 1 - whole day; 0.5 - halfday; 0 - not absent ; -1 - emergency; -2 - sick
+    time_in = Column(String(5), nullable=True) #formatted din (will add constraints later)
+    time_out = Column(String(5), nullable=True) #constraint military format
+    minutes_late = Column(Integer, nullable=True) #constraint 0+
+
+class MonthlyPayroll(Base):
+    __tablename__ = 'monthly_payroll'
+    monthcutoff_id = Column(Integer, ForeignKey('month.monthcutoff_id'), nullable=False)
+    faculty_id = Column(Integer, ForeignKey('faculty.faculty_id'), nullable=False, primary_key=True)
+
+    ## SUMMARY PART
+    no_of_absences = Column(Integer, nullable=True)
+    no_of_unpaid_absences = Column(Integer, nullable=True)
+    #no of unpaid absences??
+    total_minutes_late = Column(Integer, nullable=True)
+    pending_deduc = Column(Integer, nullable=True)
+
+    ## COMPUTATIONAL PART
+    computed_deduc = Column(Integer, nullable=True)
+    computed_salary = Column(Integer, nullable=True)
+
 
 class Students(Base):
     __tablename__ = 'student'
@@ -39,6 +94,7 @@ class Students(Base):
     contact_number1 = Column(String, nullable=False)
     contact_number2 = Column(String, nullable=True)
     up_dependent = Column(String, nullable=False)
+    child = relationship(Enrolled, backref="parent", passive_deletes=True)
 
 class Faculty(Base):
     __tablename__ = 'faculty'
@@ -62,66 +118,13 @@ class Faculty(Base):
     pers_ssn = Column(String, nullable=True)
     pers_philhealth = Column(String, nullable=True)
     pers_accntnum = Column(String, nullable=True)
+    child = relationship(Employed, backref="parent", passive_deletes=True)
 
 class Schoolyear(Base):
     __tablename__ = 'schoolyear'
-
+    
     schoolyear_code = Column(String(10), nullable=False, primary_key=True)
 
-class Enrolled(Base):
-    __tablename__ = 'enrolled'
-    schoolyear_code = Column(String(10), ForeignKey('schoolyear.schoolyear_code'), nullable=False, primary_key=True)
-    student_id = Column(Integer, ForeignKey('student.student_id'), nullable=False, primary_key=True)
-    payment_mode = Column(Integer, nullable=False)
-    semestral_pay = Column(String, nullable=True)
-    semestral_OR = Column(String, nullable=True)
-    month1_OR = Column(String, nullable=True)
-    month2_pay = Column(String, nullable=True)
-    month2_OR = Column(String, nullable=True)
-    month3_pay = Column(String, nullable=True)
-    month3_OR = Column(String, nullable=True)
-    month4_pay = Column(String, nullable=True)
-    month4_OR = Column(String, nullable=True)
-
-class Employed(Base):
-    __tablename__ = 'employed'
-    schoolyear_code = Column(String(10), ForeignKey('schoolyear.schoolyear_code'), nullable=False, primary_key=True)
-    faculty_id = Column(Integer, ForeignKey('faculty.faculty_id'), nullable=False, primary_key=True)
-
-class MonthCutoff(Base):
-    __tablename__ = 'month'
-    __table_args__ = (UniqueConstraint('start_date','end_date'),)
-    monthcutoff_id = Column(Integer, nullable=False, primary_key=True, autoincrement=True)
-    schoolyear_code = Column(String(10), ForeignKey('schoolyear.schoolyear_code'), nullable=False)
-    start_date = Column(String(10), nullable=False)
-    end_date = Column(String(10), nullable=False)
-
-class DailyAttendance(Base):
-    __tablename__ = 'daily_attendance'
-    monthcutoff_id = Column(Integer, ForeignKey('month.monthcutoff_id'), nullable=False)
-    date = Column(String(10), nullable=False, primary_key=True)
-    faculty_id = Column(Integer, ForeignKey('faculty.faculty_id'), nullable=False, primary_key=True)
-    is_absent = Column(Float, nullable=True) #float: 1 - whole day; 0.5 - halfday; 0 - not absent
-    is_unpaid_absent = Column(Float, nullable=True) #float: 1 - whole day; 0.5 - halfday; 0 - not absent ; -1 - emergency; -2 - sick
-    time_in = Column(String(5), nullable=True) #formatted din (will add constraints later)
-    time_out = Column(String(5), nullable=True) #constraint military format
-    minutes_late = Column(Integer, nullable=True) #constraint 0+
-
-class MonthlyPayroll(Base):
-    __tablename__ = 'monthly_payroll'
-    monthcutoff_id = Column(Integer, ForeignKey('month.monthcutoff_id'), nullable=False, primary_key=True)
-    faculty_id = Column(Integer, ForeignKey('faculty.faculty_id'), nullable=False, primary_key=True)
-
-    ## SUMMARY PART
-    no_of_absences = Column(Integer, nullable=True)
-    no_of_unpaid_absences = Column(Integer, nullable=True)
-    #no of unpaid absences??
-    total_minutes_late = Column(Integer, nullable=True)
-    pending_deduc = Column(Integer, nullable=True)
-
-    ## COMPUTATIONAL PART
-    computed_deduc = Column(Integer, nullable=True)
-    computed_salary = Column(Integer, nullable=True)
 
 engine = create_engine('sqlite:///kdcc.db')
 db_session = scoped_session(sessionmaker(autocommit=False,
