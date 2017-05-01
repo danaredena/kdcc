@@ -198,6 +198,7 @@ class DataGrid(GridLayout):
         label_student.text = ''
         label_faculty.text = ''
         if studentid: delete_db(studentid, 0)
+        elif facultyid: delete_db(facultyid, 1)
 
         childs = self.parent.children
         selected = 0
@@ -690,37 +691,24 @@ class FacultyRecordsWindow(Widget):
         self.layout.add_widget(scroll)
         self.layout.add_widget(self.label_grid)
         self.add_widget(self.layout)
+        del_row_btn = Button(text="Delete", on_press=partial(self.grid.remove_row, len(header)), font_size=15, pos=(250,25), size=(100,40))
+        self.add_widget(del_row_btn)
 
     def main_menu(self, *args):
-        global label_faculty
         self.label_grid.remove_widget(label_faculty)
         label_faculty.text = ''
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
     def create(self, *args):
-        global label_faculty
         self.label_grid.remove_widget(label_faculty)
         label_faculty.text = ''
         self.clear_widgets()
         self.add_widget(CreateFacultyWindow())
     def edit(self):
-        global label_faculty
         self.label_grid.remove_widget(label_faculty)
         label_faculty.text = ''
         self.clear_widgets()
         self.add_widget(EditFacultyWindow())
-    def delete_faculty(self):
-        global label_faculty
-        self.label_grid.remove_widget(label_faculty)
-        label_faculty.text = ''
-        if self.faculty_list.adapter.selection:
-            selection_obj = self.faculty_list.adapter.selection[0]
-            selection = selection_obj.text
-            #print(selection[0])
-            self.faculty_list.adapter.data.remove(selection)
-
-            delete_db(int(selection[0]), 1) #gets student_id, 0 - for student record
-            self.faculty_list._trigger_reset_populate()
 
 
 class CreateFacultyWindow(Widget):
@@ -791,6 +779,7 @@ class EditFacultyWindow(Widget):
     def __init__(self, **kwargs):
         super(EditFacultyWindow, self).__init__(**kwargs)
         global facultyid
+        print('facultyid:', facultyid)
         for teacher in session.query(Faculty).filter_by(faculty_id=facultyid):
             self.ids.id_number.text = str(teacher.id_number)
             self.ids.first_name.text = teacher.first_name
@@ -930,7 +919,6 @@ monthcutoffid = 2
 #FINANCIAL-PAYROLL
 class FinanceSummaryWindow(Widget):
     def __init__(self, **kwargs):
-
         global studentid
         global facultyid
         global monthcutoffid

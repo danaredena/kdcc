@@ -49,7 +49,7 @@ class DailyAttendance(Base):
     __tablename__ = 'daily_attendance'
     monthcutoff_id = Column(Integer, ForeignKey('month.monthcutoff_id'), nullable=False)
     date = Column(String(10), nullable=False, primary_key=True)
-    faculty_id = Column(Integer, ForeignKey('faculty.faculty_id'), nullable=False, primary_key=True)
+    faculty_id = Column(Integer, ForeignKey('faculty.faculty_id', ondelete='CASCADE'), nullable=False, primary_key=True)
     is_absent = Column(Float, nullable=True) #float: 1 - whole day; 0.5 - halfday; 0 - not absent
     is_unpaid_absent = Column(Float, nullable=True) #float: 1 - whole day; 0.5 - halfday; 0 - not absent ; -1 - emergency; -2 - sick
     time_in = Column(String(5), nullable=True) #formatted din (will add constraints later)
@@ -59,7 +59,7 @@ class DailyAttendance(Base):
 class MonthlyPayroll(Base):
     __tablename__ = 'monthly_payroll'
     monthcutoff_id = Column(Integer, ForeignKey('month.monthcutoff_id'), nullable=False)
-    faculty_id = Column(Integer, ForeignKey('faculty.faculty_id'), nullable=False, primary_key=True)
+    faculty_id = Column(Integer, ForeignKey('faculty.faculty_id', ondelete='CASCADE'), nullable=False, primary_key=True)
 
     ## SUMMARY PART
     no_of_absences = Column(Integer, nullable=True)
@@ -118,7 +118,9 @@ class Faculty(Base):
     pers_ssn = Column(String, nullable=True)
     pers_philhealth = Column(String, nullable=True)
     pers_accntnum = Column(String, nullable=True)
-    child = relationship(Employed, backref="parent", passive_deletes=True)
+    child1 = relationship(Employed, backref="parent", passive_deletes=True)
+    child2 = relationship(DailyAttendance, backref="parent", passive_deletes=True)
+    child3 = relationship(MonthlyPayroll, backref="parent", passive_deletes=True)
 
 class Schoolyear(Base):
     __tablename__ = 'schoolyear'
