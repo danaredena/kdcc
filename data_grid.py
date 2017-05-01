@@ -251,6 +251,7 @@ unslct_all_btn = Button(text="Unselect All", on_press=partial(grid.unselect_all)
 show_grid_log = Button(text="Show log", on_press=partial(grid.show_log))
 
 ###
+'''
 def modal_insert(self):
     lbl1 = Label(text='ID', id="lbl")
     lbl2 = Label(text='Nome', id="lbl")
@@ -302,7 +303,7 @@ def modal_insert(self):
     view.open()
 
 add_custom_row = Button(text="Add Custom Row", on_press=modal_insert)
-
+'''
 
 def fill_data(self):
     for d in data:
