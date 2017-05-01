@@ -467,18 +467,11 @@ class StudentRecordsWindow(Widget):
         self.clear_widgets()
         self.add_widget(CreateStudentWindow())
     def edit(self):
-        if self.student_list.adapter.selection:
-            global studentid
-            selection_obj = self.student_list.adapter.selection[0]
-            selection = selection_obj.text
-            #studentid = int(selection[0])
-            data = selection.split("  ")
-            lastname = data[0][:-1]; firstname = data[1]; middlename = data[2]
-            get = session.query(Students.student_id).filter_by(last_name=lastname, first_name=firstname, middle_name=middlename)
-            studentid = get[0][0]
-
-            self.clear_widgets()
-            self.add_widget(EditStudentWindow())
+        global label_student
+        label_student.text = ''
+        self.label_grid.remove_widget(label_student)
+        self.clear_widgets()
+        self.add_widget(EditStudentWindow())
     def delete_student(self):
         if self.student_list.adapter.selection:
             selection_obj = self.student_list.adapter.selection[0]
@@ -555,7 +548,6 @@ class CreateStudentWindow(Widget):
 class EditStudentWindow(Widget):
     def __init__(self, **kwargs):
         super(EditStudentWindow, self).__init__(**kwargs)
-        global studentid
         for student in session.query(Students).filter_by(student_id=studentid):
             self.ids.nickname.text = student.nickname
             self.ids.first_name.text = student.first_name
