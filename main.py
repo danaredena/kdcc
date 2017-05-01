@@ -63,6 +63,7 @@ class HeaderLabel(Label):
 counter = 0
 class DataGrid(GridLayout):
     def add_row(self, row_data, row_align, cols_size, instance, **kwargs):
+        print(row_data)
         global counter
         self.rows += 1
         #self.rows = 2
@@ -74,10 +75,11 @@ class DataGrid(GridLayout):
                     print( ch.id)
                     print( len(ch.id))
                     row_n = 0
-                    if (len(ch.id) == 11):
+                    if (len(ch.id) == 11): #format
                         row_n = ch.id[4:5]
+
                     else:
-                        row_n = ch.id[4:6]
+                        row_n = ch.id[4:6] #
                     for c in childs:
                         #ETO UNG NAG-IIBA UNG KULANG NG ROWS
                         if ('row_'+str(row_n)+'_col_0') == c.id:
@@ -370,19 +372,14 @@ class StudentRecordsWindow(Widget):
         super(StudentRecordsWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
         self.data = []
-        items = Students.query.all()
-        for item in items:
-            for student in session.query(Students).filter_by(student_id=item.student_id):
-                first_name = student.first_name
-                middle_name = student.middle_name
-                last_name = student.last_name
-            self.data.append([last_name+", "+first_name+" "+middle_name])
-        print(self.data)
+        students = Students.query.all()
+        for student in students:
+            self.data.append([student.nickname, student.last_name+', '+student.first_name+' '+student.middle_name, str(student.student_id)])
 
-        header = ['Name']
-        self.col_size = [0.5]
+        header = ['Nickname', 'Name']
+        self.col_size = [0.33, 0.67] #fractions siya, dapat equal to 1
         #body_alignment = ["center", "left", "right", "right"]
-        self.body_alignment = ["center"]
+        self.body_alignment = ["center", "center"]
 
         self.grid = DataGrid(header, self.data, self.body_alignment, self.col_size)
         self.grid.rows = 10
@@ -604,22 +601,13 @@ class FacultyRecordsWindow(Widget):
         super(FacultyRecordsWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
         self.data = []
-        items = MonthlyPayroll.query.all()
-        for item in items:
-            for teacher in session.query(Faculty).filter_by(faculty_id=item.faculty_id):
-                id_number = str(teacher.id_number)
-                first_name = teacher.first_name
-                middle_name = teacher.middle_name
-                last_name = teacher.last_name
-                monthly_rate = teacher.monthly_rate
-            self.data.append([id_number, last_name+","+first_name+" "+middle_name, str(monthly_rate), str(item.computed_deduc), str(item.computed_salary), str(item.pending_deduc)])
-            print(id_number, first_name, middle_name, last_name)
-        print(self.data)
+        all_faculty = Faculty.query.all()
+        for faculty in all_faculty:
+            self.data.append([faculty.id_number, faculty.last_name+', '+faculty.first_name+' '+faculty.middle_name, str(faculty.faculty_id)])
 
-        header = ['ID', 'Name', 'Monthly Rate','Computed Deduction', 'Computed Salary', 'Pending Deduction']
-        self.col_size = [0.1, 0.5, 0.2, 0.2, 0.2, 0.2]
-        #body_alignment = ["center", "left", "right", "right"]
-        self.body_alignment = ["center", "center", "center", "center", "center", "center"]
+        header = ['ID Number', 'Name']
+        self.col_size = [0.33, 0.67] #fractions - add to 1
+        self.body_alignment = ["center", "center"]
 
         self.grid = DataGrid(header, self.data, self.body_alignment, self.col_size)
         self.grid.rows = 10
@@ -842,13 +830,10 @@ class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kiv
 
 #FINANCIAL-PAYROLL
 class FinanceSummaryWindow(Widget):
-    finance_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(FinanceSummaryWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
         self.data = []
-        self.faculty_id_list = []
-        items = MonthlyPayroll.query.all()
         items = MonthlyPayroll.query.all()
         for item in items:
 

@@ -7,8 +7,8 @@
         Color:
             rgba: (0.871, 0.725, 0.886,1)
         Rectangle:
-            pos: self.pos
-            size: self.size
+            pos: 0,0
+            size: 800, 600
     Image:
         source: 'logo.png'
         nocache: True
@@ -1104,7 +1104,6 @@
         center_y: root.y + 290
 
 <FinanceSummaryWindow>:
-    finance_list: finance_list_view
     TextInput:
         id: change_date1
         font_size: 20
@@ -1141,14 +1140,6 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
-    ListView:
-        id: finance_list_view
-        adapter:
-            ListAdapter(data=[], cls=main.FacultyListButton)
-        width: 680
-        height: 400
-        center_x: root.width + 285
-        center_y: root.y + 290
 
 <PayrollWindow>:
     payfaculty_list: payfaculty_list_view
