@@ -65,6 +65,7 @@ studentid = 0
 facultyid = 0
 label_student = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
 label_faculty = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
+label_attn = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
 
 class DataGrid(GridLayout):
     def add_row(self, row_data, row_align, cols_size, instance, **kwargs):
@@ -76,6 +77,7 @@ class DataGrid(GridLayout):
         def change_on_press(self):
             global studentid
             global facultyid
+            print (studentid, facultyid)
             if (studentid):
                 studentid = row_data[-1]
                 for student in session.query(Students).filter_by(student_id=studentid):
@@ -100,7 +102,7 @@ class DataGrid(GridLayout):
                     if contactnumber2:
                         guardians += " (" + contactnumber2 + ")"
                     label_student.text = "Name: %s%s, %s %s\nNickname: %s\nBirth date: %s\nAge: %s\nSex: %s\nAddress: %s\nDate of admission: %s\nGuardian/s: %s\nUP/Non-UP: %s" %(lastname, suffix, firstname, middlename, nickname, birthdate, str(age), sex, address, dateofadmission, guardians, remarks)
-            elif facultyid:
+            elif(facultyid):
                 facultyid = row_data[-1]
                 for faculty in session.query(Faculty).filter_by(faculty_id=facultyid):
                     firstname = faculty.first_name
@@ -681,7 +683,7 @@ class FacultyRecordsWindow(Widget):
         scroll.do_scroll_x = False
 
         '''pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
-        
+
         add_row_btn = Button(text="Add Row", on_press=pp)
         del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
         upt_row_btn = Button(text="Update Row")
@@ -932,23 +934,31 @@ class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kiv
             self.prev_list.adapter.data.extend([", ".join(details)])
         self.prev_list._trigger_reset_populate()
 
+monthcutoffid = 2
 #FINANCIAL-PAYROLL
 class FinanceSummaryWindow(Widget):
     def __init__(self, **kwargs):
+
+        global studentid
+        global facultyid
+        global monthcutoffid
+        studentid = 0
+        facultyid = -1
         super(FinanceSummaryWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
         self.data = []
         items = MonthlyPayroll.query.all()
         for item in items:
-
-            for teacher in session.query(Faculty).filter_by(faculty_id=item.faculty_id):
-                id_number = str(teacher.id_number)
-                first_name = teacher.first_name
-                middle_name = teacher.middle_name
-                last_name = teacher.last_name
-                monthly_rate = teacher.monthly_rate
-                faculty_id = teacher.faculty_id
-            self.data.append([id_number, last_name+", "+first_name+" "+middle_name, str(monthly_rate), str(item.computed_deduc),  str(item.pending_deduc), str(item.computed_salary), str(faculty_id)])
+            print(item.monthcutoff_id)
+            if (item.monthcutoff_id == monthcutoffid):
+                for teacher in session.query(Faculty).filter_by(faculty_id=item.faculty_id):
+                    id_number = str(teacher.id_number)
+                    first_name = teacher.first_name
+                    middle_name = teacher.middle_name
+                    last_name = teacher.last_name
+                    monthly_rate = teacher.monthly_rate
+                    faculty_id = teacher.faculty_id
+                self.data.append([id_number, last_name+", "+first_name+" "+middle_name, str(monthly_rate), str(item.computed_deduc),  str(item.pending_deduc), str(item.computed_salary), str(faculty_id)])
 
         header = ['Faculty ID', 'Name', 'Monthly\n  Rate', ' Computed\nDeductions', '  Pending\nDeductions', 'Computed\n Salary']
         self.col_size = [0.14, 0.29, 0.14, 0.14, 0.14, 0.14]
@@ -969,10 +979,10 @@ class FinanceSummaryWindow(Widget):
         del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
         upt_row_btn = Button(text="Update Row")
         slct_all_btn = Button(text="Select All", on_press=partial(self.grid.select_all))
-        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))'''
+        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))
 
         show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))
-
+        '''
         self.layout.add_widget(scroll)
         self.add_widget(self.layout)
 
@@ -990,20 +1000,91 @@ class PayrollWindow(Widget):
     payfaculty_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(PayrollWindow, self).__init__(**kwargs)
-        del self.payfaculty_list.adapter.data[:]
-        items = MonthlyPayroll.query.all()
+        day_rate = 500
+        global facultyid
+        global studentid
+        global monthcutoffid
+        facultyid_attn = facultyid
+        #facultyid = 0
+        studentid = 0
+        total_minutes_late = 0
+        self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
+        self.data = []
+        items = DailyAttendance.query.all()
         for item in items:
-            for teacher in session.query(Faculty).filter_by(faculty_id=item.faculty_id):
-                id_number = str(teacher.id_number)
-                first_name = teacher.first_name
-                middle_name = teacher.middle_name
-                last_name = teacher.last_name
-                monthly_rate = teacher
 
-            details = [str(item.faculty_id), first_name+' '+middle_name[0]+'. '+last_name, str(item.monthly_rate), str(item.computed_deduc), str(item.computed_salary), str(item.pending_deduc)]
-            #print(", ".join(details))
-            self.payfaculty_list.adapter.data.extend([", ".join(details)])
-        self.payfaculty_list._trigger_reset_populate()
+            if (item.monthcutoff_id == monthcutoffid):
+                print("IN")
+                #absences
+                if (item.is_absent != 0): #!= 0
+
+                    if(item.is_absent == 1): #whole day
+                        whole_half = "Whole Day"
+                    elif(item.is_absent == 0.5):
+                        whole_half = "Half Day"
+
+                    if(item.is_unpaid_absent == 1):
+                        paid_unpaid = "Unpaid"
+
+                    elif(item.is_unpaid_absent == 0.5):
+                        paid_unpaid = "Unpaid"
+
+                    elif(item.is_unpaid_absent == -1):
+                        paid_unpaid = "Paid - EL"
+
+                    if(item.is_unpaid_absent == -2):
+                        paid_unpaid = "Paid - SL"
+
+                    #Deduction
+                    if(item.is_absent == 1 and item.is_unpaid_absent == 1):
+                        deduc = day_rate
+                        p_deduc = 0
+
+                    elif(item.is_absent == 1 and item.is_unpaid_absent == 0.5):
+                        deduc = day_rate/2
+                        p_deduc = day_rate - p_deduc
+
+                    elif(item.is_absent == 0.5 and item.is_unpaid_absent == 0.5):
+                        deduc = day_rate/2
+                        p_deduc = 0
+
+                    else:
+                        deduc = 0
+                        p_deduc = 0
+
+                    print([item.data, "("+paid_unpaid+")"+" "+whole_half, str(deduc), str(p_deduc)])
+                    self.data.append([item.data, "("+paid_unpaid+")"+" "+whole_half, str(deduc), str(p_deduc)])
+
+            print(self.data)
+
+        header = ['Date', 'Description', 'Deduction', 'Balance']
+        self.col_size = [0.20, 0.40, 0.20, 0.20] #fractions - add to 1
+        self.body_alignment = ["center", "center", "center", "center"]
+
+        self.grid = DataGrid(header, self.data, self.body_alignment, self.col_size)
+        self.grid.rows = 10
+
+        scroll = ScrollView(size_hint=(1, 1), size=(400, 500000), scroll_y=0, pos_hint={'center_x':.5, 'center_y':.5})
+        scroll.add_widget(self.grid)
+        scroll.do_scroll_y = True
+        scroll.do_scroll_x = False
+
+        '''pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
+
+        add_row_btn = Button(text="Add Row", on_press=pp)
+        del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
+        upt_row_btn = Button(text="Update Row")
+        slct_all_btn = Button(text="Select All", on_press=partial(self.grid.select_all))
+        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))
+
+        show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))'''
+        #label_faculty.bind(size=label_faculty.setter('text_size'))
+        self.label_grid = BoxLayout(orientation="vertical")
+        self.label_grid.add_widget(label_faculty)
+
+        self.layout.add_widget(scroll)
+        self.layout.add_widget(self.label_grid)
+        self.add_widget(self.layout)
 
     def main_menu(self, *args):
         self.clear_widgets()

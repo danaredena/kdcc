@@ -101,14 +101,15 @@ class DailyAttendance(Base):
     monthcutoff_id = Column(Integer, ForeignKey('month.monthcutoff_id'), nullable=False)
     date = Column(String(10), nullable=False, primary_key=True)
     faculty_id = Column(Integer, ForeignKey('faculty.faculty_id'), nullable=False, primary_key=True)
-    is_absent = Column(Boolean, nullable=True) #need to monitor this pa
+    is_absent = Column(Float, nullable=True) #float: 1 - whole day; 0.5 - halfday; 0 - not absent
+    is_unpaid_absent = Column(Float, nullable=True) #float: 1 - whole day; 0.5 - halfday; 0 - not absent ; -1 - emergency; -2 - sick
     time_in = Column(String(5), nullable=True) #formatted din (will add constraints later)
     time_out = Column(String(5), nullable=True) #constraint military format
     minutes_late = Column(Integer, nullable=True) #constraint 0+
 
 class MonthlyPayroll(Base):
     __tablename__ = 'monthly_payroll'
-    monthcutoff_id = Column(Integer, ForeignKey('month.monthcutoff_id'), nullable=False)
+    monthcutoff_id = Column(Integer, ForeignKey('month.monthcutoff_id'), nullable=False, primary_key=True)
     faculty_id = Column(Integer, ForeignKey('faculty.faculty_id'), nullable=False, primary_key=True)
 
     ## SUMMARY PART
