@@ -2,7 +2,6 @@
 #: import ListAdapter kivy.adapters.listadapter.ListAdapter
 #: import ListItemButton kivy.uix.listview.ListItemButton
 
-
 <LoginWindow>:
     canvas.before:
         Color:
@@ -581,7 +580,7 @@
         center_y: root.y + 75
         text: "Create"
         size: (250,40)
-        on_press: root.create()		
+        on_press: root.create()
 
 <SchoolyearListWindow>
     Button:
@@ -1189,3 +1188,20 @@
         height: 400
         center_x: root.width + 285
         center_y: root.y + 290
+
+# define how clabel looks and behaves
+<CLabel>:
+  canvas.before:
+    Color:
+      rgb: self.bgcolor
+    Rectangle:
+      size: self.size
+      pos: self.pos
+
+<HeaderLabel>:
+  canvas.before:
+    Color:
+      rgb: self.bgcolor
+    Rectangle:
+      size: self.size
+      pos: self.pos
