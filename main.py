@@ -812,16 +812,11 @@ class DailyListButton(ListItemButton):
 class DailyAttendanceWindow(Widget):
     daily_list = ObjectProperty()
     def __init__(self, **kwargs):
-        self.layout = BoxLayout(pos=(525,320), orientation="vertical", width=20)
         super(DailyAttendanceWindow, self).__init__(**kwargs)
-        del self.daily_list.adapter.data[:]
-        all_faculty = Faculty.query.all()
-        for faculty in all_faculty:
-            details = [faculty.last_name+', '+faculty.first_name+' '+faculty.middle_name]
-            self.daily_list.adapter.data.extend([", ".join(details)])
-        self.daily_list._trigger_reset_populate()
-        self.daily_list.adapter.bind(on_selection_change=self.printDetails)
-        ##
+        global studentid
+        global facultyid
+        studentid = 0
+        facultyid = -1
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
         self.data = []
         all_faculty = Faculty.query.all()

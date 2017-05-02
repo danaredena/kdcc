@@ -997,7 +997,6 @@
         on_press: root.back()
 
 <DailyAttendanceWindow>:
-    daily_list: daily_list_view
     Button:
         id: home
         font_size: 15
@@ -1031,14 +1030,7 @@
         center_y: root.y + 75
         text: "Save"
         size: (100,40)
-    ListView:
-        id: daily_list_view
-        adapter:
-            ListAdapter(data=[], cls=main.DailyListButton)
-        width: 300
-        height: 400
-        x: 50
-        center_y: root.y + 290
+		
 <PrevAttendanceWindow>:
     prev_list: prev_list_view
     Button:
