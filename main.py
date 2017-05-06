@@ -269,13 +269,7 @@ class DataGrid(GridLayout):
                                                                     size_hint_x=cols_size[n]))
             n+=1
         for d in body_data:
-            print( d)
             self.add_row(d, b_align, cols_size, self)
-
-
-
-
-
 ###
 '''
 def modal_insert(self):
@@ -868,17 +862,40 @@ class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kiv
     prev_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(PrevAttendanceWindow, self).__init__(**kwargs)
-        del self.prev_list.adapter.data[:]
-        all_atten = DailyAttendance.query.all()
-        for atten in all_atten:
-            details = [str(atten.monthcutoff_id), atten.date, str(atten.faculty_id), str(atten.is_absent), atten.time_in, atten.time_out, str(atten.minutes_late)]
-            #print(details)
-            for x in range(len(details)):
-                if not details[x]:
-                    details[x] = ''
-            #print(details)
-            self.prev_list.adapter.data.extend([", ".join(details)])
-        self.prev_list._trigger_reset_populate()
+        self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
+        self.data = []
+        days = DailyAttendance.query.all()
+        for day in days:
+            self.data.append([day.date, 1])
+
+        header = ['Date']
+        self.col_size = [1] #fractions - add to 1
+        self.body_alignment = ["center"]
+
+        self.grid = DataGrid(header, self.data, self.body_alignment, self.col_size)
+        self.grid.rows = 10
+
+        scroll = ScrollView(size_hint=(1, 1), size=(400, 500000), scroll_y=0, pos_hint={'center_x':.5, 'center_y':.5})
+        scroll.add_widget(self.grid)
+        scroll.do_scroll_y = True
+        scroll.do_scroll_x = False
+
+        '''pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
+
+        add_row_btn = Button(text="Add Row", on_press=pp)
+        del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
+        upt_row_btn = Button(text="Update Row")
+        slct_all_btn = Button(text="Select All", on_press=partial(self.grid.select_all))
+        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))
+
+        show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))'''
+
+        self.layout.add_widget(scroll)
+        self.add_widget(self.layout)
+
+    def back(self, *args):
+        self.clear_widgets()
+        self.add_widget(DailyAttendanceWindow())
 
 monthcutoffid = 2
 #FINANCIAL-PAYROLL

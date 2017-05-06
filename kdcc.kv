@@ -94,7 +94,6 @@
 
 
 <StudentRecordsWindow>:
-    student_list: students_list_view
     Button:
         id: create
         font_size: 15
@@ -135,14 +134,6 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
-    ListView:
-        id: students_list_view
-        adapter:
-            ListAdapter(data=[], cls=main.StudentListButton)
-        width: 300
-        height: 400
-        x: 50
-        center_y: root.y + 290
 
 
 <CreateStudentWindow>:
@@ -577,7 +568,6 @@
 
 
 <FacultyRecordsWindow>:
-    faculty_list: faculty_list_view
     Button:
         id: create
         font_size: 15
@@ -602,14 +592,6 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
-    ListView:
-        id: faculty_list_view
-        adapter:
-            ListAdapter(data=[], cls=main.FacultyListButton)
-        width: 300
-        height: 400
-        x: 50
-        center_y: root.y + 290
 
 
 <CreateFacultyWindow>:
@@ -1023,48 +1005,14 @@
         on_press: root.check_attendance()
 		
 <PrevAttendanceWindow>:
-    prev_list: prev_list_view
-    Button:
-        id: save
-        font_size: 15
-        center_x: root.width
-        center_y: root.y + 75
-        text: "Save"
-        size: (100,40)
-    TextInput:
-        id: change_date
-        font_size: 20
-        center_x: root.width + 360
-        center_y: root.y + 560
-        height: 35
-        width: 170
-        hint_text: "change_date"
-        write_tab: False
-        multiline: False
-    Button:
-        id: view_previous_days
-        font_size: 15
-        center_x: root.width + 540
-        center_y: root.y + 560
-        text: "View Previous Days"
-        size: (150,35)
-        on_press: root.prev_attendance()
     Button:
         id: home
         font_size: 15
         center_x: root.width + 560
         center_y: root.y + 75
-        text: "Back to Home"
+        text: "Back"
         size: (130,40)
-        on_press: root.main_menu()
-    ListView:
-        id: prev_list_view
-        adapter:
-            ListAdapter(data=[], cls=main.DailyListButton)
-        width: 680
-        height: 400
-        center_x: root.width + 285
-        center_y: root.y + 290
+        on_press: root.back()
 
 <FinanceSummaryWindow>:
     TextInput:
