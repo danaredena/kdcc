@@ -576,7 +576,7 @@ class EditStudentWindow(Widget):
         self.add_widget(StudentRecordsWindow())
 
 class ChooseSchoolyearWindow(Widget):
-    
+
     schoolyear_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(ChooseSchoolyearWindow, self).__init__(**kwargs)
@@ -974,7 +974,7 @@ class PayrollWindow(Widget):
         self.data = []
         items = DailyAttendance.query.all()
         for item in items:
-
+            #print(item)
             if (item.monthcutoff_id == monthcutoffid):
                 print("IN")
                 #absences
@@ -1014,8 +1014,8 @@ class PayrollWindow(Widget):
                         deduc = 0
                         p_deduc = 0
 
-                    print([item.data, "("+paid_unpaid+")"+" "+whole_half, str(deduc), str(p_deduc)])
-                    self.data.append([item.data, "("+paid_unpaid+")"+" "+whole_half, str(deduc), str(p_deduc)])
+                    print([item.date, "("+paid_unpaid+")"+" "+whole_half, str(deduc), str(p_deduc), item.faculty_id])
+                    self.data.append([item.date, "("+paid_unpaid+")"+" "+whole_half, str(deduc), str(p_deduc), item.faculty_id])
 
             print(self.data)
 
