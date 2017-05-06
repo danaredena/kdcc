@@ -581,16 +581,7 @@ class EditStudentWindow(Widget):
         self.add_widget(StudentRecordsWindow())
 
 class ChooseSchoolyearWindow(Widget):
-    schoolyear_list = ObjectProperty()
-    def __init__(self, **kwargs):
-        super(ChooseSchoolyearWindow, self).__init__(**kwargs)
-        del self.schoolyear_list.adapter.data[:]
-        schoolyear = Schoolyear.query.all()
-        for schoolyear in schoolyear:
-            details = [schoolyear.schoolyear_code]
-            self.schoolyear_list.adapter.data.extend([", ".join(details)])
-        self.schoolyear_list._trigger_reset_populate()
-
+    
     schoolyear_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(ChooseSchoolyearWindow, self).__init__(**kwargs)
