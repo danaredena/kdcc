@@ -65,6 +65,7 @@ studentid = 0
 facultyid = 0
 label_student = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
 label_faculty = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
+label_schoolyear = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
 label_attn = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
 
 class DataGrid(GridLayout):
@@ -614,9 +615,9 @@ class ChooseSchoolyearWindow(Widget):
 
         show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))'''
 
-        label_student.bind(size=label_student.setter('text_size'))
+        label_schoolyear.bind(size=label_schoolyear.setter('text_size'))
         self.label_grid = BoxLayout(orientation="vertical")
-        self.label_grid.add_widget(label_student)
+        self.label_grid.add_widget(label_schoolyear)
 
         self.layout.add_widget(scroll)
         self.layout.add_widget(self.label_grid)
@@ -628,12 +629,21 @@ class ChooseSchoolyearWindow(Widget):
         pass
 
     def main_menu(self, *args):
+        global label_schoolyear
+        label_schoolyear.text = ''
+        self.label_grid.remove_widget(label_schoolyear)
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
     def back_to_student_records(self, *args):
-          self.clear_widgets()
-          self.add_widget(StudentRecordsWindow())
+        global label_schoolyear
+        label_schoolyear.text = ''
+        self.label_grid.remove_widget(label_schoolyear)
+        self.clear_widgets()
+        self.add_widget(StudentRecordsWindow())
     def create_schoolyear(self, *args):
+        global label_schoolyear
+        label_schoolyear.text = ''
+        self.label_grid.remove_widget(label_schoolyear)
         self.clear_widgets()
         self.add_widget(CreateSchoolyearWindow())
 
