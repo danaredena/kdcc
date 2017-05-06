@@ -581,7 +581,6 @@ class EditStudentWindow(Widget):
         self.add_widget(StudentRecordsWindow())
 
 class ChooseSchoolyearWindow(Widget):
-
     schoolyear_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(ChooseSchoolyearWindow, self).__init__(**kwargs)
@@ -591,6 +590,48 @@ class ChooseSchoolyearWindow(Widget):
             details = [schoolyear.schoolyear_code]
             self.schoolyear_list.adapter.data.extend([", ".join(details)])
         self.schoolyear_list._trigger_reset_populate()
+
+    schoolyear_list = ObjectProperty()
+    def __init__(self, **kwargs):
+        super(ChooseSchoolyearWindow, self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
+        self.data = []
+        schoolyears = Schoolyear.query.all()
+        for schoolyear in schoolyears:
+            self.data.append([schoolyear.schoolyear_code, 1])
+
+        header = ['Schoolyear Code']
+        self.col_size = [1] #fractions siya, dapat equal to 1
+        #body_alignment = ["center", "left", "right", "right"]
+        self.body_alignment = ["center"]
+
+        self.grid = DataGrid(header, self.data, self.body_alignment, self.col_size)
+        self.grid.rows = 10
+
+        scroll = ScrollView(size_hint=(1, 1), size=(400, 500000), scroll_y=0, pos_hint={'center_x':.5, 'center_y':.5})
+        scroll.add_widget(self.grid)
+        scroll.do_scroll_y = True
+        scroll.do_scroll_x = False
+
+        '''pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
+
+        add_row_btn = Button(text="Add Row", on_press=pp)
+        del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
+        upt_row_btn = Button(text="Update Row")
+        slct_all_btn = Button(text="Select All", on_press=partial(self.grid.select_all))
+        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))
+
+        show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))'''
+
+        label_student.bind(size=label_student.setter('text_size'))
+        self.label_grid = BoxLayout(orientation="vertical")
+        self.label_grid.add_widget(label_student)
+
+        self.layout.add_widget(scroll)
+        self.layout.add_widget(self.label_grid)
+        self.add_widget(self.layout)
+        del_row_btn = Button(text="Delete", on_press=partial(self.grid.remove_row, len(header)), font_size=15, pos=(250,25), size=(100,40))
+        self.add_widget(del_row_btn)
 
     def populate_list(self, *args):
         pass
