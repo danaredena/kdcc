@@ -63,10 +63,10 @@ class HeaderLabel(Label):
 counter = 0
 studentid = 0
 facultyid = 0
+
 label_student = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
 label_faculty = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
 label_schoolyear = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
-label_attn = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
 
 class DataGrid(GridLayout):
     def add_row(self, row_data, row_align, cols_size, instance, **kwargs):
@@ -75,10 +75,11 @@ class DataGrid(GridLayout):
         self.rows += 1
         #self.rows = 2
         ##########################################################
+        print(self.rows)
         def change_on_press(self):
             global studentid
             global facultyid
-            print (studentid, facultyid)
+
             if (studentid):
                 studentid = row_data[-1]
                 for student in session.query(Students).filter_by(student_id=studentid):
@@ -103,6 +104,7 @@ class DataGrid(GridLayout):
                     if contactnumber2:
                         guardians += " (" + contactnumber2 + ")"
                     label_student.text = "Name: %s%s, %s %s\nNickname: %s\nBirth date: %s\nAge: %s\nSex: %s\nAddress: %s\nDate of admission: %s\nGuardian/s: %s\nUP/Non-UP: %s" %(lastname, suffix, firstname, middlename, nickname, birthdate, str(age), sex, address, dateofadmission, guardians, remarks)
+
             elif(facultyid):
                 facultyid = row_data[-1]
                 for faculty in session.query(Faculty).filter_by(faculty_id=facultyid):
@@ -125,6 +127,7 @@ class DataGrid(GridLayout):
                     label_faculty.text = ("Name: %s, %s %s\nAddress: %s\nBirthdate: %s\nSex: %s\nDate of Employment: %s\nContact Number: %s\nPosition: %s\nMonthly Rate: %s\nTin number: %s\nPhilHealth: %s\nSocial Security Number: %s\nAccount Number: %s\nRemarks: %s") % (lastname, firstname, middlename, address, birthdate, sex, doe, contact_number, position, monthly_rate, tin_number, philhealth, social_security_number, account_number, remarks)
 
             childs = self.parent.children
+
             for ch in childs:
                 if (ch.id == self.id):
                     print( ch.id)
@@ -136,7 +139,8 @@ class DataGrid(GridLayout):
                     else:
                         row_n = ch.id[4:6] #
                     for c in childs:
-                        #ETO UNG NAG-IIBA UNG KULANG NG ROWS
+                        print(c)
+                    #ETO UNG NAG-IIBA UNG KULANG NG cols
                         if ('row_'+str(row_n)+'_col_0') == c.id:
                             if c.state == "normal":
                                 c.state="down"
@@ -903,7 +907,6 @@ class FinanceSummaryWindow(Widget):
     def __init__(self, **kwargs):
         global studentid
         global facultyid
-        global monthcutoffid
         studentid = 0
         facultyid = -1
         super(FinanceSummaryWindow, self).__init__(**kwargs)
@@ -962,13 +965,8 @@ class PayrollWindow(Widget):
     payfaculty_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(PayrollWindow, self).__init__(**kwargs)
-        day_rate = 500
-        global facultyid
-        global studentid
         global monthcutoffid
-        facultyid_attn = facultyid
-        #facultyid = 0
-        studentid = 0
+        day_rate = 500
         total_minutes_late = 0
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
         self.data = []
@@ -1042,7 +1040,7 @@ class PayrollWindow(Widget):
         show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))'''
         #label_faculty.bind(size=label_faculty.setter('text_size'))
         self.label_grid = BoxLayout(orientation="vertical")
-        self.label_grid.add_widget(label_faculty)
+        #self.label_grid.add_widget(label_faculty)
 
         self.layout.add_widget(scroll)
         self.layout.add_widget(self.label_grid)
