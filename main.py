@@ -21,6 +21,9 @@ from kivy.uix.listview import ListItemButton
 from kivy.adapters.listadapter import ListAdapter
 from kivy.uix.label import Label
 from kivy.uix.dropdown import DropDown
+from kivy.uix.checkbox import CheckBox
+from kivy.graphics import Color
+from kivy.graphics import Rectangle
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -716,7 +719,6 @@ class EditFacultyWindow(Widget):
         self.add_widget(FacultyRecordsWindow())
 
 class DailyAttendanceWindow(Widget):
-    daily_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(DailyAttendanceWindow, self).__init__(**kwargs)
 
@@ -727,6 +729,10 @@ class DailyAttendanceWindow(Widget):
     def prev_attendance(self):
         self.clear_widgets()
         self.add_widget(PrevAttendanceWindow())
+
+    def check_attendance(self):
+        self.clear_widgets()
+        self.add_widget(CheckAttendanceWindow())
 
 class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kivy
     def __init__(self, **kwargs):
@@ -755,6 +761,79 @@ class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kiv
     def back(self, *args):
         self.clear_widgets()
         self.add_widget(DailyAttendanceWindow())
+
+class CheckAttendanceWindow(Widget):
+    def __init__(self, **kwargs):
+        super(CheckAttendanceWindow, self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
+        self.data = []
+        all_faculty = Faculty.query.all()
+        for faculty in all_faculty:
+            self.data.append([faculty.id_number, faculty.last_name+', '+faculty.first_name+' '+faculty.middle_name, str(faculty.faculty_id)])
+
+        header = ['ID Number', 'Name']
+        self.col_size = [0.33, 0.67] #fractions - add to 1
+        self.body_alignment = ["center", "center"]
+
+        self.grid = DataGrid(header, self.data, self.body_alignment, self.col_size)
+        self.grid.rows = 10
+
+        scroll = ScrollView(size_hint=(1, 1), size=(400, 500000), scroll_y=0, pos_hint={'center_x':.5, 'center_y':.5})
+        scroll.add_widget(self.grid)
+        scroll.do_scroll_y = True
+        scroll.do_scroll_x = False
+
+        self.panel = GridLayout(cols=2, row_default_height=40, spacing=10, padding=(10,10,10,10))
+        with self.canvas:
+            Color(0,0,0,1)  # set the colour to red
+            Rectangle(pos=(400,100), size=(350,400))
+            Color(0,0,0,1)
+            Rectangle(pos=(401,101), size=(348,398))
+        self.absent_lb = Label(text="Absent")
+        self.absent_cb = CheckBox()
+        self.emerg_lb = Label(text="Emergency leave")
+        self.emerg_cb = CheckBox()
+        self.sick_lb = Label(text="Sick leave")
+        self.sick_cb = CheckBox()
+        
+        self.time_in_lb = Label(text="Time in:")
+        self.time_in_grid = GridLayout(cols=3, row_default_height=40)
+        self.time_in_mm = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="mm")
+        self.time_in_col = Label(text=":")
+        self.time_in_hh = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="hh")
+        self.time_in_grid.add_widget(self.time_in_mm); self.time_in_grid.add_widget(self.time_in_col); self.time_in_grid.add_widget(self.time_in_hh);
+        
+        self.time_out_lb = Label(text="Time out:")
+        self.time_out_grid = GridLayout(cols=3, row_default_height=40)
+        self.time_out_mm = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="mm")
+        self.time_out_col = Label(text=":")
+        self.time_out_hh = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="hh")
+        self.time_out_grid.add_widget(self.time_out_mm); self.time_out_grid.add_widget(self.time_out_col); self.time_out_grid.add_widget(self.time_out_hh);
+
+        self.mins_late_lb = Label(text="Minutes late:")
+        self.mins_late = TextInput(size_hint_x=None, multiline=False)
+        self.panel.add_widget(self.absent_lb)
+        self.panel.add_widget(self.absent_cb)
+        self.panel.add_widget(self.emerg_lb)
+        self.panel.add_widget(self.emerg_cb)
+        self.panel.add_widget(self.sick_lb)
+        self.panel.add_widget(self.sick_cb)
+        self.panel.add_widget(self.time_in_lb)
+        self.panel.add_widget(self.time_in_grid)
+        self.panel.add_widget(self.time_out_lb)
+        self.panel.add_widget(self.time_out_grid)
+        self.panel.add_widget(self.mins_late_lb)
+        self.panel.add_widget(self.mins_late)
+
+
+        self.layout.add_widget(scroll)
+        self.layout.add_widget(self.panel)
+        self.add_widget(self.layout)
+
+    def back(self, *args):
+        self.clear_widgets()
+        self.add_widget(DailyAttendanceWindow())
+
 
 monthcutoffid = 2
 #FINANCIAL-PAYROLL
