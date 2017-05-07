@@ -56,10 +56,6 @@ class CLabel(ToggleButton):
 class HeaderLabel(Label):
     bgcolor = ListProperty([0.108,0.476,0.611])
 
-
-#data_json = open('data.json')
-#data = json.load(data_json)
-
 counter = 0
 studentid = 0
 facultyid = 0
@@ -74,12 +70,10 @@ class DataGrid(GridLayout):
         global counter
         self.rows += 1
         #self.rows = 2
-        ##########################################################
-        print(self.rows)
         def change_on_press(self):
             global studentid
             global facultyid
-
+            print (studentid, facultyid)
             if (studentid):
                 studentid = row_data[-1]
                 for student in session.query(Students).filter_by(student_id=studentid):
@@ -99,12 +93,11 @@ class DataGrid(GridLayout):
                     contactnumber2 = student.contact_number2
                     remarks = student.up_dependent
                     guardians = guardian1 + " (" + contactnumber1 + ")"
-                    if guardian2:
-                        guardians += ", " + guardian2
-                    if contactnumber2:
-                        guardians += " (" + contactnumber2 + ")"
+                    
+                    if guardian2: guardians += ", " + guardian2
+                    if contactnumber2: guardians += " (" + contactnumber2 + ")"
+                    
                     label_student.text = "Name: %s%s, %s %s\nNickname: %s\nBirth date: %s\nAge: %s\nSex: %s\nAddress: %s\nDate of admission: %s\nGuardian/s: %s\nUP/Non-UP: %s" %(lastname, suffix, firstname, middlename, nickname, birthdate, str(age), sex, address, dateofadmission, guardians, remarks)
-
             elif(facultyid):
                 facultyid = row_data[-1]
                 for faculty in session.query(Faculty).filter_by(faculty_id=facultyid):
@@ -124,81 +117,45 @@ class DataGrid(GridLayout):
                     social_security_number = faculty.pers_ssn if faculty.pers_ssn else ''
                     account_number = faculty.pers_accntnum if faculty.pers_accntnum else ''
                     remarks = faculty.remarks if faculty.remarks else ''
+                    
                     label_faculty.text = ("Name: %s, %s %s\nAddress: %s\nBirthdate: %s\nSex: %s\nDate of Employment: %s\nContact Number: %s\nPosition: %s\nMonthly Rate: %s\nTin number: %s\nPhilHealth: %s\nSocial Security Number: %s\nAccount Number: %s\nRemarks: %s") % (lastname, firstname, middlename, address, birthdate, sex, doe, contact_number, position, monthly_rate, tin_number, philhealth, social_security_number, account_number, remarks)
 
             childs = self.parent.children
-
+            chosen_row = 0;
             for ch in childs:
                 if (ch.id == self.id):
-                    print( ch.id)
-                    print( len(ch.id))
                     row_n = 0
-                    if (len(ch.id) == 11): #format
-                        row_n = ch.id[4:5]
-
-                    else:
-                        row_n = ch.id[4:6] #
+                    if (len(ch.id) == 11): row_n = ch.id[4:5]
+                    else: row_n = ch.id[4:6]
+                    
+                    chosen_row = row_n
                     for c in childs:
-                        print(c)
-                    #ETO UNG NAG-IIBA UNG KULANG NG cols
-                        if ('row_'+str(row_n)+'_col_0') == c.id:
-                            if c.state == "normal":
-                                c.state="down"
-                            else:
-                                c.state="normal"
-                        if ('row_'+str(row_n)+'_col_1') == c.id:
-                            if c.state == "normal":
-                                c.state="down"
-                            else:
-                                c.state="normal"
-                        if ('row_'+str(row_n)+'_col_2') == c.id:
-                            if c.state == "normal":
-                                c.state="down"
-                            else:
-                                c.state="normal"
-                        if ('row_'+str(row_n)+'_col_3') == c.id:
-                            if c.state == "normal":
-                                c.state="down"
-                            else:
-                                c.state="normal"
-                        if ('row_'+str(row_n)+'_col_4') == c.id:
-                            if c.state == "normal":
-                                c.state="down"
-                            else:
-                                c.state="normal"
-                        if ('row_'+str(row_n)+'_col_5') == c.id:
-                            if c.state == "normal":
-                                c.state="down"
-                            else:
-                                c.state="normal"
+                        cols = ['0','1'];
+                        for col in cols:
+                            element = ch.id[:ch.id.rfind('_')+1] + col;
+                            if c.id == element:
+                                if ch.state == 'down': c.state = "down"
+                                else: c.state = 'normal'
+                                print("chosen",element, c.id)
+                else:
+                    row_n = 0
+                    if (len(ch.id) == 11): row_n = ch.id[4:5]
+                    else: row_n = ch.id[4:6]
 
-        def change_on_release(self):
-            if (self.state == "normal"):
-                self.state = "down"
-            else:
-                self.state = "normal"
-        ##########################################################
+                    if chosen_row != row_n: ch.state = 'normal'
+
         n = 0
         for item in row_data[:-1]:
-            cell = CLabel(text=('[color=000000]' + item + '[/color]'),
-                                        background_normal="background_normal.png",
-                                        background_down="background_pressed.png",
-                                        halign=row_align[n],
-                                        markup=True,
-                                        on_press=partial(change_on_press),
-                                        on_release=partial(change_on_release),
-                                        text_size=(0, None),
-                                        size_hint_x=cols_size[n],
-                                        size_hint_y=None,
-                                        height=40,
-                                        id=("row_" + str(counter) + "_col_" + str(n)))
+            cell = CLabel(text=('[color=000000]' + item + '[/color]'), background_normal="background_normal.png", background_down="background_pressed.png", halign=row_align[n], markup=True, on_press=partial(change_on_press), text_size=(0, None), size_hint_x=cols_size[n], size_hint_y=None, height=40, id=("row_" + str(counter) + "_col_" + str(n)))
             cell_width = Window.size[0] * cell.size_hint_x
             cell.text_size=(cell_width - 30, None)
             cell.texture_update()
             self.add_widget(cell)
             n+=1
+
         counter += 1
         #self.rows += 1
+
     def remove_row(self, n_cols, instance, **kwargs):
         label_student.text = ''
         label_faculty.text = ''
@@ -214,25 +171,6 @@ class DataGrid(GridLayout):
                         self.remove_widget(c)
                         print( str(c.id) + '   -   ' + str(c.state))
                         selected += 1
-        if selected == 0:
-            for ch in childs:
-                count_01 = n_cols
-                count_02 = 0
-                count = 0
-                while (count < n_cols):
-                    if n_cols != len(ch.children):
-                        for c in ch.children:
-                            if c.id != "Header_Label":
-                                print( "Length: " + str(len(ch.children)))
-                                print( "N_cols: " + str(n_cols + 1))
-
-                                self.remove_widget(c)
-                                count += 1
-                                break
-                            else:
-                                break
-                    else:
-                        break
 
     def select_all(self, instance, **kwargs):
         childs = self.parent.children
@@ -262,72 +200,16 @@ class DataGrid(GridLayout):
         self.cols = len(header_data)
         self.rows = len(body_data) + 1
         self.spacing = [1,1]
+
         n = 0
         for hcell in header_data:
             header_str = "[b]" + str(hcell) + "[/b]"
-            self.add_widget(HeaderLabel(text=header_str,
-                                                                    markup=True,
-                                                                    size_hint_y=None,
-                                                                    height=40,
-                                                                    id="Header_Label",
-                                                                    size_hint_x=cols_size[n]))
+            self.add_widget(HeaderLabel(text=header_str,markup=True,size_hint_y=None,height=40,id="Header_Label",size_hint_x=cols_size[n]))
             n+=1
+
         for d in body_data:
+            print( d)
             self.add_row(d, b_align, cols_size, self)
-###
-'''
-def modal_insert(self):
-    lbl1 = Label(text='ID', id="lbl")
-    lbl2 = Label(text='Nome', id="lbl")
-    lbl3 = Label(text='Preco', id="lbl")
-    lbl4 = Label(text='IVA', id="lbl")
-    txt1 = TextInput(text='000', id="txtinp")
-    txt2 = TextInput(text='Product Name', id="txtinp")
-    txt3 = TextInput(text='123.45', id="txtinp")
-    txt4 = TextInput(text='23', id="txtinp")
-
-    insertion_grid = GridLayout(cols=2)
-    insertion_grid.add_widget(lbl1)
-    insertion_grid.add_widget(txt1)
-    insertion_grid.add_widget(lbl2)
-    insertion_grid.add_widget(txt2)
-    insertion_grid.add_widget(lbl3)
-    insertion_grid.add_widget(txt3)
-    insertion_grid.add_widget(lbl4)
-    insertion_grid.add_widget(txt4)
-    # create content and assign to the view
-
-    content = Button(text='Close me!')
-
-    modal_layout = BoxLayout(orientation="vertical")
-    modal_layout.add_widget(insertion_grid)
-
-    def insert_def(self):
-        input_list = []
-        for text_inputs in reversed(self.parent.children[2].children):
-            if text_inputs.id == "txtinp":
-                input_list.append(text_inputs.text)
-        print( input_list)
-        grid.add_row(input_list, body_alignment, col_size, self)
-        # print( view
-        # view.dismiss
-
-
-    insert_btn = Button(text="Insert", on_press=insert_def)
-    modal_layout.add_widget(insert_btn)
-    modal_layout.add_widget(content)
-
-    view = ModalView(auto_dismiss=False)
-
-    view.add_widget(modal_layout)
-    # bind the on_press event of the button to the dismiss function
-    content.bind(on_press=view.dismiss)
-    insert_btn.bind(on_release=view.dismiss)
-
-    view.open()
-
-add_custom_row = Button(text="Add Custom Row", on_press=modal_insert)
-'''
 
 #insert to database function (for safety)
 def add_db(addobject):
@@ -412,22 +294,18 @@ class Student():
         self.contact_number2 = None
         self.up_dependent = None
 
-class StudentListButton(ListItemButton):
-    pass
-
-class SchoolyearListButton(ListItemButton):
-    pass
-
 class StudentRecordsWindow(Widget):
     student_list = ObjectProperty()
     def __init__(self, **kwargs):
+        super(StudentRecordsWindow, self).__init__(**kwargs)
         global studentid
         global facultyid
+        
         studentid = -1
         facultyid = 0
-        super(StudentRecordsWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
+
         students = Students.query.all()
         for student in students:
             self.data.append([student.nickname, student.last_name+', '+student.first_name+' '+student.middle_name, str(student.student_id)])
@@ -462,6 +340,7 @@ class StudentRecordsWindow(Widget):
         self.layout.add_widget(scroll)
         self.layout.add_widget(self.label_grid)
         self.add_widget(self.layout)
+
         del_row_btn = Button(text="Delete", on_press=partial(self.grid.remove_row, len(header)), font_size=15, pos=(250,25), size=(100,40))
         self.add_widget(del_row_btn)
 
@@ -471,18 +350,21 @@ class StudentRecordsWindow(Widget):
         self.label_grid.remove_widget(label_student)
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
+
     def create(self, *args):
         global label_student
         label_student.text = ''
         self.label_grid.remove_widget(label_student)
         self.clear_widgets()
         self.add_widget(CreateStudentWindow())
+
     def edit(self):
         global label_student
         label_student.text = ''
         self.label_grid.remove_widget(label_student)
         self.clear_widgets()
         self.add_widget(EditStudentWindow())
+
     def choose_schoolyear(self, *args):
         global label_student
         label_student.text = ''
@@ -544,6 +426,7 @@ class CreateStudentWindow(Widget):
         #print(session.query(Students).all())
         self.clear_widgets()
         self.add_widget(StudentRecordsWindow())
+
     def back_to_student_records(self, *args):
         self.clear_widgets()
         self.add_widget(StudentRecordsWindow())
@@ -580,12 +463,11 @@ class EditStudentWindow(Widget):
         self.add_widget(StudentRecordsWindow())
 
 class ChooseSchoolyearWindow(Widget):
-
-    schoolyear_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(ChooseSchoolyearWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
+
         schoolyears = Schoolyear.query.all()
         for schoolyear in schoolyears:
             self.data.append([schoolyear.schoolyear_code, 1])
@@ -603,16 +485,6 @@ class ChooseSchoolyearWindow(Widget):
         scroll.do_scroll_y = True
         scroll.do_scroll_x = False
 
-        '''pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
-
-        add_row_btn = Button(text="Add Row", on_press=pp)
-        del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
-        upt_row_btn = Button(text="Update Row")
-        slct_all_btn = Button(text="Select All", on_press=partial(self.grid.select_all))
-        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))
-
-        show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))'''
-
         label_schoolyear.bind(size=label_schoolyear.setter('text_size'))
         self.label_grid = BoxLayout(orientation="vertical")
         self.label_grid.add_widget(label_schoolyear)
@@ -620,6 +492,7 @@ class ChooseSchoolyearWindow(Widget):
         self.layout.add_widget(scroll)
         self.layout.add_widget(self.label_grid)
         self.add_widget(self.layout)
+
         del_row_btn = Button(text="Delete", on_press=partial(self.grid.remove_row, len(header)), font_size=15, pos=(250,25), size=(100,40))
         self.add_widget(del_row_btn)
 
@@ -632,12 +505,14 @@ class ChooseSchoolyearWindow(Widget):
         self.label_grid.remove_widget(label_schoolyear)
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
+
     def back_to_student_records(self, *args):
         global label_schoolyear
         label_schoolyear.text = ''
         self.label_grid.remove_widget(label_schoolyear)
         self.clear_widgets()
         self.add_widget(StudentRecordsWindow())
+
     def create_schoolyear(self, *args):
         global label_schoolyear
         label_schoolyear.text = ''
@@ -661,7 +536,6 @@ class CreateSchoolyearWindow(Widget):
           self.add_widget(ChooseSchoolyearWindow())
 
 class SchoolyearListWindow(Widget):
-
     def choose_schoolyear(self, *args):
         self.clear_widgets()
         self.add_widget(ChooseSchoolyearWindow())
@@ -685,20 +559,17 @@ class Facuty():
         self.pers_accntnum = None
         self.remarks = None
 
-class FacultyListButton(ListItemButton):
-    pass
-
 class FacultyRecordsWindow(Widget):
-
-    faculty_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(FacultyRecordsWindow, self).__init__(**kwargs)
         global studentid
         global facultyid
+
         studentid = 0
         facultyid = -1
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
+
         all_faculty = Faculty.query.all()
         for faculty in all_faculty:
             self.data.append([faculty.id_number, faculty.last_name+', '+faculty.first_name+' '+faculty.middle_name, str(faculty.faculty_id)])
@@ -715,15 +586,6 @@ class FacultyRecordsWindow(Widget):
         scroll.do_scroll_y = True
         scroll.do_scroll_x = False
 
-        '''pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
-
-        add_row_btn = Button(text="Add Row", on_press=pp)
-        del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
-        upt_row_btn = Button(text="Update Row")
-        slct_all_btn = Button(text="Select All", on_press=partial(self.grid.select_all))
-        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))
-
-        show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))'''
         label_faculty.bind(size=label_faculty.setter('text_size'))
         self.label_grid = BoxLayout(orientation="vertical")
         self.label_grid.add_widget(label_faculty)
@@ -731,6 +593,7 @@ class FacultyRecordsWindow(Widget):
         self.layout.add_widget(scroll)
         self.layout.add_widget(self.label_grid)
         self.add_widget(self.layout)
+
         del_row_btn = Button(text="Delete", on_press=partial(self.grid.remove_row, len(header)), font_size=15, pos=(250,25), size=(100,40))
         self.add_widget(del_row_btn)
 
@@ -739,11 +602,13 @@ class FacultyRecordsWindow(Widget):
         label_faculty.text = ''
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
+
     def create(self, *args):
         self.label_grid.remove_widget(label_faculty)
         label_faculty.text = ''
         self.clear_widgets()
         self.add_widget(CreateFacultyWindow())
+
     def edit(self):
         self.label_grid.remove_widget(label_faculty)
         label_faculty.text = ''
@@ -811,6 +676,7 @@ class CreateFacultyWindow(Widget):
         #print(f_id_number_text, f_first_name_text, f_middle_name_text, f_last_name_text, f_address_text, f_birth_date_text, f_sex_text, f_date_of_employment_text, f_position_text, f_contact_number_text, f_pers_tin_text, f_pers_ssn_text, f_pers_philhealth_text, f_pers_accntnum_text, f_remarks_text)
         self.clear_widgets()
         self.add_widget(FacultyRecordsWindow())
+
     def back_to_faculty_records(self, *args):
         self.clear_widgets()
         self.add_widget(FacultyRecordsWindow())
@@ -819,6 +685,7 @@ class EditFacultyWindow(Widget):
     def __init__(self, **kwargs):
         super(EditFacultyWindow, self).__init__(**kwargs)
         global facultyid
+
         print('facultyid:', facultyid)
         for teacher in session.query(Faculty).filter_by(faculty_id=facultyid):
             self.ids.id_number.text = str(teacher.id_number)
@@ -837,17 +704,16 @@ class EditFacultyWindow(Widget):
             self.ids.philhealth.text = teacher.pers_philhealth if teacher.pers_philhealth else ''
             self.ids.account_number.text = teacher.pers_accntnum if teacher.pers_accntnum else ''
             self.ids.remarks.text = teacher.remarks if teacher.remarks else ''
+
     def save(self):
         session.query(Faculty).filter_by(faculty_id=facultyid).update(dict(id_number = self.ids.id_number.text, first_name = self.ids.first_name.text, middle_name = self.ids.middle_name.text, last_name = self.ids.last_name.text, address = self.ids.address.text, birth_date = self.ids.birth_date.text, sex = self.ids.sex.text, date_of_employment = self.ids.date_of_employment.text, position = self.ids.position.text, contact_number = self.ids.contact_number.text, pers_tin = self.ids.tin_number.text, pers_ssn = self.ids.social_security_number.text, pers_philhealth = self.ids.philhealth.text, pers_accntnum = self.ids.account_number.text, remarks = self.ids.remarks.text))
         session.commit()
         self.clear_widgets()
         self.add_widget(FacultyRecordsWindow())
+
     def back(self):
         self.clear_widgets()
         self.add_widget(FacultyRecordsWindow())
-
-class DailyListButton(ListItemButton):
-    pass
 
 class DailyAttendanceWindow(Widget):
     daily_list = ObjectProperty()
@@ -863,7 +729,6 @@ class DailyAttendanceWindow(Widget):
         self.add_widget(PrevAttendanceWindow())
 
 class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kivy
-    prev_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(PrevAttendanceWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
@@ -883,16 +748,6 @@ class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kiv
         scroll.add_widget(self.grid)
         scroll.do_scroll_y = True
         scroll.do_scroll_x = False
-
-        '''pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
-
-        add_row_btn = Button(text="Add Row", on_press=pp)
-        del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
-        upt_row_btn = Button(text="Update Row")
-        slct_all_btn = Button(text="Select All", on_press=partial(self.grid.select_all))
-        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))
-
-        show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))'''
 
         self.layout.add_widget(scroll)
         self.add_widget(self.layout)
@@ -938,16 +793,6 @@ class FinanceSummaryWindow(Widget):
         scroll.do_scroll_y = True
         scroll.do_scroll_x = True
 
-        '''pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
-
-        add_row_btn = Button(text="Add Row", on_press=pp)
-        del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
-        upt_row_btn = Button(text="Update Row")
-        slct_all_btn = Button(text="Select All", on_press=partial(self.grid.select_all))
-        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))
-
-        show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))
-        '''
         self.layout.add_widget(scroll)
         self.add_widget(self.layout)
 
@@ -1029,15 +874,6 @@ class PayrollWindow(Widget):
         scroll.do_scroll_y = True
         scroll.do_scroll_x = False
 
-        '''pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
-
-        add_row_btn = Button(text="Add Row", on_press=pp)
-        del_row_btn = Button(text="Delete Row", on_press=partial(self.grid.remove_row, len(header)))
-        upt_row_btn = Button(text="Update Row")
-        slct_all_btn = Button(text="Select All", on_press=partial(self.grid.select_all))
-        unslct_all_btn = Button(text="Unselect All", on_press=partial(self.grid.unselect_all))
-
-        show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))'''
         #label_faculty.bind(size=label_faculty.setter('text_size'))
         self.label_grid = BoxLayout(orientation="vertical")
         #self.label_grid.add_widget(label_faculty)
