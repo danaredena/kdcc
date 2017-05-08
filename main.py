@@ -361,6 +361,9 @@ class StudentRecordsWindow(Widget):
         self.clear_widgets()
         self.add_widget(ChooseSchoolyearWindow())
 
+    def reset(self, *args):
+        global label_student
+        label_student.text = ''
 
 class CreateStudentWindow(Widget):
     def create(self, *args):
@@ -583,6 +586,10 @@ class FacultyRecordsWindow(Widget):
         label_faculty.text = ''
         self.clear_widgets()
         self.add_widget(EditFacultyWindow())
+
+    def reset(self, *args):
+        global label_faculty
+        label_faculty.text = ''
 
 
 class CreateFacultyWindow(Widget):
@@ -878,8 +885,9 @@ monthcutoffid = 2
 #FINANCIAL-PAYROLL
 class FinanceSummaryWindow(Widget):
     def __init__(self, **kwargs):
-        global studentid, facultyid
+        global studentid, facultyid, daily
         studentid = 0
+        daily = 0
         facultyid = -1
         super(FinanceSummaryWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
@@ -920,6 +928,9 @@ class FinanceSummaryWindow(Widget):
     def payroll(self, *args):
         self.clear_widgets()
         self.add_widget(PayrollWindow())
+
+    def reset(self, *args):
+        pass
 
 
 def on_checkbox_active(checkbox, value):
@@ -1081,8 +1092,8 @@ class PayrollWindow(Widget):
             Rectangle(pos=(401,101), size=(348,398))
         self.add_widget(MainMenuWindow())
 
-
-
+    def reset(self, *args):
+        pass
 
 
 class KDCCApp(App):
