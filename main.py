@@ -102,6 +102,10 @@ class DataGrid(GridLayout):
                     if contactnumber2: guardians += " (" + contactnumber2 + ")"
 
                     label_student.text = "Name: %s%s, %s %s\nNickname: %s\nBirth date: %s\nAge: %s\nSex: %s\nAddress: %s\nDate of admission: %s\nGuardian/s: %s\nUP/Non-UP: %s" %(lastname, suffix, firstname, middlename, nickname, birthdate, str(age), sex, address, dateofadmission, guardians, remarks)
+            elif(daily):
+                facultyid = row_data[-1]
+                self.parent.parent.parent.parent.update()
+
             elif(facultyid):
                 facultyid = row_data[-1]
                 for faculty in session.query(Faculty).filter_by(faculty_id=facultyid):
@@ -123,15 +127,13 @@ class DataGrid(GridLayout):
                     remarks = faculty.remarks if faculty.remarks else ''
 
                     label_faculty.text = ("Name: %s, %s %s\nAddress: %s\nBirthdate: %s\nSex: %s\nDate of Employment: %s\nContact Number: %s\nPosition: %s\nMonthly Rate: %s\nTin number: %s\nPhilHealth: %s\nSocial Security Number: %s\nAccount Number: %s\nRemarks: %s") % (lastname, firstname, middlename, address, birthdate, sex, doe, contact_number, position, monthly_rate, tin_number, philhealth, social_security_number, account_number, remarks)
-            elif(daily):
-                facultyid = row_data[-1]
-                self.parent.parent.parent.parent.update()
-                facultyid = 0
 
             childs = self.parent.children
             chosen_row = 0;
             for ch in childs:
                 if (ch.id == self.id):
+                    if ch.state == 'normal':
+                        self.parent.parent.parent.parent.reset()
                     row_n = 0
                     if (len(ch.id) == 11): row_n = ch.id[4:5]
                     else: row_n = ch.id[4:6]
@@ -288,9 +290,8 @@ class StudentRecordsWindow(Widget):
     student_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(StudentRecordsWindow, self).__init__(**kwargs)
-        global studentid, facultyid
+        global studentid
         studentid = -1
-        facultyid = 0
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
 
@@ -531,8 +532,9 @@ class SchoolyearListWindow(Widget):
 class FacultyRecordsWindow(Widget):
     def __init__(self, **kwargs):
         super(FacultyRecordsWindow, self).__init__(**kwargs)
-        global studentid, facultyid
+        global studentid, facultyid, daily
         studentid = 0
+        daily = 0
         facultyid = -1
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
@@ -729,19 +731,18 @@ class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kiv
 class CheckAttendanceWindow(Widget):
     def __init__(self, **kwargs):
         super(CheckAttendanceWindow, self).__init__(**kwargs)
-        global studentid, daily, facultyid
+        global studentid, daily
         studentid = 0
-        facultyid = 0
-        daily = 1
-        #self.today = strftime("%m/%d/%y", gmtime())
-        self.today = "03/02/17"
-        self.count = DailyAttendance.query.filter(DailyAttendance.date==self.today).count()
+        daily = -1
+        self.today = strftime("%m/%d/%y", gmtime())
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
         all_faculty = Faculty.query.all()
         for faculty in all_faculty:
             self.data.append([faculty.id_number, faculty.last_name+', '+faculty.first_name+' '+faculty.middle_name, str(faculty.faculty_id)])
 
+        self.date_lb = Label(text="Date today:   "+self.today, pos=(100,470), color=(0,0,0,1),font_size=20)
+        self.add_widget(self.date_lb)
         header = ['ID Number', 'Name']
         self.col_size = [0.33, 0.67] #fractions - add to 1
         self.body_alignment = ["center", "center"]
@@ -763,9 +764,9 @@ class CheckAttendanceWindow(Widget):
         self.absent_lb = Label(text="Absent")
         self.absent_cb = CheckBox()
         self.emerg_lb = Label(text="Emergency leave")
-        self.emerg_cb = CheckBox()
+        self.emerg_cb = CheckBox(group="leave")
         self.sick_lb = Label(text="Sick leave")
-        self.sick_cb = CheckBox()
+        self.sick_cb = CheckBox(group="leave")
         
         self.time_in_lb = Label(text="Time in:")
         self.time_in_grid = GridLayout(cols=3, row_default_height=40)
@@ -824,8 +825,9 @@ class CheckAttendanceWindow(Widget):
 
     def update(self, *args):
         self.reset()
-        faculty = session.query(DailyAttendance).filter(DailyAttendance.date==self.today).filter(DailyAttendance.faculty_id==facultyid)
-        if (self.count > 0):
+        count = DailyAttendance.query.filter(DailyAttendance.date==self.today).count()
+        if (count > 0):
+            faculty = session.query(DailyAttendance).filter(DailyAttendance.date==self.today).filter(DailyAttendance.faculty_id==facultyid)
             for f in faculty:
                 if f.is_absent: self.absent_cb.active = True
                 else: self.absent_cb.active = False
@@ -844,7 +846,33 @@ class CheckAttendanceWindow(Widget):
         self.mins_late.text = ''
 
     def save(self, *args):
-        pass
+        count = DailyAttendance.query.filter(DailyAttendance.date==self.today).count()
+        if self.absent_cb.active: absent = 1
+        else: absent = 0
+        if self.emerg_cb.active: unpaid_absent = -1
+        elif self.sick_cb.active: unpaid_absent = -2
+        else: unpaid_absent = 0
+        timein = self.time_in_hh.text + ':' + self.time_in_mm.text
+        timeout = self.time_out_hh.text + ':' + self.time_out_mm.text
+        minutes_late = int(self.mins_late.text) if self.mins_late.text else ''
+        if count > 0:
+            faculty = session.query(DailyAttendance).filter(DailyAttendance.date==self.today).filter(DailyAttendance.faculty_id==facultyid)
+            if faculty.count() > 0:
+                for f in faculty:
+                    f.is_absent = absent
+                    f.is_unpaid_absent = unpaid_absent
+                    f.time_in = timein
+                    f.time_out = timeout
+                    f.minutes_late = minutes_late
+                    session.commit()
+            else:
+                new_daily = DailyAttendance(monthcutoff_id=2, date = self.today, faculty_id=facultyid, is_absent=absent, is_unpaid_absent=unpaid_absent, time_in=timein, time_out=timeout, minutes_late=minutes_late)
+                session.add(new_daily)
+                session.commit()
+        else:
+            new_daily = DailyAttendance(monthcutoff_id=2, date = self.today, faculty_id=facultyid, is_absent=absent, is_unpaid_absent=unpaid_absent, time_in=timein, time_out=timeout, minutes_late=minutes_late)
+            session.add(new_daily)
+            session.commit()
 
 monthcutoffid = 2
 #FINANCIAL-PAYROLL
