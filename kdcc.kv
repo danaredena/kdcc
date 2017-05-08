@@ -986,7 +986,7 @@
         text: "Check Attendance Today"
         size: (250,80)
         on_press: root.check_attendance()
-		
+
 <PrevAttendanceWindow>:
     Button:
         id: home
@@ -1036,7 +1036,6 @@
         on_press: root.main_menu()
 
 <PayrollWindow>:
-    payfaculty_list: payfaculty_list_view
     Button:
         id: home
         font_size: 15
@@ -1045,14 +1044,6 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
-    ListView:
-        id: payfaculty_list_view
-        adapter:
-            ListAdapter(data=[], cls=main.FacultyListButton)
-        width: 680
-        height: 400
-        center_x: root.width + 285
-        center_y: root.y + 290
 
 # define how clabel looks and behaves
 <CLabel>:

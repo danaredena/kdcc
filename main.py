@@ -96,10 +96,10 @@ class DataGrid(GridLayout):
                     contactnumber2 = student.contact_number2
                     remarks = student.up_dependent
                     guardians = guardian1 + " (" + contactnumber1 + ")"
-                    
+
                     if guardian2: guardians += ", " + guardian2
                     if contactnumber2: guardians += " (" + contactnumber2 + ")"
-                    
+
                     label_student.text = "Name: %s%s, %s %s\nNickname: %s\nBirth date: %s\nAge: %s\nSex: %s\nAddress: %s\nDate of admission: %s\nGuardian/s: %s\nUP/Non-UP: %s" %(lastname, suffix, firstname, middlename, nickname, birthdate, str(age), sex, address, dateofadmission, guardians, remarks)
             elif(facultyid):
                 facultyid = row_data[-1]
@@ -120,7 +120,7 @@ class DataGrid(GridLayout):
                     social_security_number = faculty.pers_ssn if faculty.pers_ssn else ''
                     account_number = faculty.pers_accntnum if faculty.pers_accntnum else ''
                     remarks = faculty.remarks if faculty.remarks else ''
-                    
+
                     label_faculty.text = ("Name: %s, %s %s\nAddress: %s\nBirthdate: %s\nSex: %s\nDate of Employment: %s\nContact Number: %s\nPosition: %s\nMonthly Rate: %s\nTin number: %s\nPhilHealth: %s\nSocial Security Number: %s\nAccount Number: %s\nRemarks: %s") % (lastname, firstname, middlename, address, birthdate, sex, doe, contact_number, position, monthly_rate, tin_number, philhealth, social_security_number, account_number, remarks)
 
             childs = self.parent.children
@@ -130,10 +130,10 @@ class DataGrid(GridLayout):
                     row_n = 0
                     if (len(ch.id) == 11): row_n = ch.id[4:5]
                     else: row_n = ch.id[4:6]
-                    
+
                     chosen_row = row_n
                     for c in childs:
-                        cols = ['0','1'];
+                        cols = ['0','1','2','3','4','5'];
                         for col in cols:
                             element = ch.id[:ch.id.rfind('_')+1] + col;
                             if c.id == element:
@@ -279,31 +279,13 @@ class MainMenuWindow(Widget):
         self.clear_widgets()
         self.add_widget(LoginWindow())
 
-class Student():
-    def __init__(self):
-        self.nickname = None
-        self.first_name = None
-        self.middle_name = None
-        self.last_name = None
-        self.address = None
-        self.birth_date = None
-        self.age = None #autocompute
-        self.sex = None
-        self.date_of_admission = None
-        #self.group = None
-        self.guardian1_name = None
-        self.guardian2_name = None
-        self.contact_number1 = None
-        self.contact_number2 = None
-        self.up_dependent = None
-
 class StudentRecordsWindow(Widget):
     student_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(StudentRecordsWindow, self).__init__(**kwargs)
         global studentid
         global facultyid
-        
+
         studentid = -1
         facultyid = 0
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
@@ -543,25 +525,6 @@ class SchoolyearListWindow(Widget):
         self.clear_widgets()
         self.add_widget(ChooseSchoolyearWindow())
 
-class Facuty():
-    def __init__(self):
-        self.id_number = None
-        self.first_name = None
-        self.middle_name = None
-        self.last_name = None
-        self.address = None
-        self.birth_date = None
-        self.age = None #autocompute
-        self.sex = None
-        self.date_of_employment = None
-        self.position = None
-        self.contact_number = None
-        self.pers_tin = None
-        self.pers_ssn = None
-        self.pers_philhealth = None
-        self.pers_accntnum = None
-        self.remarks = None
-
 class FacultyRecordsWindow(Widget):
     def __init__(self, **kwargs):
         super(FacultyRecordsWindow, self).__init__(**kwargs)
@@ -785,9 +748,9 @@ class CheckAttendanceWindow(Widget):
 
         self.panel = GridLayout(cols=2, row_default_height=40, spacing=10, padding=(10,10,10,10))
         with self.canvas:
-            Color(0,0,0,1)  # set the colour to red
+            Color(0.608, 0.349, 0.714,1)  # set the colour to red
             Rectangle(pos=(400,100), size=(350,400))
-            Color(0,0,0,1)
+            Color(0.608, 0.349, 0.714,1)
             Rectangle(pos=(401,101), size=(348,398))
         self.absent_lb = Label(text="Absent")
         self.absent_cb = CheckBox()
@@ -795,23 +758,25 @@ class CheckAttendanceWindow(Widget):
         self.emerg_cb = CheckBox()
         self.sick_lb = Label(text="Sick leave")
         self.sick_cb = CheckBox()
-        
+
         self.time_in_lb = Label(text="Time in:")
         self.time_in_grid = GridLayout(cols=3, row_default_height=40)
-        self.time_in_mm = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="mm")
+        self.time_in_mm = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="hh")
         self.time_in_col = Label(text=":")
-        self.time_in_hh = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="hh")
+        self.time_in_hh = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="mm")
         self.time_in_grid.add_widget(self.time_in_mm); self.time_in_grid.add_widget(self.time_in_col); self.time_in_grid.add_widget(self.time_in_hh);
-        
+
         self.time_out_lb = Label(text="Time out:")
         self.time_out_grid = GridLayout(cols=3, row_default_height=40)
-        self.time_out_mm = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="mm")
+        self.time_out_mm = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="hh")
         self.time_out_col = Label(text=":")
-        self.time_out_hh = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="hh")
+        self.time_out_hh = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="mm")
         self.time_out_grid.add_widget(self.time_out_mm); self.time_out_grid.add_widget(self.time_out_col); self.time_out_grid.add_widget(self.time_out_hh);
 
         self.mins_late_lb = Label(text="Minutes late:")
         self.mins_late = TextInput(size_hint_x=None, multiline=False)
+        self.save_b = Button(text="Save")
+
         self.panel.add_widget(self.absent_lb)
         self.panel.add_widget(self.absent_cb)
         self.panel.add_widget(self.emerg_lb)
@@ -824,6 +789,7 @@ class CheckAttendanceWindow(Widget):
         self.panel.add_widget(self.time_out_grid)
         self.panel.add_widget(self.mins_late_lb)
         self.panel.add_widget(self.mins_late)
+        self.panel.add_widget(self.save_b)
 
 
         self.layout.add_widget(scroll)
@@ -886,7 +852,6 @@ class FinanceSummaryWindow(Widget):
 
 
 class PayrollWindow(Widget):
-    payfaculty_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(PayrollWindow, self).__init__(**kwargs)
         global monthcutoffid
@@ -953,6 +918,53 @@ class PayrollWindow(Widget):
         scroll.do_scroll_y = True
         scroll.do_scroll_x = False
 
+        self.panel = GridLayout(cols=2, row_default_height=40, spacing=10, padding=(10,10,10,10))
+        with self.canvas:
+            Color(0.608, 0.349, 0.714,1)  # set the colour to red
+            Rectangle(pos=(400,100), size=(350,400))
+            Color(0.608, 0.349, 0.714,1)
+            Rectangle(pos=(401,101), size=(348,398))
+        self.absent_lb = Label(text="Absent")
+        self.absent_cb = CheckBox()
+        self.emerg_lb = Label(text="Emergency leave")
+        self.emerg_cb = CheckBox()
+        self.sick_lb = Label(text="Sick leave")
+        self.sick_cb = CheckBox()
+
+        self.time_in_lb = Label(text="Time in:")
+        self.time_in_grid = GridLayout(cols=3, row_default_height=40)
+        self.time_in_mm = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="mm")
+        self.time_in_col = Label(text=":")
+        self.time_in_hh = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="hh")
+        self.time_in_grid.add_widget(self.time_in_mm); self.time_in_grid.add_widget(self.time_in_col); self.time_in_grid.add_widget(self.time_in_hh);
+
+        self.time_out_lb = Label(text="Time out:")
+        self.time_out_grid = GridLayout(cols=3, row_default_height=40)
+        self.time_out_mm = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="mm")
+        self.time_out_col = Label(text=":")
+        self.time_out_hh = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="hh")
+        self.time_out_grid.add_widget(self.time_out_mm); self.time_out_grid.add_widget(self.time_out_col); self.time_out_grid.add_widget(self.time_out_hh);
+
+        self.mins_late_lb = Label(text="Minutes late:")
+        self.mins_late = TextInput(size_hint_x=None, multiline=False)
+        self.panel.add_widget(self.absent_lb)
+        self.panel.add_widget(self.absent_cb)
+        self.panel.add_widget(self.emerg_lb)
+        self.panel.add_widget(self.emerg_cb)
+        self.panel.add_widget(self.sick_lb)
+        self.panel.add_widget(self.sick_cb)
+        self.panel.add_widget(self.time_in_lb)
+        self.panel.add_widget(self.time_in_grid)
+        self.panel.add_widget(self.time_out_lb)
+        self.panel.add_widget(self.time_out_grid)
+        self.panel.add_widget(self.mins_late_lb)
+        self.panel.add_widget(self.mins_late)
+
+
+        self.layout.add_widget(scroll)
+        self.layout.add_widget(self.panel)
+        self.add_widget(self.layout)
+        '''
         #label_faculty.bind(size=label_faculty.setter('text_size'))
         self.label_grid = BoxLayout(orientation="vertical")
         #self.label_grid.add_widget(label_faculty)
@@ -960,7 +972,7 @@ class PayrollWindow(Widget):
         self.layout.add_widget(scroll)
         self.layout.add_widget(self.label_grid)
         self.add_widget(self.layout)
-
+        '''
     def main_menu(self, *args):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
@@ -970,8 +982,5 @@ class KDCCApp(App):
     def build(self):
         return LoginWindow()
 
-student = Student()
-faculty = Faculty()
-schoolyear = Schoolyear()
 if __name__ == '__main__':
     KDCCApp().run()
