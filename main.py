@@ -919,48 +919,67 @@ class PayrollWindow(Widget):
         scroll.do_scroll_y = True
         scroll.do_scroll_x = False
 
-        self.panel = GridLayout(cols=2, row_default_height=40, spacing=10, padding=(10,10,10,10))
+        self.panel = GridLayout(cols=2, row_default_height=20, spacing=10, padding=(30,30,0,10))
         with self.canvas:
             Color(0.608, 0.349, 0.714,1)  # set the colour to red
             Rectangle(pos=(400,100), size=(350,400))
             Color(0.608, 0.349, 0.714,1)
             Rectangle(pos=(401,101), size=(348,398))
-        self.absent_lb = Label(text="Absent")
-        self.absent_cb = CheckBox()
-        self.emerg_lb = Label(text="Emergency leave")
+        self.paidleave_lb = Label(text="Paid Leave:")
+        self.blank = Label(text="     ")
+        self.emerg_lb = Label(text="Emergency Leave")
         self.emerg_cb = CheckBox()
         self.sick_lb = Label(text="Sick leave")
         self.sick_cb = CheckBox()
 
-        self.time_in_lb = Label(text="Time in:")
-        self.time_in_grid = GridLayout(cols=3, row_default_height=40)
-        self.time_in_mm = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="mm")
-        self.time_in_col = Label(text=":")
-        self.time_in_hh = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="hh")
-        self.time_in_grid.add_widget(self.time_in_mm); self.time_in_grid.add_widget(self.time_in_col); self.time_in_grid.add_widget(self.time_in_hh);
-
-        self.time_out_lb = Label(text="Time out:")
-        self.time_out_grid = GridLayout(cols=3, row_default_height=40)
-        self.time_out_mm = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="mm")
-        self.time_out_col = Label(text=":")
-        self.time_out_hh = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="hh")
-        self.time_out_grid.add_widget(self.time_out_mm); self.time_out_grid.add_widget(self.time_out_col); self.time_out_grid.add_widget(self.time_out_hh);
-
-        self.mins_late_lb = Label(text="Minutes late:")
-        self.mins_late = TextInput(size_hint_x=None, multiline=False)
-        self.panel.add_widget(self.absent_lb)
-        self.panel.add_widget(self.absent_cb)
+        self.panel.add_widget(self.paidleave_lb)
+        self.panel.add_widget(self.blank)
         self.panel.add_widget(self.emerg_lb)
         self.panel.add_widget(self.emerg_cb)
         self.panel.add_widget(self.sick_lb)
         self.panel.add_widget(self.sick_cb)
-        self.panel.add_widget(self.time_in_lb)
-        self.panel.add_widget(self.time_in_grid)
-        self.panel.add_widget(self.time_out_lb)
-        self.panel.add_widget(self.time_out_grid)
-        self.panel.add_widget(self.mins_late_lb)
-        self.panel.add_widget(self.mins_late)
 
+        self.line1 = Label(text="     ")
+        self.line2 = Label(text="     ")
+        self.panel.add_widget(self.line1)
+        self.panel.add_widget(self.line2)
+
+        self.unpaidleave_lb = Label(text="Unpaid Leave:")
+        self.blank = Label(text="     ")
+        self.whole_lb = Label(text="Whole Day")
+        self.whole_cb = CheckBox()
+        self.half_lb = Label(text="Half Day")
+        self.half_cb = CheckBox()
+
+        self.panel.add_widget(self.unpaidleave_lb)
+        self.panel.add_widget(self.blank)
+        self.panel.add_widget(self.whole_lb)
+        self.panel.add_widget(self.whole_cb)
+        self.panel.add_widget(self.half_lb)
+        self.panel.add_widget(self.half_cb)
+
+        self.line1 = Label(text="     ")
+        self.line2 = Label(text="     ")
+        self.panel.add_widget(self.line1)
+        self.panel.add_widget(self.line2)
+
+        self.cutoffdeduc_lb = Label(text="Cut-off Deduction:")
+        self.blank = Label(text="     ")
+        self.wholed_lb = Label(text="Whole Day")
+        self.wholed_cb = CheckBox()
+        self.halfd_lb = Label(text="Half Day")
+        self.halfd_cb = CheckBox()
+
+        self.save_b = Button(text="Save")
+
+
+        self.panel.add_widget(self.cutoffdeduc_lb)
+        self.panel.add_widget(self.blank)
+        self.panel.add_widget(self.wholed_lb)
+        self.panel.add_widget(self.wholed_cb)
+        self.panel.add_widget(self.halfd_lb)
+        self.panel.add_widget(self.halfd_cb)
+        self.panel.add_widget(self.save_b)
 
         self.layout.add_widget(scroll)
         self.layout.add_widget(self.panel)
@@ -977,6 +996,7 @@ class PayrollWindow(Widget):
     def main_menu(self, *args):
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
+
 
 
 class KDCCApp(App):
