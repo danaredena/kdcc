@@ -756,9 +756,9 @@ class CheckAttendanceWindow(Widget):
         self.absent_lb = Label(text="Absent")
         self.absent_cb = CheckBox()
         self.emerg_lb = Label(text="Emergency leave")
-        self.emerg_cb = CheckBox()
+        self.emerg_cb = CheckBox(group='leave')
         self.sick_lb = Label(text="Sick leave")
-        self.sick_cb = CheckBox()
+        self.sick_cb = CheckBox(group='leave')
 
         self.time_in_lb = Label(text="Time in:")
         self.time_in_grid = GridLayout(cols=3, row_default_height=40)
@@ -799,6 +799,11 @@ class CheckAttendanceWindow(Widget):
 
     def back(self, *args):
         self.clear_widgets()
+        with self.canvas:
+            Color(0.871, 0.725, 0.886,1)  # set the colour to white
+            Rectangle(pos=(400,100), size=(350,400))
+            Color(0.871, 0.725, 0.886,1)
+            Rectangle(pos=(401,101), size=(348,398))
         self.add_widget(DailyAttendanceWindow())
 
 
@@ -851,8 +856,14 @@ class FinanceSummaryWindow(Widget):
         self.add_widget(PayrollWindow())
 
 
+def on_checkbox_active(checkbox, value):
+    if value:
+        print('The checkbox', checkbox, 'is active')
+    else:
+        print('The checkbox', checkbox, 'is inactive')
 
 class PayrollWindow(Widget):
+
     def __init__(self, **kwargs):
         super(PayrollWindow, self).__init__(**kwargs)
         global monthcutoffid
@@ -928,9 +939,11 @@ class PayrollWindow(Widget):
         self.paidleave_lb = Label(text="Paid Leave:")
         self.blank = Label(text="     ")
         self.emerg_lb = Label(text="Emergency Leave")
-        self.emerg_cb = CheckBox()
+        self.emerg_cb = CheckBox(group='paidleave')
+        self.emerg_cb.bind(active=on_checkbox_active)
         self.sick_lb = Label(text="Sick leave")
-        self.sick_cb = CheckBox()
+        self.sick_cb = CheckBox(group='paidleave')
+        self.sick_cb.bind(active=on_checkbox_active)
 
         self.panel.add_widget(self.paidleave_lb)
         self.panel.add_widget(self.blank)
@@ -947,9 +960,9 @@ class PayrollWindow(Widget):
         self.unpaidleave_lb = Label(text="Unpaid Leave:")
         self.blank = Label(text="     ")
         self.whole_lb = Label(text="Whole Day")
-        self.whole_cb = CheckBox()
+        self.whole_cb = CheckBox(group='unpaidleave')
         self.half_lb = Label(text="Half Day")
-        self.half_cb = CheckBox()
+        self.half_cb = CheckBox(group='unpaidleave')
 
         self.panel.add_widget(self.unpaidleave_lb)
         self.panel.add_widget(self.blank)
@@ -966,9 +979,9 @@ class PayrollWindow(Widget):
         self.cutoffdeduc_lb = Label(text="Cut-off Deduction:")
         self.blank = Label(text="     ")
         self.wholed_lb = Label(text="Whole Day")
-        self.wholed_cb = CheckBox()
+        self.wholed_cb = CheckBox(group='deduc')
         self.halfd_lb = Label(text="Half Day")
-        self.halfd_cb = CheckBox()
+        self.halfd_cb = CheckBox(group='deduc')
 
         self.save_b = Button(text="Save")
 
@@ -995,7 +1008,14 @@ class PayrollWindow(Widget):
         '''
     def main_menu(self, *args):
         self.clear_widgets()
+        with self.canvas:
+            Color(0.871, 0.725, 0.886,1)  # set the colour to white
+            Rectangle(pos=(400,100), size=(350,400))
+            Color(0.871, 0.725, 0.886,1)
+            Rectangle(pos=(401,101), size=(348,398))
         self.add_widget(MainMenuWindow())
+
+
 
 
 
