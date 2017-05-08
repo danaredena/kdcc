@@ -29,6 +29,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import and_
+from sqlalchemy import desc
 from models import *
 
 import json
@@ -702,7 +703,7 @@ class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kiv
         super(PrevAttendanceWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
-        days = DailyAttendance.query.all()
+        days = session.query(DailyAttendance.date).distinct().order_by(desc(DailyAttendance.date))
         for day in days:
             self.data.append([day.date, 1])
 
