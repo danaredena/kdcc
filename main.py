@@ -1,4 +1,5 @@
-import datetime
+from time import gmtime, strftime
+from datetime import datetime
 import kivy
 
 from kivy.lang import Builder
@@ -63,7 +64,7 @@ class HeaderLabel(Label):
 counter = 0
 studentid = 0
 facultyid = 0
-
+daily = 0
 label_student = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
 label_faculty = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
 label_schoolyear = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
@@ -75,8 +76,7 @@ class DataGrid(GridLayout):
         self.rows += 1
         #self.rows = 2
         def change_on_press(self):
-            global studentid
-            global facultyid
+            global studentid, facultyid
             print (studentid, facultyid)
             if (studentid):
                 studentid = row_data[-1]
@@ -123,6 +123,10 @@ class DataGrid(GridLayout):
                     remarks = faculty.remarks if faculty.remarks else ''
 
                     label_faculty.text = ("Name: %s, %s %s\nAddress: %s\nBirthdate: %s\nSex: %s\nDate of Employment: %s\nContact Number: %s\nPosition: %s\nMonthly Rate: %s\nTin number: %s\nPhilHealth: %s\nSocial Security Number: %s\nAccount Number: %s\nRemarks: %s") % (lastname, firstname, middlename, address, birthdate, sex, doe, contact_number, position, monthly_rate, tin_number, philhealth, social_security_number, account_number, remarks)
+            elif(daily):
+                facultyid = row_data[-1]
+                self.parent.parent.parent.parent.update()
+                facultyid = 0
 
             childs = self.parent.children
             chosen_row = 0;
@@ -284,9 +288,7 @@ class StudentRecordsWindow(Widget):
     student_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(StudentRecordsWindow, self).__init__(**kwargs)
-        global studentid
-        global facultyid
-
+        global studentid, facultyid
         studentid = -1
         facultyid = 0
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
@@ -529,9 +531,7 @@ class SchoolyearListWindow(Widget):
 class FacultyRecordsWindow(Widget):
     def __init__(self, **kwargs):
         super(FacultyRecordsWindow, self).__init__(**kwargs)
-        global studentid
-        global facultyid
-
+        global studentid, facultyid
         studentid = 0
         facultyid = -1
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
@@ -729,6 +729,13 @@ class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kiv
 class CheckAttendanceWindow(Widget):
     def __init__(self, **kwargs):
         super(CheckAttendanceWindow, self).__init__(**kwargs)
+        global studentid, daily, facultyid
+        studentid = 0
+        facultyid = 0
+        daily = 1
+        #self.today = strftime("%m/%d/%y", gmtime())
+        self.today = "03/02/17"
+        self.count = DailyAttendance.query.filter(DailyAttendance.date==self.today).count()
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
         all_faculty = Faculty.query.all()
@@ -756,27 +763,29 @@ class CheckAttendanceWindow(Widget):
         self.absent_lb = Label(text="Absent")
         self.absent_cb = CheckBox()
         self.emerg_lb = Label(text="Emergency leave")
-        self.emerg_cb = CheckBox(group='leave')
+        self.emerg_cb = CheckBox()
         self.sick_lb = Label(text="Sick leave")
-        self.sick_cb = CheckBox(group='leave')
-
+        self.sick_cb = CheckBox()
+        
         self.time_in_lb = Label(text="Time in:")
         self.time_in_grid = GridLayout(cols=3, row_default_height=40)
-        self.time_in_mm = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="hh")
+        self.time_in_mm = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="mm", write_tab=False)
         self.time_in_col = Label(text=":")
-        self.time_in_hh = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="mm")
-        self.time_in_grid.add_widget(self.time_in_mm); self.time_in_grid.add_widget(self.time_in_col); self.time_in_grid.add_widget(self.time_in_hh);
-
+        self.time_in_hh = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="hh", write_tab=False)
+        self.time_in_grid.add_widget(self.time_in_hh); self.time_in_grid.add_widget(self.time_in_col); self.time_in_grid.add_widget(self.time_in_mm);
+        self.time_in_mm.bind(text=self.compute_mins_late)
+        self.time_in_hh.bind(text=self.compute_mins_late)
+        
         self.time_out_lb = Label(text="Time out:")
         self.time_out_grid = GridLayout(cols=3, row_default_height=40)
-        self.time_out_mm = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="hh")
+        self.time_out_mm = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="mm", write_tab=False)
         self.time_out_col = Label(text=":")
-        self.time_out_hh = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="mm")
+        self.time_out_hh = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="hh", write_tab=False)
         self.time_out_grid.add_widget(self.time_out_mm); self.time_out_grid.add_widget(self.time_out_col); self.time_out_grid.add_widget(self.time_out_hh);
 
         self.mins_late_lb = Label(text="Minutes late:")
-        self.mins_late = TextInput(size_hint_x=None, multiline=False)
-        self.save_b = Button(text="Save")
+        self.mins_late = TextInput(size_hint_x=None, multiline=False, readonly=True)
+        self.save_bt = Button(text="Save", on_press=self.save)
 
         self.panel.add_widget(self.absent_lb)
         self.panel.add_widget(self.absent_cb)
@@ -790,8 +799,7 @@ class CheckAttendanceWindow(Widget):
         self.panel.add_widget(self.time_out_grid)
         self.panel.add_widget(self.mins_late_lb)
         self.panel.add_widget(self.mins_late)
-        self.panel.add_widget(self.save_b)
-
+        self.panel.add_widget(self.save_bt)
 
         self.layout.add_widget(scroll)
         self.layout.add_widget(self.panel)
@@ -799,20 +807,50 @@ class CheckAttendanceWindow(Widget):
 
     def back(self, *args):
         self.clear_widgets()
-        with self.canvas:
-            Color(0.871, 0.725, 0.886,1)  # set the colour to white
-            Rectangle(pos=(400,100), size=(350,400))
-            Color(0.871, 0.725, 0.886,1)
-            Rectangle(pos=(401,101), size=(348,398))
+        self.canvas.clear()
         self.add_widget(DailyAttendanceWindow())
 
+    def compute_mins_late(self, *args):
+        if (len(self.time_in_mm.text)==2 and len(self.time_in_hh.text)>0 and self.time_in_mm.text.isdigit() and self.time_in_hh.text.isdigit()):
+            time_in = self.time_in_hh.text + ':' + self.time_in_mm.text
+            print('heyheyhey', time_in)
+            t1 = datetime.strptime("08:00", "%H:%M")
+            t2 = datetime.strptime(time_in, "%H:%M")
+            mins = t2-t1
+            print("mins late:", mins)
+            self.mins_late.text=str(int(mins.seconds/60))
+        else:
+            self.mins_late.text=''
+
+    def update(self, *args):
+        self.reset()
+        faculty = session.query(DailyAttendance).filter(DailyAttendance.date==self.today).filter(DailyAttendance.faculty_id==facultyid)
+        if (self.count > 0):
+            for f in faculty:
+                if f.is_absent: self.absent_cb.active = True
+                else: self.absent_cb.active = False
+                if f.is_unpaid_absent==-1: self.emerg_cb.active = True
+                elif f.is_unpaid_absent==-2: self.sick_cb.active = True
+                (self.time_in_hh.text, self.time_in_mm.text) = f.time_in.split(':')
+                (self.time_out_hh.text, self.time_out_mm.text) = f.time_out.split(':')
+                self.mins_late.text = str(f.minutes_late)
+
+    def reset(self, *args):
+        self.absent_cb.active = False
+        self.emerg_cb.active = False
+        self.sick_cb.active = False
+        self.time_in_hh.text = self.time_in_mm.text = ''
+        self.time_out_hh.text = self.time_out_mm.text = ''
+        self.mins_late.text = ''
+
+    def save(self, *args):
+        pass
 
 monthcutoffid = 2
 #FINANCIAL-PAYROLL
 class FinanceSummaryWindow(Widget):
     def __init__(self, **kwargs):
-        global studentid
-        global facultyid
+        global studentid, facultyid
         studentid = 0
         facultyid = -1
         super(FinanceSummaryWindow, self).__init__(**kwargs)
