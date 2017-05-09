@@ -472,7 +472,7 @@ class EditStudentWindow(Widget):
 
     def save(self):
     	if (self.ids.first_name.text != "" and self.ids.last_name.text != "" and self.ids.address.text != "" and self.ids.sex.text != "" and 
-    		self.ids.guardianA.text != "" and self.ids.contactA.text != "" and self.ids.up_dependent.text != "" and self.ids.nickname.text != "" and
+    		self.ids.guardianA.text != "" and self.ids.contactA.text.isdigit() and self.ids.up_dependent.text != "" and self.ids.nickname.text != "" and
     		self.ids.middle_name.text != "" and len(self.ids.birth_date.text.split('/')) == 3 and len(self.ids.date_of_admission.text.split('/')) == 3):
         #update db for students
 	        session.query(Students).filter_by(student_id=studentid).update(dict(nickname=self.ids.nickname.text, first_name=self.ids.first_name.text, middle_name=self.ids.middle_name.text, last_name=self.ids.last_name.text, suffix=self.ids.suffix.text, address=self.ids.address.text, birth_date=self.ids.birth_date.text, sex=self.ids.sex.text, date_of_admission=self.ids.date_of_admission.text, guardian1_name=self.ids.guardianA.text, guardian2_name=self.ids.guardianB.text, contact_number1=self.ids.contactA.text, contact_number2=self.ids.contactB.text, up_dependent=self.ids.up_dependent.text))
@@ -706,13 +706,16 @@ class CreateFacultyWindow(Widget):
         faculty.remarks = self.ids.remarks
         f_remarks_text = faculty.remarks.text
 
-        new_faculty = Faculty(id_number = f_id_number_text, first_name=f_first_name_text, middle_name=f_middle_name_text, last_name=f_last_name_text, suffix=f_suffix_text, address=f_address_text, birth_date=f_birth_date_text, sex=f_sex_text, date_of_employment=f_date_of_employment_text, position=f_position_text, contact_number=f_contact_number_text, pers_tin=f_pers_tin_text, pers_ssn=f_pers_ssn_text, pers_philhealth=f_pers_philhealth_text, pers_accntnum=f_pers_accntnum_text, remarks=f_remarks_text)
-        #print(new_faculty.id_number, new_faculty.first_name, new_faculty.middle_name, new_faculty.last_name, new_faculty.address, new_faculty.birth_date, new_faculty.sex, new_faculty.date_of_employment, new_faculty.position, new_faculty.contact_number, new_faculty.pers_tin, new_faculty.pers_ssn, new_faculty.pers_philhealth, new_faculty.pers_accntnum, new_faculty.remarks)
-        print( add_db(new_faculty) )
+        if (f_id_number_text.isdigit() and f_first_name_text != "" and f_middle_name_text != "" and f_last_name_text != "" and f_address_text != "" and
+            f_sex_text != "" and f_position_text != "" and f_contact_number_text.isdigit() and f_pers_tin_text.isdigit() and f_pers_ssn_text.isdigit() and
+            f_pers_philhealth_text.isdigit() and f_pers_accntnum_text.isdigit() and len(f_date_of_employment_text.split('/')) == 3 and len(f_birth_date_text.split('/')) == 3):
+            new_faculty = Faculty(id_number = f_id_number_text, first_name=f_first_name_text, middle_name=f_middle_name_text, last_name=f_last_name_text, suffix=f_suffix_text, address=f_address_text, birth_date=f_birth_date_text, sex=f_sex_text, date_of_employment=f_date_of_employment_text, position=f_position_text, contact_number=f_contact_number_text, pers_tin=f_pers_tin_text, pers_ssn=f_pers_ssn_text, pers_philhealth=f_pers_philhealth_text, pers_accntnum=f_pers_accntnum_text, remarks=f_remarks_text)
+            #print(new_faculty.id_number, new_faculty.first_name, new_faculty.middle_name, new_faculty.last_name, new_faculty.address, new_faculty.birth_date, new_faculty.sex, new_faculty.date_of_employment, new_faculty.position, new_faculty.contact_number, new_faculty.pers_tin, new_faculty.pers_ssn, new_faculty.pers_philhealth, new_faculty.pers_accntnum, new_faculty.remarks)
+            print( add_db(new_faculty) )
 
-        #print(f_id_number_text, f_first_name_text, f_middle_name_text, f_last_name_text, f_address_text, f_birth_date_text, f_sex_text, f_date_of_employment_text, f_position_text, f_contact_number_text, f_pers_tin_text, f_pers_ssn_text, f_pers_philhealth_text, f_pers_accntnum_text, f_remarks_text)
-        self.clear_widgets()
-        self.add_widget(FacultyRecordsWindow())
+            #print(f_id_number_text, f_first_name_text, f_middle_name_text, f_last_name_text, f_address_text, f_birth_date_text, f_sex_text, f_date_of_employment_text, f_position_text, f_contact_number_text, f_pers_tin_text, f_pers_ssn_text, f_pers_philhealth_text, f_pers_accntnum_text, f_remarks_text)
+            self.clear_widgets()
+            self.add_widget(FacultyRecordsWindow())
 
     def back_to_faculty_records(self, *args):
         self.clear_widgets()
@@ -743,10 +746,13 @@ class EditFacultyWindow(Widget):
             self.ids.remarks.text = teacher.remarks if teacher.remarks else ''
 
     def save(self):
-        session.query(Faculty).filter_by(faculty_id=facultyid).update(dict(id_number = self.ids.id_number.text, first_name = self.ids.first_name.text, middle_name = self.ids.middle_name.text, last_name = self.ids.last_name.text, address = self.ids.address.text, birth_date = self.ids.birth_date.text, sex = self.ids.sex.text, date_of_employment = self.ids.date_of_employment.text, position = self.ids.position.text, contact_number = self.ids.contact_number.text, pers_tin = self.ids.tin_number.text, pers_ssn = self.ids.social_security_number.text, pers_philhealth = self.ids.philhealth.text, pers_accntnum = self.ids.account_number.text, remarks = self.ids.remarks.text))
-        session.commit()
-        self.clear_widgets()
-        self.add_widget(FacultyRecordsWindow())
+        if (f_id_number_text.isdigit() and f_first_name_text != "" and f_middle_name_text != "" and f_last_name_text != "" and f_address_text != "" and
+            f_sex_text != "" and f_position_text != "" and f_contact_number_text.isdigit() and f_pers_tin_text.isdigit() and f_pers_ssn_text.isdigit() and
+            f_pers_philhealth_text.isdigit() and f_pers_accntnum_text.isdigit() and len(f_date_of_employment_text.split('/')) == 3 and len(f_birth_date_text.split('/')) == 3):
+            session.query(Faculty).filter_by(faculty_id=facultyid).update(dict(id_number = self.ids.id_number.text, first_name = self.ids.first_name.text, middle_name = self.ids.middle_name.text, last_name = self.ids.last_name.text, address = self.ids.address.text, birth_date = self.ids.birth_date.text, sex = self.ids.sex.text, date_of_employment = self.ids.date_of_employment.text, position = self.ids.position.text, contact_number = self.ids.contact_number.text, pers_tin = self.ids.tin_number.text, pers_ssn = self.ids.social_security_number.text, pers_philhealth = self.ids.philhealth.text, pers_accntnum = self.ids.account_number.text, remarks = self.ids.remarks.text))
+            session.commit()
+            self.clear_widgets()
+            self.add_widget(FacultyRecordsWindow())
 
     def back(self):
         self.clear_widgets()
