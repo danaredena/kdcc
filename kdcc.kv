@@ -988,17 +988,25 @@
 
 <PrevAttendanceWindow>:
     Button:
-        id: home
+        id: back
         font_size: 15
         center_x: root.width + 560
         center_y: root.y + 75
         text: "Back"
         size: (130,40)
         on_press: root.back()
-
-<PrevAttendanceWindow>:
     Button:
-        id: home
+        id: view
+        font_size: 15
+        center_x: root.width + 430
+        center_y: root.y + 75
+        text: "View"
+        size: (130,40)
+        on_press: root.view()
+
+<ViewAttendanceWindow>:
+    Button:
+        id: back
         font_size: 15
         center_x: root.width + 560
         center_y: root.y + 75

@@ -65,6 +65,7 @@ counter = 0
 studentid = 0
 facultyid = 0
 daily = 0
+date = ''
 label_student = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
 label_faculty = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
 label_schoolyear = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
@@ -76,8 +77,9 @@ class DataGrid(GridLayout):
         self.rows += 1
         #self.rows = 2
         def change_on_press(self):
-            global studentid, facultyid
+            global studentid, facultyid, date
             print (studentid, facultyid)
+            if daily == -2: date = row_data[0]
             if (studentid):
                 studentid = row_data[-1]
                 for student in session.query(Students).filter_by(student_id=studentid):
@@ -535,6 +537,12 @@ class ChooseSchoolyearWindow(Widget):
         self.clear_widgets()
         self.add_widget(CreateSchoolyearWindow())
 
+    def update(self, *args):
+        pass
+
+    def reset(self, *args):
+        pass
+
 class CreateSchoolyearWindow(Widget):
     def create(self, *args):
         schoolyear.schoolyear_code = self.ids.schoolyear_code
@@ -578,9 +586,7 @@ class FacultyRecordsWindow(Widget):
     def __init__(self, **kwargs):
         super(FacultyRecordsWindow, self).__init__(**kwargs)
         global studentid, facultyid, daily
-        studentid = 0
-        daily = 0
-        facultyid = -1
+        studentid = 0; daily = 0; facultyid = -1
         label_faculty.text = ''
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         with self.canvas:
@@ -759,6 +765,8 @@ class DailyAttendanceWindow(Widget):
 
 class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kivy
     def __init__(self, **kwargs):
+        global daily
+        daily = -2
         super(PrevAttendanceWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
@@ -785,12 +793,130 @@ class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kiv
         self.clear_widgets()
         self.add_widget(DailyAttendanceWindow())
 
+    def view(self, *args):
+        self.clear_widgets()
+        self.add_widget(ViewAttendanceWindow())
+
+    def update(self, *args):
+        pass
+
+    def reset(self, *args):
+        pass
+
+class ViewAttendanceWindow(Widget):
+    def __init__(self, **kwargs):
+        super(ViewAttendanceWindow, self).__init__(**kwargs)
+        global studentid, daily
+        studentid = 0; daily = -1
+        self.absent = self.emerg = self.sick = 0
+        self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
+        self.data = []
+        all_faculty = Faculty.query.all()
+        for faculty in all_faculty:
+            self.data.append([faculty.id_number, faculty.last_name+', '+faculty.first_name+' '+faculty.middle_name, str(faculty.faculty_id)])
+
+        self.date_lb = Label(text="Date:   "+date, pos=(100,470), color=(0,0,0,1),font_size=20)
+        self.add_widget(self.date_lb)
+        header = ['ID Number', 'Name']
+        self.col_size = [0.33, 0.67] #fractions - add to 1
+        self.body_alignment = ["center", "center"]
+
+        self.grid = DataGrid(header, self.data, self.body_alignment, self.col_size)
+        self.grid.rows = 10
+
+        scroll = ScrollView(size_hint=(1, 1), size=(400, 500000), scroll_y=0, pos_hint={'center_x':.5, 'center_y':.5})
+        scroll.add_widget(self.grid)
+        scroll.do_scroll_y = True
+        scroll.do_scroll_x = False
+
+        self.panel = GridLayout(cols=2, row_default_height=40, spacing=10, padding=(10,10,10,10))
+        with self.canvas:
+            Color(0.608, 0.349, 0.714,1)  # set the colour to red
+            Rectangle(pos=(400,100), size=(350,400))
+            Color(0.608, 0.349, 0.714,1)
+            Rectangle(pos=(401,101), size=(348,398))
+        self.absent_lb = Label(text="Absent")
+        self.absent_cb = CheckBox()
+        self.emerg_lb = Label(text="Emergency leave")
+        self.emerg_cb = CheckBox(group="leave")
+        self.sick_lb = Label(text="Sick leave")
+        self.sick_cb = CheckBox(group="leave")
+        self.absent_cb.bind(active=self.on_checkbox_toggle)
+        self.emerg_cb.bind(active=self.on_checkbox_toggle)
+        self.sick_cb.bind(active=self.on_checkbox_toggle)
+        
+        self.time_in_lb = Label(text="Time in:")
+        self.time_in_grid = GridLayout(cols=3, row_default_height=40)
+        self.time_in_mm = TextInput(size_hint_x=None, width=50, readonly=True)
+        self.time_in_col = Label(text=":")
+        self.time_in_hh = TextInput(size_hint_x=None, width=50, readonly=True)
+        self.time_in_grid.add_widget(self.time_in_hh); self.time_in_grid.add_widget(self.time_in_col); self.time_in_grid.add_widget(self.time_in_mm);
+        
+        self.time_out_lb = Label(text="Time out:")
+        self.time_out_grid = GridLayout(cols=3, row_default_height=40)
+        self.time_out_mm = TextInput(size_hint_x=None, width=50, readonly=True)
+        self.time_out_col = Label(text=":")
+        self.time_out_hh = TextInput(size_hint_x=None, width=50, readonly=True)
+        self.time_out_grid.add_widget(self.time_out_mm); self.time_out_grid.add_widget(self.time_out_col); self.time_out_grid.add_widget(self.time_out_hh);
+
+        self.mins_late_lb = Label(text="Minutes late:")
+        self.mins_late = TextInput(size_hint_x=None, readonly=True)
+
+        self.panel.add_widget(self.absent_lb)
+        self.panel.add_widget(self.absent_cb)
+        self.panel.add_widget(self.emerg_lb)
+        self.panel.add_widget(self.emerg_cb)
+        self.panel.add_widget(self.sick_lb)
+        self.panel.add_widget(self.sick_cb)
+        self.panel.add_widget(self.time_in_lb)
+        self.panel.add_widget(self.time_in_grid)
+        self.panel.add_widget(self.time_out_lb)
+        self.panel.add_widget(self.time_out_grid)
+        self.panel.add_widget(self.mins_late_lb)
+        self.panel.add_widget(self.mins_late)
+
+        self.layout.add_widget(scroll)
+        self.layout.add_widget(self.panel)
+        self.add_widget(self.layout)
+
+    def back(self, *args):
+        self.canvas.clear()
+        self.clear_widgets()
+        self.add_widget(PrevAttendanceWindow())
+
+    def update(self, *args):
+        self.reset()
+        faculty = session.query(DailyAttendance).filter(DailyAttendance.date==date).filter(DailyAttendance.faculty_id==facultyid)
+        for f in faculty:
+            if f.is_absent: self.absent = self.absent_cb.active = True
+            else: self.absent = self.absent_cb.active = False
+            if f.is_unpaid_absent==-1:
+                self.emerg = self.emerg_cb.active = True
+                self.sick = self.sick_cb.active = False
+            elif f.is_unpaid_absent==-2:
+                self.sick = self.sick_cb.active = True
+                self.emerg = self.emerg_cb.active = False
+            (self.time_in_hh.text, self.time_in_mm.text) = f.time_in.split(':')
+            (self.time_out_hh.text, self.time_out_mm.text) = f.time_out.split(':') if f.time_out else ('','')
+            self.mins_late.text = str(f.minutes_late)
+
+    def on_checkbox_toggle(self, *args):
+        self.absent_cb.active = self.absent
+        self.emerg_cb.active = self.emerg
+        self.sick_cb.active = self.sick
+
+    def reset(self, *args):
+        self.absent = self.emerg = self.sick = False
+        self.on_checkbox_toggle()
+        self.time_in_hh.text = self.time_in_mm.text = ''
+        self.time_out_hh.text = self.time_out_mm.text = ''
+        self.mins_late.text = ''
+
 class CheckAttendanceWindow(Widget):
     def __init__(self, **kwargs):
         super(CheckAttendanceWindow, self).__init__(**kwargs)
         global studentid, daily
-        studentid = 0
-        daily = -1
+        studentid = 0; daily = -1
         self.today = strftime("%m/%d/%y", gmtime())
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
@@ -933,13 +1059,10 @@ class CheckAttendanceWindow(Widget):
 
 monthcutoffid = 2
 #FINANCIAL-PAYROLL
-
 class FinanceSummaryWindow(Widget):
     def __init__(self, **kwargs):
         global studentid, facultyid, daily
-        studentid = 0
-        daily = 0
-        facultyid = -1
+        studentid = 0; daily = 0; facultyid = -1
         super(FinanceSummaryWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
         self.data = []
@@ -1181,6 +1304,9 @@ class PayrollWindow(Widget):
             Color(0.871, 0.725, 0.886,1)
             Rectangle(pos=(401,101), size=(348,398))
         self.add_widget(MainMenuWindow())
+
+    def update(self, *args):
+        pass
 
     def reset(self, *args):
         pass
