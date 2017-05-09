@@ -1357,32 +1357,27 @@ class PayrollWindow(Widget):
         self.half_cb.active = False
 
     def save(self, *args):
-        pass
-        '''if self.emerg_cb.active:
+        if self.emerg_cb.active:
+            unpaid_absent = -1;
+            absent = 1
+        elif self.sick_cb.active: 
+            unpaid_absent = -2
+            absent = 1
+        elif self.whole_cb.active:
+            absent = 1
             unpaid_absent = 1
-
-        if (item.is_absent != 0): #!= 0
-            if(item.is_absent == 1): #whole day
-                whole_half = "Whole Day"
-            elif(item.is_absent == 0.5):
-                whole_half = "Half Day"
-
-            if(item.is_unpaid_absent == 1):
-                paid_unpaid = "Unpaid"
-
-            elif(item.is_unpaid_absent == 0.5):
-                paid_unpaid = "Unpaid"
-
-            elif(item.is_unpaid_absent == -1):
-                paid_unpaid = "Paid - EL"
-
-            if(item.is_unpaid_absent == -2):
-                paid_unpaid = "Paid - SL"
-
-            if (paid_unpaid == "Paid - EL"):
-                self.emerg_cb.active = True
-            elif (paid_unpaid == "Paid - SL"):
-                self.sick_cb.active = True'''
+        elif self.half_cb.active:
+            absent = .5
+            unpaid_absent = .5
+        else: absent = 0
+        items = session.query(DailyAttendance).filter(DailyAttendance.monthcutoff_id==monthcutoffid).filter(DailyAttendance.faculty_id==int(facultyid)).filter(DailyAttendance.date==date)
+        for item in items:
+            print("jahsdjshgdasg")
+            item.is_unpaid_absent = unpaid_absent
+            item.is_absent = absent
+            session.commit()
+        self.clear_widgets()
+        self.__init__()
 
     def compute(self, *args):
         total_deduction = 0
