@@ -1272,7 +1272,7 @@ class PayrollWindow(Widget):
         self.halfd_lb = Label(text="Half Day")
         self.halfd_cb = CheckBox(group='deduc')
 
-        self.save_b = Button(text="Save")
+        self.save_b = Button(text="Save", on_press=self.save)
 
 
         self.panel.add_widget(self.cutoffdeduc_lb)
@@ -1307,7 +1307,6 @@ class PayrollWindow(Widget):
     def update(self, *args):
         self.reset()
         items = DailyAttendance.query.all()
-        print("JSHDJSGDSHGD")
         for item in items:
             if (item.monthcutoff_id == monthcutoffid and item.faculty_id==int(facultyid) and item.date==date and item.date==date):
                 print("IN")
@@ -1345,6 +1344,36 @@ class PayrollWindow(Widget):
         self.whole_cb.active = False
         self.half_cb.active = False
 
+    def save(self, *args):
+        pass
+        '''if self.emerg_cb.active:
+            unpaid_absent = 1
+
+        if (item.is_absent != 0): #!= 0
+            if(item.is_absent == 1): #whole day
+                whole_half = "Whole Day"
+            elif(item.is_absent == 0.5):
+                whole_half = "Half Day"
+
+            if(item.is_unpaid_absent == 1):
+                paid_unpaid = "Unpaid"
+
+            elif(item.is_unpaid_absent == 0.5):
+                paid_unpaid = "Unpaid"
+
+            elif(item.is_unpaid_absent == -1):
+                paid_unpaid = "Paid - EL"
+
+            if(item.is_unpaid_absent == -2):
+                paid_unpaid = "Paid - SL"
+
+            if (paid_unpaid == "Paid - EL"):
+                self.emerg_cb.active = True
+            elif (paid_unpaid == "Paid - SL"):
+                self.sick_cb.active = True'''
+
+    def compute(self, *args):
+        pass
 
 class KDCCApp(App):
     def build(self):
