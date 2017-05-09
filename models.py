@@ -63,7 +63,7 @@ class MonthlyPayroll(Base):
 
     ## SUMMARY PART
     no_of_absences = Column(Integer, nullable=True)
-    no_of_unpaid_absences = Column(Integer, nullable=True)
+    #no_of_unpaid_absences = Column(Integer, nullable=True)
     #no of unpaid absences??
     total_minutes_late = Column(Integer, nullable=True)
     pending_deduc = Column(Integer, nullable=True)
@@ -124,7 +124,7 @@ class Faculty(Base):
 
 class Schoolyear(Base):
     __tablename__ = 'schoolyear'
-    
+
     schoolyear_code = Column(String(10), nullable=False, primary_key=True)
 
 

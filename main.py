@@ -1,5 +1,5 @@
 from time import gmtime, strftime
-from datetime import datetime
+import datetime
 import kivy
 
 from kivy.lang import Builder
@@ -286,23 +286,23 @@ class MainMenuWindow(Widget):
         self.clear_widgets()
         self.add_widget(LoginWindow())
 
-class Student(): 
-    def __init__(self): 
-        self.nickname = None 
-        self.first_name = None 
-        self.middle_name = None 
-        self.last_name = None 
-        self.address = None 
-        self.birth_date = None 
-        self.age = None #autocompute 
-        self.sex = None 
-        self.date_of_admission = None 
-        #self.group = None 
-        self.guardian1_name = None 
-        self.guardian2_name = None 
-        self.contact_number1 = None 
-        self.contact_number2 = None 
-        self.up_dependent = None 
+class Student():
+    def __init__(self):
+        self.nickname = None
+        self.first_name = None
+        self.middle_name = None
+        self.last_name = None
+        self.address = None
+        self.birth_date = None
+        self.age = None #autocompute
+        self.sex = None
+        self.date_of_admission = None
+        #self.group = None
+        self.guardian1_name = None
+        self.guardian2_name = None
+        self.contact_number1 = None
+        self.contact_number2 = None
+        self.up_dependent = None
 
 class StudentRecordsWindow(Widget):
     student_list = ObjectProperty()
@@ -555,24 +555,24 @@ class SchoolyearListWindow(Widget):
         self.clear_widgets()
         self.add_widget(ChooseSchoolyearWindow())
 
-class Facuty(): 
-    def __init__(self): 
-        self.id_number = None 
-        self.first_name = None 
-        self.middle_name = None 
-        self.last_name = None 
-        self.address = None 
-        self.birth_date = None 
-        self.age = None #autocompute 
-        self.sex = None 
-        self.date_of_employment = None 
-        self.position = None 
-        self.contact_number = None 
-        self.pers_tin = None 
-        self.pers_ssn = None 
-        self.pers_philhealth = None 
-        self.pers_accntnum = None 
-        self.remarks = None 
+class Facuty():
+    def __init__(self):
+        self.id_number = None
+        self.first_name = None
+        self.middle_name = None
+        self.last_name = None
+        self.address = None
+        self.birth_date = None
+        self.age = None #autocompute
+        self.sex = None
+        self.date_of_employment = None
+        self.position = None
+        self.contact_number = None
+        self.pers_tin = None
+        self.pers_ssn = None
+        self.pers_philhealth = None
+        self.pers_accntnum = None
+        self.remarks = None
 
 class FacultyRecordsWindow(Widget):
     def __init__(self, **kwargs):
@@ -824,7 +824,7 @@ class CheckAttendanceWindow(Widget):
         self.emerg_cb = CheckBox(group="leave")
         self.sick_lb = Label(text="Sick leave")
         self.sick_cb = CheckBox(group="leave")
-        
+
         self.time_in_lb = Label(text="Time in:")
         self.time_in_grid = GridLayout(cols=3, row_default_height=40)
         self.time_in_mm = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="mm", write_tab=False)
@@ -833,7 +833,7 @@ class CheckAttendanceWindow(Widget):
         self.time_in_grid.add_widget(self.time_in_hh); self.time_in_grid.add_widget(self.time_in_col); self.time_in_grid.add_widget(self.time_in_mm);
         self.time_in_mm.bind(text=self.compute_mins_late)
         self.time_in_hh.bind(text=self.compute_mins_late)
-        
+
         self.time_out_lb = Label(text="Time out:")
         self.time_out_grid = GridLayout(cols=3, row_default_height=40)
         self.time_out_mm = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="mm", write_tab=False)
@@ -911,7 +911,7 @@ class CheckAttendanceWindow(Widget):
         else: unpaid_absent = 0
         timein = self.time_in_hh.text + ':' + self.time_in_mm.text
         timeout = self.time_out_hh.text + ':' + self.time_out_mm.text
-        minutes_late = int(self.mins_late.text) if self.mins_late.text else ''
+        minutes_late = int(self.mins_late.text) if self.mins_late.text else 0
         if count > 0:
             faculty = session.query(DailyAttendance).filter(DailyAttendance.date==self.today).filter(DailyAttendance.faculty_id==facultyid)
             if faculty.count() > 0:
@@ -933,6 +933,7 @@ class CheckAttendanceWindow(Widget):
 
 monthcutoffid = 2
 #FINANCIAL-PAYROLL
+
 class FinanceSummaryWindow(Widget):
     def __init__(self, **kwargs):
         global studentid, facultyid, daily
@@ -942,6 +943,26 @@ class FinanceSummaryWindow(Widget):
         super(FinanceSummaryWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
         self.data = []
+        #populate MonthlyPayroll
+        count = 0
+        checks = MonthlyPayroll.query.filter_by(monthcutoff_id=monthcutoffid)
+        for check in checks:
+            count += 1
+
+        if (count == 0):
+            items = Faculty.query.all()
+            for item in items:
+                facultyid = item.faculty_id
+                print(facultyid)
+                #no_of_absences = 0
+                total_minslate = 0
+                entries = DailyAttendance.query.all()
+                for entry in entries:
+                    if (entry.monthcutoff_id == monthcutoffid and entry.faculty_id==facultyid):
+                        total_minslate += int(entry.minutes_late)
+                print(total_minslate)
+                new_entry = MonthlyPayroll(monthcutoff_id=monthcutoffid, faculty_id=facultyid, total_minutes_late=total_minslate)
+                print( add_db(new_entry) )
         items = MonthlyPayroll.query.all()
         for item in items:
             print(item.monthcutoff_id)
@@ -953,7 +974,25 @@ class FinanceSummaryWindow(Widget):
                     last_name = teacher.last_name
                     monthly_rate = teacher.monthly_rate
                     faculty_id = teacher.faculty_id
-                self.data.append([id_number, last_name+", "+first_name+" "+middle_name, str(monthly_rate), str(item.computed_deduc),  str(item.pending_deduc), str(item.computed_salary), str(faculty_id)])
+                if (item.computed_deduc == None):
+                    computed_deduc = "-please set-"
+                else:
+                    computed_deduc = str(item.computed_deduc)
+                if (item.pending_deduc == None):
+                    pending_deduc = "-please set-"
+                else:
+                    pending_deduc = str(item.pending_deduc)
+
+                if (item.computed_salary == None):
+                    computed_salary = "-please set-"
+                else:
+                    computed_salary = str(item.computed_salary)
+                self.data.append([id_number, last_name+", "+first_name+" "+middle_name, str(monthly_rate), computed_deduc,  pending_deduc, computed_salary, str(faculty_id)])
+        #GET DATE IF CUTOFF, CREATE NEW
+        self.today = datetime.datetime.now()
+        (self.today.day)
+        self.date_lb = Label(text="Cutoff: May 1, 2017 - May 15, 2017", pos=(150,470), color=(0,0,0,1),font_size=16)
+        self.add_widget(self.date_lb)
 
         header = ['Faculty ID', 'Name', 'Monthly\n  Rate', ' Computed\nDeductions', '  Pending\nDeductions', 'Computed\n Salary']
         self.col_size = [0.14, 0.29, 0.14, 0.14, 0.14, 0.14]
@@ -1044,6 +1083,7 @@ class PayrollWindow(Widget):
                     self.data.append([item.date, "("+paid_unpaid+")"+" "+whole_half, str(deduc), str(p_deduc), item.faculty_id])
 
             print(self.data)
+
 
         header = ['Date', 'Description', 'Deduction', 'Balance']
         self.col_size = [0.20, 0.40, 0.20, 0.20] #fractions - add to 1
@@ -1150,9 +1190,9 @@ class KDCCApp(App):
     def build(self):
         return LoginWindow()
 
-student = Student() 
-faculty = Faculty() 
-schoolyear = Schoolyear() 
+student = Student()
+faculty = Faculty()
+schoolyear = Schoolyear()
 
 if __name__ == '__main__':
     KDCCApp().run()

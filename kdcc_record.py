@@ -12,7 +12,7 @@ DBSession.configure(bind=engine)
 
 def fill():
     try:
-        #'''
+        '''
         #1: ADD USER 'admin'
         session = DBSession()
         new_user = User(username='admin', password='admin')
@@ -86,17 +86,17 @@ def fill():
 
         #10: ADD DAILY ATTENDANCE (arbitrary) '02/09/2017'
         session = DBSession()
-        new_daily = DailyAttendance(monthcutoff_id=2, date = '03/02/17', faculty_id=1, is_absent=1, is_unpaid_absent=-1, time_in='07:30', time_out='18:00', minutes_late=0)
+        new_daily = DailyAttendance(monthcutoff_id=2, date = '05/01/17', faculty_id=1, is_absent=1, is_unpaid_absent=-1, time_in='07:30', time_out='18:00', minutes_late=0)
         session.add(new_daily)
-        new_daily = DailyAttendance(monthcutoff_id=2, date='03/09/17', faculty_id=1, is_absent=0, is_unpaid_absent=0, time_in='10:30', minutes_late= 200)
+        new_daily = DailyAttendance(monthcutoff_id=2, date='05/02/17', faculty_id=1, is_absent=0, is_unpaid_absent=0, time_in='10:30', minutes_late= 200)
         session.add(new_daily)
-        new_daily = DailyAttendance(monthcutoff_id=2, date='03/11/17', faculty_id=1, is_absent=0.5, is_unpaid_absent=0.5, time_in='10:30', minutes_late= 100)
+        new_daily = DailyAttendance(monthcutoff_id=2, date='05/03/17', faculty_id=1, is_absent=0.5, is_unpaid_absent=0.5, time_in='10:30', minutes_late= 100)
         session.add(new_daily)
-        new_daily = DailyAttendance(monthcutoff_id=2, date = '03/05/17', faculty_id=1, is_absent=0, is_unpaid_absent=0, time_in='07:30', time_out='18:00', minutes_late=145)
+        new_daily = DailyAttendance(monthcutoff_id=2, date = '05/04/17', faculty_id=1, is_absent=0, is_unpaid_absent=0, time_in='07:30', time_out='18:00', minutes_late=145)
         session.add(new_daily)
-        new_daily = DailyAttendance(monthcutoff_id=2, date='03/19/17', faculty_id=1, is_absent=1, is_unpaid_absent=0.5, time_in='10:30', minutes_late= 0)
+        new_daily = DailyAttendance(monthcutoff_id=2, date='05/05/17', faculty_id=1, is_absent=1, is_unpaid_absent=0.5, time_in='10:30', minutes_late= 0)
         session.add(new_daily)
-        new_daily = DailyAttendance(monthcutoff_id=2, date='03/15/17', faculty_id=1, is_absent=0.5, is_unpaid_absent=0.5, time_in='10:30', minutes_late= 0)
+        new_daily = DailyAttendance(monthcutoff_id=2, date='05/06/17', faculty_id=1, is_absent=0.5, is_unpaid_absent=0.5, time_in='10:30', minutes_late= 0)
         session.add(new_daily)
         session.commit()
 
@@ -107,8 +107,11 @@ def fill():
         new_payroll = MonthlyPayroll(monthcutoff_id=2, faculty_id=2, no_of_absences=4, pending_deduc=500, computed_deduc=100,computed_salary=11000)
         session.add(new_payroll)
         session.commit()
-
-        #'''
+        
+        '''
+        session = DBSession()
+        session.query(MonthlyPayroll).delete()
+        session.commit()
 
     except: #this part ensures na no drastic changes will happen in case something goes wrong
         session.rollback()
