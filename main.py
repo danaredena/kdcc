@@ -286,6 +286,24 @@ class MainMenuWindow(Widget):
         self.clear_widgets()
         self.add_widget(LoginWindow())
 
+class Student(): 
+    def __init__(self): 
+        self.nickname = None 
+        self.first_name = None 
+        self.middle_name = None 
+        self.last_name = None 
+        self.address = None 
+        self.birth_date = None 
+        self.age = None #autocompute 
+        self.sex = None 
+        self.date_of_admission = None 
+        #self.group = None 
+        self.guardian1_name = None 
+        self.guardian2_name = None 
+        self.contact_number1 = None 
+        self.contact_number2 = None 
+        self.up_dependent = None 
+
 class StudentRecordsWindow(Widget):
     student_list = ObjectProperty()
     def __init__(self, **kwargs):
@@ -531,6 +549,25 @@ class SchoolyearListWindow(Widget):
     def choose_schoolyear(self, *args):
         self.clear_widgets()
         self.add_widget(ChooseSchoolyearWindow())
+
+class Facuty(): 
+    def __init__(self): 
+        self.id_number = None 
+        self.first_name = None 
+        self.middle_name = None 
+        self.last_name = None 
+        self.address = None 
+        self.birth_date = None 
+        self.age = None #autocompute 
+        self.sex = None 
+        self.date_of_employment = None 
+        self.position = None 
+        self.contact_number = None 
+        self.pers_tin = None 
+        self.pers_ssn = None 
+        self.pers_philhealth = None 
+        self.pers_accntnum = None 
+        self.remarks = None 
 
 class FacultyRecordsWindow(Widget):
     def __init__(self, **kwargs):
@@ -1099,6 +1136,10 @@ class PayrollWindow(Widget):
 class KDCCApp(App):
     def build(self):
         return LoginWindow()
+
+student = Student() 
+faculty = Faculty() 
+schoolyear = Schoolyear() 
 
 if __name__ == '__main__':
     KDCCApp().run()
