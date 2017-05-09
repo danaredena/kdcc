@@ -1033,7 +1033,7 @@ class CheckAttendanceWindow(Widget):
         else: absent = 0
         if self.emerg_cb.active: unpaid_absent = -1
         elif self.sick_cb.active: unpaid_absent = -2
-        else: unpaid_absent = 0
+        else: unpaid_absent = 1
         timein = self.time_in_hh.text + ':' + self.time_in_mm.text
         timeout = self.time_out_hh.text + ':' + self.time_out_mm.text
         minutes_late = int(self.mins_late.text) if self.mins_late.text else 0
@@ -1154,7 +1154,8 @@ class PayrollWindow(Widget):
 
     def __init__(self, **kwargs):
         super(PayrollWindow, self).__init__(**kwargs)
-        global monthcutoffid, facultyid
+        global daily
+        daily = -2
         day_rate = 500
         total_minutes_late = 0
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
@@ -1192,7 +1193,7 @@ class PayrollWindow(Widget):
 
                     elif(item.is_absent == 1 and item.is_unpaid_absent == 0.5):
                         deduc = day_rate/2
-                        p_deduc = day_rate - p_deduc
+                        p_deduc = day_rate/2
 
                     elif(item.is_absent == 0.5 and item.is_unpaid_absent == 0.5):
                         deduc = day_rate/2
@@ -1230,10 +1231,8 @@ class PayrollWindow(Widget):
         self.blank = Label(text="     ")
         self.emerg_lb = Label(text="Emergency Leave")
         self.emerg_cb = CheckBox(group='paidleave')
-        self.emerg_cb.bind(active=on_checkbox_active)
         self.sick_lb = Label(text="Sick leave")
         self.sick_cb = CheckBox(group='paidleave')
-        self.sick_cb.bind(active=on_checkbox_active)
 
         self.panel.add_widget(self.paidleave_lb)
         self.panel.add_widget(self.blank)
@@ -1306,10 +1305,45 @@ class PayrollWindow(Widget):
         self.add_widget(MainMenuWindow())
 
     def update(self, *args):
-        pass
+        self.reset()
+        items = DailyAttendance.query.all()
+        print("JSHDJSGDSHGD")
+        for item in items:
+            if (item.monthcutoff_id == monthcutoffid and item.faculty_id==int(facultyid) and item.date==date and item.date==date):
+                print("IN")
+                if (item.is_absent != 0): #!= 0
+                    if(item.is_absent == 1): #whole day
+                        whole_half = "Whole Day"
+                    elif(item.is_absent == 0.5):
+                        whole_half = "Half Day"
+
+                    if(item.is_unpaid_absent == 1):
+                        paid_unpaid = "Unpaid"
+
+                    elif(item.is_unpaid_absent == 0.5):
+                        paid_unpaid = "Unpaid"
+
+                    elif(item.is_unpaid_absent == -1):
+                        paid_unpaid = "Paid - EL"
+
+                    if(item.is_unpaid_absent == -2):
+                        paid_unpaid = "Paid - SL"
+
+                    if (paid_unpaid == "Paid - EL"):
+                        self.emerg_cb.active = True
+                    elif (paid_unpaid == "Paid - SL"):
+                        self.sick_cb.active = True
+
+                    if paid_unpaid == "Unpaid" and whole_half=="Whole Day":
+                        self.whole_cb.active=True
+                    elif paid_unpaid == "Unpaid" and whole_half=="Half Day":
+                        self.half_cb.active=True
 
     def reset(self, *args):
-        pass
+        self.emerg_cb.active = False
+        self.sick_cb.active = False
+        self.whole_cb.active = False
+        self.half_cb.active = False
 
 
 class KDCCApp(App):
