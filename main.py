@@ -1314,7 +1314,7 @@ class PayrollWindow(Widget):
         self.reset()
         items = DailyAttendance.query.all()
         for item in items:
-            if (item.monthcutoff_id == monthcutoffid and item.faculty_id==int(facultyid) and item.date==date and item.date==date):
+            if (item.monthcutoff_id == monthcutoffid and item.faculty_id==int(facultyid) and item.date==date):
                 print("IN")
                 if (item.is_absent != 0): #!= 0
                     if(item.is_absent == 1): #whole day
@@ -1379,7 +1379,23 @@ class PayrollWindow(Widget):
                 self.sick_cb.active = True'''
 
     def compute(self, *args):
-        pass
+        total_deduction = 0
+        total_pending = 0
+        for row in self.data:
+            total_deduction += int(float(row[2]))
+            total_pending += int(float(row[3]))
+        items = session.query(MonthlyPayroll).filter(MonthlyPayroll.monthcutoff_id==monthcutoffid).filter(MonthlyPayroll.faculty_id==int(facultyid))
+        for item in items:
+            item.computed_deduc = total_deduction
+            item.pending_deduc = total_pending
+            for teacher in session.query(Faculty).filter_by(faculty_id=item.faculty_id):
+                monthly_rate = teacher.monthly_rate
+            item.computed_salary = monthly_rate=total_deduction
+            session.commit()
+        self.canvas.clear()
+        self.clear_widgets()
+        self.add_widget(FinanceSummaryWindow())
+
 
 class KDCCApp(App):
     def build(self):
