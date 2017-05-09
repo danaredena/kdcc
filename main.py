@@ -485,7 +485,7 @@ class ChooseSchoolyearWindow(Widget):
         self.layout.add_widget(self.label_grid)
         self.add_widget(self.layout)
 
-        del_row_btn = Button(text="Delete", on_press=partial(self.grid.remove_row, len(header)), font_size=15, pos=(250,25), size=(100,40))
+        del_row_btn = Button(text="Delete", on_press=partial(self.grid.remove_row, len(header)), font_size=15, pos=(300,25), size=(100,40))
         self.add_widget(del_row_btn)
 
     def populate_list(self, *args):
