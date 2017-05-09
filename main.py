@@ -308,9 +308,15 @@ class StudentRecordsWindow(Widget):
     student_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(StudentRecordsWindow, self).__init__(**kwargs)
+        label_student.text = ''
         global studentid
         studentid = -1
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
+        with self.canvas:
+            Color(0.608, 0.349, 0.714,1)  # set the colour to red
+            Rectangle(pos=(400,100), size=(350,400))
+            Color(0.608, 0.349, 0.714,1)
+            Rectangle(pos=(401,101), size=(348,398))
         self.data = []
 
         students = Students.query.all()
@@ -341,7 +347,7 @@ class StudentRecordsWindow(Widget):
         show_grid_log = Button(text="Show log", on_press=partial(self.grid.show_log))'''
 
         label_student.bind(size=label_student.setter('text_size'))
-        self.label_grid = BoxLayout(orientation="vertical")
+        self.label_grid = BoxLayout(orientation="vertical", padding=10)
         self.label_grid.add_widget(label_student)
 
         self.layout.add_widget(scroll)
@@ -352,35 +358,34 @@ class StudentRecordsWindow(Widget):
         self.add_widget(del_row_btn)
 
     def main_menu(self, *args):
-        global label_student
         label_student.text = ''
+        self.canvas.clear()
         self.label_grid.remove_widget(label_student)
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
 
     def create(self, *args):
-        global label_student
         label_student.text = ''
+        self.canvas.clear()
         self.label_grid.remove_widget(label_student)
         self.clear_widgets()
         self.add_widget(CreateStudentWindow())
 
     def edit(self):
-        global label_student
         label_student.text = ''
+        self.canvas.clear()
         self.label_grid.remove_widget(label_student)
         self.clear_widgets()
         self.add_widget(EditStudentWindow())
 
     def choose_schoolyear(self, *args):
-        global label_student
         label_student.text = ''
+        self.canvas.clear()
         self.label_grid.remove_widget(label_student)
         self.clear_widgets()
         self.add_widget(ChooseSchoolyearWindow())
 
     def reset(self, *args):
-        global label_student
         label_student.text = ''
 
 class CreateStudentWindow(Widget):
@@ -576,7 +581,13 @@ class FacultyRecordsWindow(Widget):
         studentid = 0
         daily = 0
         facultyid = -1
+        label_faculty.text = ''
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
+        with self.canvas:
+            Color(0.608, 0.349, 0.714,1)  # set the colour to red
+            Rectangle(pos=(400,100), size=(350,400))
+            Color(0.608, 0.349, 0.714,1)
+            Rectangle(pos=(401,101), size=(348,398))
         self.data = []
 
         all_faculty = Faculty.query.all()
@@ -596,7 +607,7 @@ class FacultyRecordsWindow(Widget):
         scroll.do_scroll_x = False
 
         label_faculty.bind(size=label_faculty.setter('text_size'))
-        self.label_grid = BoxLayout(orientation="vertical")
+        self.label_grid = BoxLayout(orientation="vertical", padding=10)
         self.label_grid.add_widget(label_faculty)
 
         self.layout.add_widget(scroll)
@@ -607,25 +618,27 @@ class FacultyRecordsWindow(Widget):
         self.add_widget(del_row_btn)
 
     def main_menu(self, *args):
+        self.canvas.clear()
         self.label_grid.remove_widget(label_faculty)
         label_faculty.text = ''
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
 
     def create(self, *args):
+        self.canvas.clear()
         self.label_grid.remove_widget(label_faculty)
         label_faculty.text = ''
         self.clear_widgets()
         self.add_widget(CreateFacultyWindow())
 
     def edit(self):
+        self.canvas.clear()
         self.label_grid.remove_widget(label_faculty)
         label_faculty.text = ''
         self.clear_widgets()
         self.add_widget(EditFacultyWindow())
 
     def reset(self, *args):
-        global label_faculty
         label_faculty.text = ''
 
 
