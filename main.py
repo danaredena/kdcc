@@ -107,7 +107,6 @@ class DataGrid(GridLayout):
             elif(daily):
                 facultyid = row_data[-1]
                 self.parent.parent.parent.parent.update()
-
             elif(facultyid):
                 facultyid = row_data[-1]
                 for faculty in session.query(Faculty).filter_by(faculty_id=facultyid):
@@ -1155,7 +1154,7 @@ class PayrollWindow(Widget):
 
     def __init__(self, **kwargs):
         super(PayrollWindow, self).__init__(**kwargs)
-        global monthcutoffid
+        global monthcutoffid, facultyid
         day_rate = 500
         total_minutes_late = 0
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
@@ -1163,7 +1162,8 @@ class PayrollWindow(Widget):
         items = DailyAttendance.query.all()
         for item in items:
             #print(item)
-            if (item.monthcutoff_id == monthcutoffid):
+            print("facultyid", facultyid, item.faculty_id, monthcutoffid, item.monthcutoff_id)
+            if (item.monthcutoff_id == monthcutoffid and item.faculty_id==int(facultyid)):
                 print("IN")
                 #absences
                 if (item.is_absent != 0): #!= 0
