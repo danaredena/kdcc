@@ -490,14 +490,33 @@ class EditStudentWindow(Widget):
             self.ids.up_dependent.text = student.up_dependent
 
     def save(self):
-    	if (self.ids.first_name.text != "" and self.ids.last_name.text != "" and self.ids.address.text != "" and self.ids.sex.text != "" and 
-    		self.ids.guardianA.text != "" and self.ids.contactA.text.isdigit() and self.ids.up_dependent.text != "" and self.ids.nickname.text != "" and
-    		self.ids.middle_name.text != "" and len(self.ids.birth_date.text.split('/')) == 3 and len(self.ids.date_of_admission.text.split('/')) == 3):
-        #update db for students
-	        session.query(Students).filter_by(student_id=studentid).update(dict(nickname=self.ids.nickname.text, first_name=self.ids.first_name.text, middle_name=self.ids.middle_name.text, last_name=self.ids.last_name.text, suffix=self.ids.suffix.text, address=self.ids.address.text, birth_date=self.ids.birth_date.text, sex=self.ids.sex.text, date_of_admission=self.ids.date_of_admission.text, guardian1_name=self.ids.guardianA.text, guardian2_name=self.ids.guardianB.text, contact_number1=self.ids.contactA.text, contact_number2=self.ids.contactB.text, up_dependent=self.ids.up_dependent.text))
-	        session.commit()
-	        self.clear_widgets()
-	        self.add_widget(StudentRecordsWindow())
+        bday = self.ids.birth_date.text.split('/')
+        admit = self.ids.date_of_admission.text.split('/')
+        bday_= 1
+        admit_ = 1 
+        for x in bday: 
+            if (not x.isdigit()):
+                bday_ = 0
+        for x in admit:
+            if (not x.isdigit()):
+                admit_ = 0
+        label = self.ids.error
+        if (self.ids.nickname.text != "" and self.ids.first_name.text != "" and self.ids.middle_name.text != "" and self.ids.last_name.text != "" and
+            self.ids.address.text != "" and len(bday) == 3 and len(admit) == 3 and bday_ == 1 and admit_ == 1 and self.ids.sex.text != "" and
+            self.ids.guardianA.text != "" and int(int(self.ids.contactA.text) / 1000000000) == 9 and self.ids.contactA.text.isdigit() and
+            self.ids.up_dependent.text != ""): 
+            session.query(Students).filter_by(student_id=studentid).update(dict(nickname=self.ids.nickname.text, first_name=self.ids.first_name.text, middle_name=self.ids.middle_name.text, last_name=self.ids.last_name.text, suffix=self.ids.suffix.text, address=self.ids.address.text, birth_date=self.ids.birth_date.text, sex=self.ids.sex.text, date_of_admission=self.ids.date_of_admission.text, guardian1_name=self.ids.guardianA.text, guardian2_name=self.ids.guardianB.text, contact_number1=self.ids.contactA.text, contact_number2=self.ids.contactB.text, up_dependent=self.ids.up_dependent.text))
+            session.commit()
+            self.clear_widgets()
+            self.add_widget(StudentRecordsWindow())
+        elif (self.ids.nickname.text == "" or self.ids.first_name.text == "" or self.ids.middle_name.text == "" or self.ids.last_name.text == "" or self.ids.address.text == "" or self.ids.sex.text == "" or 
+            self.ids.guardianA.text == "" or self.ids.contactA.text == "" or self.ids.up_dependent.text == "" or self.ids.birth_date.text == "" or self.ids.date_of_admission.text == ""):
+            label.text = "*This field is required"
+        elif (len(admit) != 3 or len(bday) != 3 or bday_ != 1 or admit_ != 1):
+            label.text = "Date should be in MM/DD/YY format"
+        elif (self.ids.contactA.text != ""):
+            if (int(int(self.ids.contactA.text) / 1000000000) != 9):
+                label.text = "Contact number should be in 09xxxxxxxxx format"
 
     def back(self):
         self.clear_widgets()

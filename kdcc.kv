@@ -298,6 +298,13 @@
 
 <EditStudentWindow>:
     name: 'editStudent'
+    Label:
+        id: error
+        pos: (75,100)
+        size: self.texture_size
+        color: (0,0,0,1)
+        halign: "left"
+        text: ""
     TextInput:
         on_text_validate: root.save()
         id: nickname
