@@ -1085,18 +1085,19 @@ class CheckAttendanceWindow(Widget):
         self.time_in_col = Label(text=":")
         self.time_in_hh = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="hh", write_tab=False)
         self.time_in_grid.add_widget(self.time_in_hh); self.time_in_grid.add_widget(self.time_in_col); self.time_in_grid.add_widget(self.time_in_mm);
-        self.time_in_mm.bind(text=self.compute_mins_late)
-        self.time_in_hh.bind(text=self.compute_mins_late)
+        #self.time_in_hh.bind(text=self.compute_mins_late)
+        #self.time_in_mm.bind(text=self.compute_mins_late)
+
 
         self.time_out_lb = Label(text="Time out:")
         self.time_out_grid = GridLayout(cols=3, row_default_height=40)
         self.time_out_mm = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="mm", write_tab=False)
         self.time_out_col = Label(text=":")
         self.time_out_hh = TextInput(size_hint_x=None, width=50, multiline=False, hint_text="hh", write_tab=False)
-        self.time_out_grid.add_widget(self.time_out_mm); self.time_out_grid.add_widget(self.time_out_col); self.time_out_grid.add_widget(self.time_out_hh);
+        self.time_out_grid.add_widget(self.time_out_hh); self.time_out_grid.add_widget(self.time_out_col); self.time_out_grid.add_widget(self.time_out_mm);
 
         self.mins_late_lb = Label(text="Minutes late:")
-        self.mins_late = TextInput(size_hint_x=None, multiline=False, readonly=True)
+        self.mins_late = TextInput(size_hint_x=None, multiline=False, width=50, write_tab=False, hint_text="no. of minutes")
         self.save_bt = Button(text="Save", on_press=self.save)
 
         self.panel.add_widget(self.absent_lb)
