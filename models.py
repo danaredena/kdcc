@@ -41,7 +41,8 @@ class MonthCutoff(Base):
     __tablename__ = 'month'
     __table_args__ = (UniqueConstraint('start_date','end_date'),)
     monthcutoff_id = Column(Integer, nullable=False, primary_key=True, autoincrement=True)
-    schoolyear_code = Column(String(10), ForeignKey('schoolyear.schoolyear_code'), nullable=False)
+    #schoolyear_code = Column(String(10), ForeignKey('schoolyear.schoolyear_code'), nullable=False)
+    schoolyear_code = Column(String(10), nullable=True)
     start_date = Column(String(10), nullable=False)
     end_date = Column(String(10), nullable=False)
 
@@ -112,7 +113,7 @@ class Faculty(Base):
     position = Column(String, nullable=False)
     contact_number = Column(String(11), nullable=False)
     remarks = Column(String, nullable=True)
-    monthly_rate = Column(Integer, nullable=True)
+    monthly_rate = Column(Integer, nullable=False)
     #personal details
     pers_tin = Column(String, nullable=True)
     pers_ssn = Column(String, nullable=True)

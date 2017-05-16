@@ -3,6 +3,8 @@ import datetime
 import kivy
 import csv
 import os.path
+import calendar
+import sys
 
 from kivy.lang import Builder
 from kivy.properties import  ListProperty
@@ -255,9 +257,46 @@ def delete_db(id, sn_fn):
             session.rollback()
             raise
 
+monthcutoffid = -1
 class LoginWindow(Widget):
     def __init__(self, **kwargs):
         super(LoginWindow, self).__init__(**kwargs)
+        global monthcutoffid
+        #GET DATE IF CUTOFF, CREATE NEW
+        self.today = datetime.datetime.now()
+        month_dict = [31,28,31,30,31,30,31,31,30,31,30,31]
+        #possible Cutoff
+        if (self.today.day >= 1 and self.today.day <= 15):
+            month_rep = str(self.today.month)
+            if (len(month_rep) == 1):
+                month_rep = "0%s" % self.today.month
+            self.start_date = "%s/%s/%s" % (month_rep,"01",self.today.year)
+            self.end_date = "%s/%s/%s" % (month_rep,"15",self.today.year)
+            print("first", self.start_date, self.end_date)
+        elif (self.today.day > 15):
+            month_rep = str(self.today.month)
+            if (len(month_rep) == 1):
+                month_rep = "0%s" % self.today.month
+            self.start_date = "%s/%s/%s" % (month_rep,"16",self.today.year)
+            month_days = month_dict[self.today.month-1]
+            if ((int(self.today.month) == 2) and calendar.isleap(self.today.year)):
+                month_days = 29
+            self.end_date = "%s/%s/%s" % (month_rep,month_days,self.today.year)
+            print("second", self.start_date, self.end_date)
+
+        cutoffs = MonthCutoff.query.filter_by(start_date=self.start_date, end_date=self.end_date)
+        monthcutoffid = -1
+        for cutoff in cutoffs:
+            monthcutoffid = cutoff.monthcutoff_id
+        print("afja", monthcutoffid)
+        if (monthcutoffid == -1):
+            new_cutoff = MonthCutoff(start_date=self.start_date, end_date=self.end_date)
+            print( add_db(new_cutoff))
+
+        cutoffs = MonthCutoff.query.filter_by(start_date=self.start_date, end_date=self.end_date)
+        for cutoff in cutoffs:
+            monthcutoffid = cutoff.monthcutoff_id
+        print("MONTH CUTOFF SET", monthcutoffid)
 
     def login(self, *args):
         username_input = self.ids.username_input
@@ -893,7 +932,7 @@ class DailyAttendanceWindow(Widget):
 
 class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kivy
     def __init__(self, **kwargs):
-        global daily
+        global daily, monthcutoffid
         daily = -2
         super(PrevAttendanceWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
@@ -934,7 +973,7 @@ class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kiv
 class ViewAttendanceWindow(Widget):
     def __init__(self, **kwargs):
         super(ViewAttendanceWindow, self).__init__(**kwargs)
-        global studentid, daily
+        global studentid, daily, monthcutoffid
         studentid = 0; daily = -1
         self.absent = self.emerg = self.sick = 0
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
@@ -1043,7 +1082,7 @@ class ViewAttendanceWindow(Widget):
 class CheckAttendanceWindow(Widget):
     def __init__(self, **kwargs):
         super(CheckAttendanceWindow, self).__init__(**kwargs)
-        global studentid, daily
+        global studentid, daily, monthcutoffid
         studentid = 0; daily = -1
         self.today = strftime("%m/%d/%y", gmtime())
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
@@ -1178,23 +1217,34 @@ class CheckAttendanceWindow(Widget):
                     f.minutes_late = minutes_late
                     session.commit()
             else:
-                new_daily = DailyAttendance(monthcutoff_id=2, date = self.today, faculty_id=facultyid, is_absent=absent, is_unpaid_absent=unpaid_absent, time_in=timein, time_out=timeout, minutes_late=minutes_late)
+                new_daily = DailyAttendance(monthcutoff_id=monthcutoffid, date = self.today, faculty_id=facultyid, is_absent=absent, is_unpaid_absent=unpaid_absent, time_in=timein, time_out=timeout, minutes_late=minutes_late)
                 session.add(new_daily)
                 session.commit()
         else:
-            new_daily = DailyAttendance(monthcutoff_id=2, date = self.today, faculty_id=facultyid, is_absent=absent, is_unpaid_absent=unpaid_absent, time_in=timein, time_out=timeout, minutes_late=minutes_late)
+            new_daily = DailyAttendance(monthcutoff_id=monthcutoffid, date = self.today, faculty_id=facultyid, is_absent=absent, is_unpaid_absent=unpaid_absent, time_in=timein, time_out=timeout, minutes_late=minutes_late)
             session.add(new_daily)
             session.commit()
 
-monthcutoffid = 2
 #FINANCIAL-PAYROLL
 class FinanceSummaryWindow(Widget):
     def __init__(self, **kwargs):
-        global studentid, facultyid, daily
+        global studentid, facultyid, daily, monthcutoffid
         studentid = 0; daily = 0; facultyid = -1
         super(FinanceSummaryWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
         self.data = []
+
+        cutoffs = MonthCutoff.query.filter_by(monthcutoff_id=monthcutoffid)
+        for cutoff in cutoffs:
+            monthcutoffid = cutoff.monthcutoff_id
+            start_date = cutoff.start_date
+            end_date = cutoff.end_date
+        print(monthcutoffid, start_date, end_date)
+
+        date_lb_text = "Cutoff: %s - %s" % (start_date, end_date)
+        self.date_lb = Label(text=date_lb_text, pos=(150,470), color=(0,0,0,1),font_size=16)
+        self.add_widget(self.date_lb)
+
         #populate MonthlyPayroll
         count = 0
         checks = MonthlyPayroll.query.filter_by(monthcutoff_id=monthcutoffid)
@@ -1215,6 +1265,7 @@ class FinanceSummaryWindow(Widget):
                 print(total_minslate)
                 new_entry = MonthlyPayroll(monthcutoff_id=monthcutoffid, faculty_id=facultyid, total_minutes_late=total_minslate)
                 print( add_db(new_entry) )
+
         items = MonthlyPayroll.query.all()
         for item in items:
             print(item.monthcutoff_id)
@@ -1240,11 +1291,7 @@ class FinanceSummaryWindow(Widget):
                 else:
                     computed_salary = str(item.computed_salary)
                 self.data.append([id_number, last_name+", "+first_name+" "+middle_name, str(monthly_rate), computed_deduc,  pending_deduc, computed_salary, str(faculty_id)])
-        #GET DATE IF CUTOFF, CREATE NEW
-        self.today = datetime.datetime.now()
-        (self.today.day)
-        self.date_lb = Label(text="Cutoff: May 1, 2017 - May 15, 2017", pos=(150,470), color=(0,0,0,1),font_size=16)
-        self.add_widget(self.date_lb)
+
 
         header = ['Faculty ID', 'Name', 'Monthly\n  Rate', ' Computed\nDeductions', '  Pending\nDeductions', 'Computed\n Salary']
         self.col_size = [0.14, 0.29, 0.14, 0.14, 0.14, 0.14]
