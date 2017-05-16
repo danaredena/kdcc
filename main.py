@@ -2,6 +2,7 @@ from time import gmtime, strftime
 import datetime
 import kivy
 import csv
+import os.path
 
 from kivy.lang import Builder
 from kivy.properties import  ListProperty
@@ -338,6 +339,7 @@ class StudentRecordsWindow(Widget):
         scroll.do_scroll_y = True
         scroll.do_scroll_x = False
 
+
         '''pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
 
         add_row_btn = Button(text="Add Row", on_press=pp)
@@ -358,8 +360,11 @@ class StudentRecordsWindow(Widget):
 
         del_row_btn = Button(text="Delete", on_press=partial(self.grid.remove_row, len(header)), font_size=15, pos=(250,25), size=(100,40))
         self.add_widget(del_row_btn)
+        self.label_error = self.ids.error
+        self.label_error.text = ''
 
     def main_menu(self, *args):
+        self.label_error.text = ''
         label_student.text = ''
         self.canvas.clear()
         self.label_grid.remove_widget(label_student)
@@ -368,6 +373,7 @@ class StudentRecordsWindow(Widget):
 
     def create(self, *args):
         label_student.text = ''
+        self.label_error.text = ''
         self.canvas.clear()
         self.label_grid.remove_widget(label_student)
         self.clear_widgets()
@@ -375,6 +381,7 @@ class StudentRecordsWindow(Widget):
 
     def edit(self):
         label_student.text = ''
+        self.label_error.text = ''
         self.canvas.clear()
         self.label_grid.remove_widget(label_student)
         self.clear_widgets()
@@ -382,6 +389,7 @@ class StudentRecordsWindow(Widget):
 
     def choose_schoolyear(self, *args):
         label_student.text = ''
+        self.label_error.text = ''
         self.canvas.clear()
         self.label_grid.remove_widget(label_student)
         self.clear_widgets()
@@ -389,14 +397,18 @@ class StudentRecordsWindow(Widget):
 
     def reset(self, *args):
         label_student.text = ''
+        self.label_error.text = ''
 
     def backup(self, *args):
-        outfile = open('Students.csv', 'wt')
+        basepath = os.path.dirname(__file__)
+        filepath = os.path.abspath(os.path.join(basepath, "..", "Students.csv"))
+        outfile = open(filepath, 'wt')
         outcsv = csv.writer(outfile)
         records = session.query(Students).all()
         outcsv.writerow([column.name for column in Students.__mapper__.columns])
         [outcsv.writerow([getattr(curr, column.name) for column in Students.__mapper__.columns]) for curr in records]
         outfile.close()
+        self.label_error.text = "See Students.csv for Student Records Backup"
 
 class CreateStudentWindow(Widget):
     def create(self, *args):
@@ -674,10 +686,14 @@ class FacultyRecordsWindow(Widget):
         del_row_btn = Button(text="Delete", on_press=partial(self.grid.remove_row, len(header)), font_size=15, pos=(250,25), size=(100,40))
         self.add_widget(del_row_btn)
 
+        self.label_error = self.ids.error
+        self.label_error.text = ''
+
     def main_menu(self, *args):
         self.canvas.clear()
         self.label_grid.remove_widget(label_faculty)
         label_faculty.text = ''
+        self.label_error.text = ''
         self.clear_widgets()
         self.add_widget(MainMenuWindow())
 
@@ -685,6 +701,7 @@ class FacultyRecordsWindow(Widget):
         self.canvas.clear()
         self.label_grid.remove_widget(label_faculty)
         label_faculty.text = ''
+        self.label_error.text = ''
         self.clear_widgets()
         self.add_widget(CreateFacultyWindow())
 
@@ -692,19 +709,24 @@ class FacultyRecordsWindow(Widget):
         self.canvas.clear()
         self.label_grid.remove_widget(label_faculty)
         label_faculty.text = ''
+        self.label_error.text = ''
         self.clear_widgets()
         self.add_widget(EditFacultyWindow())
 
     def reset(self, *args):
         label_faculty.text = ''
+        self.label_error.text = ''
 
     def backup(self, *args):
-        outfile = open('Faculty.csv', 'wt')
+        basepath = os.path.dirname(__file__)
+        filepath = os.path.abspath(os.path.join(basepath, "..", "Faculty.csv"))
+        outfile = open(filepath, 'wt')
         outcsv = csv.writer(outfile)
         records = session.query(Faculty).all()
         outcsv.writerow([column.name for column in Faculty.__mapper__.columns])
         [outcsv.writerow([getattr(curr, column.name) for column in Faculty.__mapper__.columns]) for curr in records]
         outfile.close()
+        self.label_error.text = "See Faculty.csv for Faculty Records Backup"
 
 
 class CreateFacultyWindow(Widget):
@@ -813,7 +835,7 @@ class EditFacultyWindow(Widget):
             self.ids.sex.text = teacher.sex
             self.ids.date_of_employment.text = teacher.date_of_employment
             self.ids.position.text = teacher.position
-            self.ids.monthly_rate.text = teacher.monthly_rate if teacher.monthly_rate else ''
+            self.ids.monthly_rate.text = str(teacher.monthly_rate) if teacher.monthly_rate else ''
             self.ids.contact_number.text = teacher.contact_number
             self.ids.tin_number.text = teacher.pers_tin if teacher.pers_tin else ''
             self.ids.social_security_number.text = teacher.pers_ssn if teacher.pers_ssn else ''
@@ -848,7 +870,7 @@ class EditFacultyWindow(Widget):
             print(self.ids.contact_number.text)
             if (int(int(self.ids.contact_number.text) / 1000000000) != 9):
                 label.text = "Contact number should be in 09xxxxxxxxx format"
-                
+
     def back(self):
         self.clear_widgets()
         self.add_widget(FacultyRecordsWindow())

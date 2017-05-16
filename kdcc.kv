@@ -92,6 +92,13 @@
         on_press: root.logout()
 
 <StudentRecordsWindow>:
+    Label:
+        id: error
+        pos: (400,75)
+        size: self.texture_size
+        color: (0,0,0,1)
+        halign: "left"
+        text: ""
     Button:
         id: create
         font_size: 15
@@ -113,7 +120,7 @@
         font_size: 15
         center_x: root.width + 460
         center_y: root.y + 75
-        text: "Back up"
+        text: "Backup"
         size: (100,40)
         on_press: root.backup()
     Button:
@@ -586,6 +593,13 @@
         on_press: root.main_menu()
 
 <FacultyRecordsWindow>:
+    Label:
+        id: error
+        pos: (400,75)
+        size: self.texture_size
+        color: (0,0,0,1)
+        halign: "left"
+        text: ""
     Button:
         id: create
         font_size: 15
@@ -607,7 +621,7 @@
         font_size: 15
         center_x: root.width + 460
         center_y: root.y + 75
-        text: "Back up"
+        text: "Backup"
         size: (100,40)
         on_press: root.backup()
     Button:
