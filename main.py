@@ -171,22 +171,8 @@ class DataGrid(GridLayout):
     def remove_row(self, n_cols, instance, **kwargs):
         label_student.text = ''
         label_faculty.text = ''
-        if studentid:
-            delete_db(studentid, 0)
-            outfile = open('Students.csv', 'wt')
-            outcsv = csv.writer(outfile)
-            records = session.query(Students).all()
-            outcsv.writerow([column.name for column in Students.__mapper__.columns])
-            [outcsv.writerow([getattr(curr, column.name) for column in Students.__mapper__.columns]) for curr in records]
-            outfile.close()
-        elif facultyid:
-            delete_db(facultyid, 1)
-            outfile = open('Faculty.csv', 'wt')
-            outcsv = csv.writer(outfile)
-            records = session.query(Faculty).all()
-            outcsv.writerow([column.name for column in Faculty.__mapper__.columns])
-            [outcsv.writerow([getattr(curr, column.name) for column in Faculty.__mapper__.columns]) for curr in records]
-            outfile.close()
+        if studentid: delete_db(studentid, 0)
+        elif facultyid: delete_db(facultyid, 1)
 
         childs = self.parent.children
         selected = 0
@@ -372,12 +358,6 @@ class StudentRecordsWindow(Widget):
 
         del_row_btn = Button(text="Delete", on_press=partial(self.grid.remove_row, len(header)), font_size=15, pos=(250,25), size=(100,40))
         self.add_widget(del_row_btn)
-        outfile = open('Students.csv', 'wt')
-        outcsv = csv.writer(outfile)
-        records = session.query(Students).all()
-        outcsv.writerow([column.name for column in Students.__mapper__.columns])
-        [outcsv.writerow([getattr(curr, column.name) for column in Students.__mapper__.columns]) for curr in records]
-        outfile.close()
 
     def main_menu(self, *args):
         label_student.text = ''
@@ -409,6 +389,14 @@ class StudentRecordsWindow(Widget):
 
     def reset(self, *args):
         label_student.text = ''
+
+    def backup(self, *args):
+        outfile = open('Students.csv', 'wt')
+        outcsv = csv.writer(outfile)
+        records = session.query(Students).all()
+        outcsv.writerow([column.name for column in Students.__mapper__.columns])
+        [outcsv.writerow([getattr(curr, column.name) for column in Students.__mapper__.columns]) for curr in records]
+        outfile.close()
 
 class CreateStudentWindow(Widget):
     def create(self, *args):
@@ -486,13 +474,6 @@ class CreateStudentWindow(Widget):
             if (int(int(contact_number1_text) / 1000000000) != 9):
                 label.text = "Contact number should be in 09xxxxxxxxx format"
 
-        outfile = open('Students.csv', 'wt')
-        outcsv = csv.writer(outfile)
-        records = session.query(Students).all()
-        outcsv.writerow([column.name for column in Students.__mapper__.columns])
-        [outcsv.writerow([getattr(curr, column.name) for column in Students.__mapper__.columns]) for curr in records]
-        outfile.close()
-
     def back_to_student_records(self, *args):
         self.clear_widgets()
         self.add_widget(StudentRecordsWindow())
@@ -544,13 +525,6 @@ class EditStudentWindow(Widget):
         elif (self.ids.contactA.text != ""):
             if (int(int(self.ids.contactA.text) / 1000000000) != 9):
                 label.text = "Contact number should be in 09xxxxxxxxx format"
-
-        outfile = open('Students.csv', 'wt')
-        outcsv = csv.writer(outfile)
-        records = session.query(Students).all()
-        outcsv.writerow([column.name for column in Students.__mapper__.columns])
-        [outcsv.writerow([getattr(curr, column.name) for column in Students.__mapper__.columns]) for curr in records]
-        outfile.close()
 
     def back(self):
         self.clear_widgets()
@@ -700,13 +674,6 @@ class FacultyRecordsWindow(Widget):
         del_row_btn = Button(text="Delete", on_press=partial(self.grid.remove_row, len(header)), font_size=15, pos=(250,25), size=(100,40))
         self.add_widget(del_row_btn)
 
-        outfile = open('Faculty.csv', 'wt')
-        outcsv = csv.writer(outfile)
-        records = session.query(Faculty).all()
-        outcsv.writerow([column.name for column in Faculty.__mapper__.columns])
-        [outcsv.writerow([getattr(curr, column.name) for column in Faculty.__mapper__.columns]) for curr in records]
-        outfile.close()
-
     def main_menu(self, *args):
         self.canvas.clear()
         self.label_grid.remove_widget(label_faculty)
@@ -730,6 +697,14 @@ class FacultyRecordsWindow(Widget):
 
     def reset(self, *args):
         label_faculty.text = ''
+
+    def backup(self, *args):
+        outfile = open('Faculty.csv', 'wt')
+        outcsv = csv.writer(outfile)
+        records = session.query(Faculty).all()
+        outcsv.writerow([column.name for column in Faculty.__mapper__.columns])
+        [outcsv.writerow([getattr(curr, column.name) for column in Faculty.__mapper__.columns]) for curr in records]
+        outfile.close()
 
 
 class CreateFacultyWindow(Widget):
@@ -816,12 +791,6 @@ class CreateFacultyWindow(Widget):
         elif (self.ids.contact_number.text != ""):
             if (int(int(self.ids.contact_number.text) / 1000000000) != 9):
                 label.text = "Contact number should be in 09xxxxxxxxx format"
-        outfile = open('Faculty.csv', 'wt')
-        outcsv = csv.writer(outfile)
-        records = session.query(Faculty).all()
-        outcsv.writerow([column.name for column in Faculty.__mapper__.columns])
-        [outcsv.writerow([getattr(curr, column.name) for column in Faculty.__mapper__.columns]) for curr in records]
-        outfile.close()
 
     def back_to_faculty_records(self, *args):
         self.clear_widgets()
@@ -879,13 +848,7 @@ class EditFacultyWindow(Widget):
             print(self.ids.contact_number.text)
             if (int(int(self.ids.contact_number.text) / 1000000000) != 9):
                 label.text = "Contact number should be in 09xxxxxxxxx format"
-        outfile = open('Faculty.csv', 'wt')
-        outcsv = csv.writer(outfile)
-        records = session.query(Faculty).all()
-        outcsv.writerow([column.name for column in Faculty.__mapper__.columns])
-        [outcsv.writerow([getattr(curr, column.name) for column in Faculty.__mapper__.columns]) for curr in records]
-        outfile.close()
-
+                
     def back(self):
         self.clear_widgets()
         self.add_widget(FacultyRecordsWindow())
