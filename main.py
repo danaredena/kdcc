@@ -183,9 +183,9 @@ class DataGrid(GridLayout):
             delete_db(facultyid, 1)
             outfile = open('Faculty.csv', 'wt')
             outcsv = csv.writer(outfile)
-            records = session.query(Students).all()
-            outcsv.writerow([column.name for column in Students.__mapper__.columns])
-            [outcsv.writerow([getattr(curr, column.name) for column in Students.__mapper__.columns]) for curr in records]
+            records = session.query(Faculty).all()
+            outcsv.writerow([column.name for column in Faculty.__mapper__.columns])
+            [outcsv.writerow([getattr(curr, column.name) for column in Faculty.__mapper__.columns]) for curr in records]
             outfile.close()
 
         childs = self.parent.children
@@ -702,9 +702,9 @@ class FacultyRecordsWindow(Widget):
 
         outfile = open('Faculty.csv', 'wt')
         outcsv = csv.writer(outfile)
-        records = session.query(Students).all()
-        outcsv.writerow([column.name for column in Students.__mapper__.columns])
-        [outcsv.writerow([getattr(curr, column.name) for column in Students.__mapper__.columns]) for curr in records]
+        records = session.query(Faculty).all()
+        outcsv.writerow([column.name for column in Faculty.__mapper__.columns])
+        [outcsv.writerow([getattr(curr, column.name) for column in Faculty.__mapper__.columns]) for curr in records]
         outfile.close()
 
     def main_menu(self, *args):
@@ -818,9 +818,9 @@ class CreateFacultyWindow(Widget):
                 label.text = "Contact number should be in 09xxxxxxxxx format"
         outfile = open('Faculty.csv', 'wt')
         outcsv = csv.writer(outfile)
-        records = session.query(Students).all()
-        outcsv.writerow([column.name for column in Students.__mapper__.columns])
-        [outcsv.writerow([getattr(curr, column.name) for column in Students.__mapper__.columns]) for curr in records]
+        records = session.query(Faculty).all()
+        outcsv.writerow([column.name for column in Faculty.__mapper__.columns])
+        [outcsv.writerow([getattr(curr, column.name) for column in Faculty.__mapper__.columns]) for curr in records]
         outfile.close()
 
     def back_to_faculty_records(self, *args):
@@ -881,9 +881,9 @@ class EditFacultyWindow(Widget):
                 label.text = "Contact number should be in 09xxxxxxxxx format"
         outfile = open('Faculty.csv', 'wt')
         outcsv = csv.writer(outfile)
-        records = session.query(Students).all()
-        outcsv.writerow([column.name for column in Students.__mapper__.columns])
-        [outcsv.writerow([getattr(curr, column.name) for column in Students.__mapper__.columns]) for curr in records]
+        records = session.query(Faculty).all()
+        outcsv.writerow([column.name for column in Faculty.__mapper__.columns])
+        [outcsv.writerow([getattr(curr, column.name) for column in Faculty.__mapper__.columns]) for curr in records]
         outfile.close()
 
     def back(self):
