@@ -744,9 +744,19 @@ class CreateFacultyWindow(Widget):
         faculty.remarks = self.ids.remarks
         f_remarks_text = faculty.remarks.text
 
-        if (f_id_number_text.isdigit() and f_first_name_text != "" and f_middle_name_text != "" and f_last_name_text != "" and f_address_text != "" and
-            f_sex_text != "" and f_position_text != "" and f_contact_number_text.isdigit() and f_pers_tin_text.isdigit() and f_pers_ssn_text.isdigit() and
-            f_pers_philhealth_text.isdigit() and f_pers_accntnum_text.isdigit() and len(f_date_of_employment_text.split('/')) == 3 and len(f_birth_date_text.split('/')) == 3):
+        bday = self.ids.birth_date.text.split('/')
+        admit = self.ids.date_of_employment.text.split('/')
+        bday_= 1
+        admit_ = 1 
+        for x in bday: 
+            if (not x.isdigit()):
+                bday_ = 0
+        for x in admit:
+            if (not x.isdigit()):
+                admit_ = 0
+        label = self.ids.error
+        if (self.ids.last_name.text != "" and self.ids.first_name.text != "" and self.ids.middle_name.text != "" and self.ids.address.text != "" and self.ids.sex.text != "" and
+            len(bday) == 3 and len(admit) == 3 and bday_ == 1 and admit_ == 1 and self.ids.contact_number.text.isdigit() and int(int(self.ids.contact_number.text) / 1000000000) == 9):
             new_faculty = Faculty(id_number = f_id_number_text, first_name=f_first_name_text, middle_name=f_middle_name_text, last_name=f_last_name_text, suffix=f_suffix_text, address=f_address_text, birth_date=f_birth_date_text, sex=f_sex_text, date_of_employment=f_date_of_employment_text, position=f_position_text, contact_number=f_contact_number_text, pers_tin=f_pers_tin_text, pers_ssn=f_pers_ssn_text, pers_philhealth=f_pers_philhealth_text, pers_accntnum=f_pers_accntnum_text, remarks=f_remarks_text)
             #print(new_faculty.id_number, new_faculty.first_name, new_faculty.middle_name, new_faculty.last_name, new_faculty.address, new_faculty.birth_date, new_faculty.sex, new_faculty.date_of_employment, new_faculty.position, new_faculty.contact_number, new_faculty.pers_tin, new_faculty.pers_ssn, new_faculty.pers_philhealth, new_faculty.pers_accntnum, new_faculty.remarks)
             print( add_db(new_faculty) )
@@ -754,6 +764,14 @@ class CreateFacultyWindow(Widget):
             #print(f_id_number_text, f_first_name_text, f_middle_name_text, f_last_name_text, f_address_text, f_birth_date_text, f_sex_text, f_date_of_employment_text, f_position_text, f_contact_number_text, f_pers_tin_text, f_pers_ssn_text, f_pers_philhealth_text, f_pers_accntnum_text, f_remarks_text)
             self.clear_widgets()
             self.add_widget(FacultyRecordsWindow())
+        elif (self.ids.last_name.text == "" or self.ids.first_name.text == "" or self.ids.middle_name.text == "" or self.ids.address.text == "" or self.ids.sex.text == "" or
+            self.ids.contact_number.text == "" or self.ids.birth_date.text == "" or self.ids.date_of_employment.text == ""):
+            label.text = "*This field is required"
+        elif (len(admit) != 3 or len(bday) != 3 or bday_ != 1 or admit_ != 1):
+            label.text = "Date should be in MM/DD/YY format"
+        elif (self.ids.contact_number.text != ""):
+            if (int(int(self.ids.contact_number.text) / 1000000000) != 9):
+                label.text = "Contact number should be in 09xxxxxxxxx format"
 
     def back_to_faculty_records(self, *args):
         self.clear_widgets()
@@ -784,13 +802,32 @@ class EditFacultyWindow(Widget):
             self.ids.remarks.text = teacher.remarks if teacher.remarks else ''
 
     def save(self):
-        if (f_id_number_text.isdigit() and f_first_name_text != "" and f_middle_name_text != "" and f_last_name_text != "" and f_address_text != "" and
-            f_sex_text != "" and f_position_text != "" and f_contact_number_text.isdigit() and f_pers_tin_text.isdigit() and f_pers_ssn_text.isdigit() and
-            f_pers_philhealth_text.isdigit() and f_pers_accntnum_text.isdigit() and len(f_date_of_employment_text.split('/')) == 3 and len(f_birth_date_text.split('/')) == 3):
+        bday = self.ids.birth_date.text.split('/')
+        admit = self.ids.date_of_employment.text.split('/')
+        bday_= 1
+        admit_ = 1 
+        for x in bday: 
+            if (not x.isdigit()):
+                bday_ = 0
+        for x in admit:
+            if (not x.isdigit()):
+                admit_ = 0
+        label = self.ids.error
+        if (self.ids.last_name.text != "" and self.ids.first_name.text != "" and self.ids.middle_name.text != "" and self.ids.address.text != "" and self.ids.sex.text != "" and
+            len(bday) == 3 and len(admit) == 3 and bday_ == 1 and admit_ == 1 and self.ids.contact_number.text.isdigit() and int(int(self.ids.contact_number.text) / 1000000000) == 9):
             session.query(Faculty).filter_by(faculty_id=facultyid).update(dict(id_number = self.ids.id_number.text, first_name = self.ids.first_name.text, middle_name = self.ids.middle_name.text, last_name = self.ids.last_name.text, address = self.ids.address.text, birth_date = self.ids.birth_date.text, sex = self.ids.sex.text, date_of_employment = self.ids.date_of_employment.text, position = self.ids.position.text, contact_number = self.ids.contact_number.text, pers_tin = self.ids.tin_number.text, pers_ssn = self.ids.social_security_number.text, pers_philhealth = self.ids.philhealth.text, pers_accntnum = self.ids.account_number.text, remarks = self.ids.remarks.text))
             session.commit()
             self.clear_widgets()
             self.add_widget(FacultyRecordsWindow())
+        elif (self.ids.last_name.text == "" or self.ids.first_name.text == "" or self.ids.middle_name.text == "" or self.ids.address.text == "" or self.ids.sex.text == "" or
+            self.ids.contact_number.text == "" or self.ids.birth_date.text == "" or self.ids.date_of_employment.text == ""):
+            label.text = "*This field is required"
+        elif (len(admit) != 3 or len(bday) != 3 or bday_ != 1 or admit_ != 1):
+            label.text = "Date should be in MM/DD/YY format"
+        elif (self.ids.contact_number.text != ""):
+            print(self.ids.contact_number.text)
+            if (int(int(self.ids.contact_number.text) / 1000000000) != 9):
+                label.text = "Contact number should be in 09xxxxxxxxx format"
 
     def back(self):
         self.clear_widgets()
