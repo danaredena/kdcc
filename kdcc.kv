@@ -118,6 +118,13 @@
         on_press: root.main_menu()
 
 <CreateStudentWindow>:
+    Label:
+        id: error
+        pos: (75,100)
+        size: self.texture_size
+        color: (0,0,0,1)
+        halign: "left"
+        text: ""
     TextInput:
         on_text_validate: root.create()
         id: nickname
@@ -126,7 +133,7 @@
         center_y: root.y + 600 - 50
         height: 35
         width: 200
-        hint_text: "Nickname"
+        hint_text: "Nickname*"
         write_tab: False
         multiline: False
     TextInput:
@@ -137,7 +144,7 @@
         center_y: root.y + 550 - 50
         height: 35
         width: 200
-        hint_text: "Last Name"
+        hint_text: "Last Name*"
         write_tab: False
         multiline: False
     TextInput:
@@ -148,7 +155,7 @@
         center_y: root.y + 550 - 50
         height: 35
         width: 200
-        hint_text: "First Name"
+        hint_text: "First Name*"
         write_tab: False
         multiline: False
     TextInput:
@@ -159,7 +166,7 @@
         center_y: root.y + 550 - 50
         height: 35
         width: 200
-        hint_text: "Middle Name"
+        hint_text: "Middle Name*"
         write_tab: False
         multiline: False
     TextInput:
@@ -181,7 +188,7 @@
         center_y: root.y + 450 - 50
         height: 35
         width: 600
-        hint_text: "Address"
+        hint_text: "Address*"
         write_tab: False
         multiline: False
     TextInput:
@@ -192,7 +199,7 @@
         center_y: root.y + 400 - 50
         height: 35
         width: 200
-        hint_text: "Birthday"
+        hint_text: "Birthday*"
         write_tab: False
         multiline: False
     TextInput:
@@ -203,7 +210,7 @@
         center_y: root.y + 400 - 50
         height: 35
         width: 200
-        hint_text: "Sex"
+        hint_text: "Sex*"
         write_tab: False
         multiline: False
     TextInput:
@@ -214,7 +221,7 @@
         center_y: root.y + 350 - 50
         height: 35
         width: 200
-        hint_text: "Date of Enrollment"
+        hint_text: "Date of Enrollment*"
         write_tab: False
         multiline: False
     TextInput:
@@ -225,7 +232,7 @@
         center_y: root.y + 350 - 50
         height: 35
         width: 200
-        hint_text: "UP/Non-UP"
+        hint_text: "UP/Non-UP*"
         write_tab: False
         multiline: False
     TextInput:
@@ -236,7 +243,7 @@
         center_y: root.y + 300 - 50
         height: 35
         width: 200
-        hint_text: "Guardian Name"
+        hint_text: "Guardian Name*"
         write_tab: False
         multiline: False
     TextInput:
@@ -247,7 +254,7 @@
         center_y: root.y + 300 - 50
         height: 35
         width: 200
-        hint_text: "Contact Number"
+        hint_text: "Contact Number*"
         write_tab: False
         multiline: False
     TextInput:
@@ -299,7 +306,7 @@
         center_y: root.y + 600 - 50
         height: 35
         width: 200
-        hint_text: "Nickname"
+        hint_text: "Nickname*"
         write_tab: False
         multiline: False
     TextInput:
@@ -310,7 +317,7 @@
         center_y: root.y + 550 - 50
         height: 35
         width: 200
-        hint_text: "Last Name"
+        hint_text: "Last Name*"
         write_tab: False
         multiline: False
     TextInput:
@@ -321,7 +328,7 @@
         center_y: root.y + 550 - 50
         height: 35
         width: 200
-        hint_text: "First Name"
+        hint_text: "First Name*"
         write_tab: False
         multiline: False
     TextInput:
@@ -332,7 +339,7 @@
         center_y: root.y + 550 - 50
         height: 35
         width: 200
-        hint_text: "Middle Name"
+        hint_text: "Middle Name*"
         write_tab: False
         multiline: False
     TextInput:
@@ -354,7 +361,7 @@
         center_y: root.y + 450 - 50
         height: 35
         width: 600
-        hint_text: "Address"
+        hint_text: "Address*"
         write_tab: False
         multiline: False
     TextInput:
@@ -365,7 +372,7 @@
         center_y: root.y + 400 - 50
         height: 35
         width: 200
-        hint_text: "Birthday"
+        hint_text: "Birthday*"
         write_tab: False
         multiline: False
     TextInput:
@@ -376,7 +383,7 @@
         center_y: root.y + 400 - 50
         height: 35
         width: 200
-        hint_text: "Sex"
+        hint_text: "Sex*"
         write_tab: False
         multiline: False
     TextInput:
@@ -387,7 +394,7 @@
         center_y: root.y + 350 - 50
         height: 35
         width: 200
-        hint_text: "Date of Enrollment"
+        hint_text: "Date of Enrollment*"
         write_tab: False
         multiline: False
     TextInput:
@@ -398,7 +405,7 @@
         center_y: root.y + 350 - 50
         height: 35
         width: 200
-        hint_text: "UP/Non-UP"
+        hint_text: "UP/Non-UP*"
         write_tab: False
         multiline: False
     TextInput:
@@ -409,7 +416,7 @@
         center_y: root.y + 300 - 50
         height: 35
         width: 200
-        hint_text: "Guardian Name"
+        hint_text: "Guardian Name*"
         write_tab: False
         multiline: False
     TextInput:
@@ -420,7 +427,7 @@
         center_y: root.y + 300 - 50
         height: 35
         width: 200
-        hint_text: "Contact Number"
+        hint_text: "Contact Number*"
         write_tab: False
         multiline: False
     TextInput:
