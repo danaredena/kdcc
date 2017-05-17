@@ -1351,17 +1351,14 @@ class PayrollWindow(Widget):
                     elif(item.is_absent == 0.5):
                         whole_half = "Half Day"
 
-                    if(item.is_unpaid_absent == 1):
-                        paid_unpaid = "Unpaid"
-
-                    elif(item.is_unpaid_absent == 0.5):
-                        paid_unpaid = "Unpaid"
-
-                    elif(item.is_unpaid_absent == -1):
+                    if(item.is_unpaid_absent == -1):
                         paid_unpaid = "Paid - EL"
 
-                    if(item.is_unpaid_absent == -2):
+                    elif(item.is_unpaid_absent == -2):
                         paid_unpaid = "Paid - SL"
+
+                    elif(item.is_unpaid_absent >= 0):
+                        paid_unpaid = "Unpaid"
 
                     #Deduction
                     if(item.is_absent == 1 and item.is_unpaid_absent == 1):
@@ -1372,9 +1369,17 @@ class PayrollWindow(Widget):
                         deduc = day_rate/2
                         p_deduc = day_rate/2
 
+                    elif(item.is_absent == 1 and item.is_unpaid_absent == 0):
+                        deduc = 0
+                        p_deduc = day_rate
+
                     elif(item.is_absent == 0.5 and item.is_unpaid_absent == 0.5):
                         deduc = day_rate/2
                         p_deduc = 0
+
+                    elif(item.is_absent == 0.5 and item.is_unpaid_absent == 0):
+                        deduc = 0
+                        p_deduc = day_rate/2
 
                     else:
                         deduc = 0
@@ -1382,6 +1387,10 @@ class PayrollWindow(Widget):
 
                     print([item.date, "("+paid_unpaid+")"+" "+whole_half, str(deduc), str(p_deduc), item.faculty_id])
                     self.data.append([item.date, "("+paid_unpaid+")"+" "+whole_half, str(deduc), str(p_deduc), item.faculty_id])
+
+                if (item.minutes_late > 0): #!= 0
+                    total_minutes_late += item.minutes_late
+                print("LATE",total_minutes_late)
 
             print(self.data)
 
@@ -1398,7 +1407,7 @@ class PayrollWindow(Widget):
         scroll.do_scroll_y = True
         scroll.do_scroll_x = False
 
-        self.panel = GridLayout(cols=2, row_default_height=20, spacing=10, padding=(30,30,0,10))
+        self.panel = GridLayout(cols=2, row_default_height=20, spacing=10, padding=(30,10,0,10))
         with self.canvas:
             Color(0.608, 0.349, 0.714,1)  # set the colour to red
             Rectangle(pos=(400,100), size=(350,400))
@@ -1444,10 +1453,12 @@ class PayrollWindow(Widget):
 
         self.cutoffdeduc_lb = Label(text="Cut-off Deduction:")
         self.blank = Label(text="     ")
-        self.wholed_lb = Label(text="Whole Day")
+        self.wholed_lb = Label(text="Whole Day Deduction")
         self.wholed_cb = CheckBox(group='deduc')
-        self.halfd_lb = Label(text="Half Day")
+        self.halfd_lb = Label(text="Half Day Deduction")
         self.halfd_cb = CheckBox(group='deduc')
+        self.nod_lb = Label(text="No Deduction")
+        self.nod_cb = CheckBox(group='deduc')
 
         self.save_b = Button(text="Save", on_press=self.save)
 
@@ -1458,6 +1469,8 @@ class PayrollWindow(Widget):
         self.panel.add_widget(self.wholed_cb)
         self.panel.add_widget(self.halfd_lb)
         self.panel.add_widget(self.halfd_cb)
+        self.panel.add_widget(self.nod_lb)
+        self.panel.add_widget(self.nod_cb)
         self.panel.add_widget(self.save_b)
 
         self.layout.add_widget(scroll)
@@ -1488,39 +1501,40 @@ class PayrollWindow(Widget):
             if (item.monthcutoff_id == monthcutoffid and item.faculty_id==int(facultyid) and item.date==date):
                 print("IN")
                 if (item.is_absent != 0): #!= 0
-                    if(item.is_absent == 1): #whole day
-                        whole_half = "Whole Day"
-                    elif(item.is_absent == 0.5):
-                        whole_half = "Half Day"
-
-                    if(item.is_unpaid_absent == 1):
-                        paid_unpaid = "Unpaid"
-
-                    elif(item.is_unpaid_absent == 0.5):
-                        paid_unpaid = "Unpaid"
-
-                    elif(item.is_unpaid_absent == -1):
-                        paid_unpaid = "Paid - EL"
-
-                    if(item.is_unpaid_absent == -2):
-                        paid_unpaid = "Paid - SL"
-
-                    if (paid_unpaid == "Paid - EL"):
+                    if(item.is_absent == 1 and item.is_unpaid_absent == -1): #whole day - EL
                         self.emerg_cb.active = True
-                    elif (paid_unpaid == "Paid - SL"):
+
+                    elif(item.is_absent == 1 and item.is_unpaid_absent == -2): #whole day - SL
                         self.sick_cb.active = True
 
-                    if paid_unpaid == "Unpaid" and whole_half=="Whole Day":
+                    elif(item.is_absent == 1 and item.is_unpaid_absent == 1): #whole day - whole deduc
                         self.whole_cb.active=True
-                    elif paid_unpaid == "Unpaid" and whole_half=="Half Day":
+                        self.wholed_cb.active=True
+
+                    elif(item.is_absent == 1 and item.is_unpaid_absent == 0.5): #whole day - half deduc
+                        self.whole_cb.active=True
+                        self.halfd_cb.active=True
+
+                    elif(item.is_absent == 1 and item.is_unpaid_absent == 0): #whole day - no deduc
+                        self.whole_cb.active=True
+                        self.nod_cb.active=True
+
+                    elif(item.is_absent == 0.5 and item.is_unpaid_absent == 0.5): #half day - half deduc
                         self.half_cb.active=True
+                        self.halfd_cb.active=True
+
+                    elif(item.is_absent == 0.5 and item.is_unpaid_absent == 0): #half day - no deduc
+                        self.half_cb.active=True
+                        self.nod_cb.active=True
 
     def reset(self, *args):
         self.emerg_cb.active = False
         self.sick_cb.active = False
         self.whole_cb.active = False
         self.half_cb.active = False
-
+        self.wholed_cb.active = False
+        self.halfd_cb.active = False
+        self.nod_cb.active = False
     def save(self, *args):
         if self.emerg_cb.active:
             unpaid_absent = -1;
@@ -1528,13 +1542,37 @@ class PayrollWindow(Widget):
         elif self.sick_cb.active:
             unpaid_absent = -2
             absent = 1
-        elif self.whole_cb.active:
-            absent = 1
-            unpaid_absent = 1
-        elif self.half_cb.active:
-            absent = .5
-            unpaid_absent = .5
+
+        elif (self.whole_cb.active):
+            if (not(self.wholed_cb.active) and not(self.halfd_cb.active) and not(self.nod_cb.active)):
+                self.wholed_cb.active=True
+
+            if (self.wholed_cb.active):
+                absent = 1
+                unpaid_absent = 1
+
+            elif (self.halfd_cb.active):
+                absent = 1
+                unpaid_absent = 0.5
+
+            elif (self.nod_cb.active):
+                absent = 1
+                unpaid_absent = 0
+
+        elif (self.half_cb.active):
+            if (self.wholed_cb.active):
+                self.wholed_cb.active=False
+            if (not(self.halfd_cb.active or self.nod_cb.active)):
+                self.halfd_cb.active=True
+            if (self.halfd_cb.active):
+                absent = 0.5
+                unpaid_absent = 0.5
+            elif (self.nod_cb.active):
+                absent = 0.5
+                unpaid_absent = 0
+
         else: absent = 0
+
         items = session.query(DailyAttendance).filter(DailyAttendance.monthcutoff_id==monthcutoffid).filter(DailyAttendance.faculty_id==int(facultyid)).filter(DailyAttendance.date==date)
         for item in items:
             print("jahsdjshgdasg")
@@ -1556,7 +1594,7 @@ class PayrollWindow(Widget):
             item.pending_deduc = total_pending
             for teacher in session.query(Faculty).filter_by(faculty_id=item.faculty_id):
                 monthly_rate = teacher.monthly_rate
-            item.computed_salary = monthly_rate=total_deduction
+            item.computed_salary = monthly_rate-total_deduction
             session.commit()
         self.canvas.clear()
         self.clear_widgets()
