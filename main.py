@@ -83,9 +83,7 @@ class DataGrid(GridLayout):
         #self.rows = 2
         def change_on_press(self):
             global studentid, facultyid, date, year
-            print (studentid, facultyid)
-            schoolyear = str(row_data[0])
-            if year: year = row_data[0]
+            if year==1: year = row_data[0]
             if daily == -2: date = row_data[0]
             if (studentid):
                 studentid = row_data[-1]
@@ -170,7 +168,6 @@ class DataGrid(GridLayout):
             cell.texture_update()
             self.add_widget(cell)
             n+=1
-
         counter += 1
         #self.rows += 1
 
@@ -209,7 +206,7 @@ class DataGrid(GridLayout):
         for ch in childs:
             for c in ch.children:
                 if c.id != "Header_Label":
-                    print( str(c.id) + '   -   ' + str(c.state) +  '   -   ' + str(c.text))
+                    print(str(c.id) + '   -   ' + str(c.state) +  '   -   ' + str(c.text))
 
     def __init__(self, header_data, body_data, b_align, cols_size, **kwargs):
         super(DataGrid, self).__init__(**kwargs)
@@ -358,8 +355,8 @@ class ChooseSchoolyearWindow(Widget):
         self.data = []
 
         years = Schoolyear.query.all()
-        for year in years:
-            self.data.append([year.schoolyear_code, 1])
+        for yr in years:
+            self.data.append([yr.schoolyear_code, 1])
 
         header = ['Schoolyear']
         self.col_size = [1] #fractions siya, dapat equal to 1
@@ -410,6 +407,7 @@ class StudentRecordsWindow(Widget):
         super(StudentRecordsWindow, self).__init__(**kwargs)
         label_student.text = ''
         global studentid, year
+        print('year',year)
         studentid = -1
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         with self.canvas:
@@ -542,9 +540,6 @@ class CreateStudentWindow(Widget):
 
         student.date_of_admission = self.ids.date_of_admission
         date_of_admission_text = student.date_of_admission.text
-
-        #student.group = self.ids.group
-        #group_text = student.group.text
 
         student.guardian1_name = self.ids.guardianA
         guardian1_name_text = student.guardian1_name.text
