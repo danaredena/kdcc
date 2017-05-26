@@ -417,7 +417,8 @@ class StudentRecordsWindow(Widget):
             Rectangle(pos=(401,101), size=(348,398))
         self.data = []
 
-        students = Students.query.all()
+        #students = Students.query.all()
+        students = session.query(Students).order_by(Students.last_name)
         for student in students:
             yy = student.date_of_admission.split('/')[-1][-2:]
             mm = int(student.date_of_admission.split('/')[0])
@@ -674,7 +675,7 @@ class FacultyRecordsWindow(Widget):
             Rectangle(pos=(401,101), size=(348,398))
         self.data = []
 
-        all_faculty = Faculty.query.all()
+        all_faculty = session.query(Faculty).order_by(Faculty.last_name)
         for faculty in all_faculty:
             self.data.append([faculty.id_number, faculty.last_name+', '+faculty.first_name+' '+faculty.middle_name, str(faculty.faculty_id)])
 
