@@ -125,6 +125,7 @@ class Faculty(Base):
 
 class Schoolyear(Base):
     __tablename__ = 'schoolyear'
+    __table_args__ = (UniqueConstraint('schoolyear_code'),)
 
     schoolyear_code = Column(String(10), nullable=False, primary_key=True)
 

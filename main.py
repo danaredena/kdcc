@@ -69,6 +69,7 @@ counter = 0
 studentid = 0
 facultyid = 0
 daily = 0
+year = 0
 date = ''
 label_student = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
 label_faculty = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
@@ -81,8 +82,10 @@ class DataGrid(GridLayout):
         self.rows += 1
         #self.rows = 2
         def change_on_press(self):
-            global studentid, facultyid, date
+            global studentid, facultyid, date, year
             print (studentid, facultyid)
+            schoolyear = str(row_data[0])
+            if year: year = row_data[0]
             if daily == -2: date = row_data[0]
             if (studentid):
                 studentid = row_data[-1]
@@ -314,7 +317,7 @@ class LoginWindow(Widget):
 class MainMenuWindow(Widget):
     def student_records(self, *args):
         self.clear_widgets()
-        self.add_widget(StudentRecordsWindow())
+        self.add_widget(ChooseSchoolyearWindow())
     def faculty_records(self, *args):
         self.clear_widgets()
         self.add_widget(FacultyRecordsWindow())
@@ -346,12 +349,67 @@ class Student():
         self.contact_number2 = None
         self.up_dependent = None
 
+class ChooseSchoolyearWindow(Widget):
+    def __init__(self, **kwargs):
+        global year, studentid, facultyid, daily
+        super(ChooseSchoolyearWindow, self).__init__(**kwargs)
+        year=1; studentid=0; facultyid=0; daily=0;
+        self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
+        self.data = []
+
+        years = Schoolyear.query.all()
+        for year in years:
+            self.data.append([year.schoolyear_code, 1])
+
+        header = ['Schoolyear']
+        self.col_size = [1] #fractions siya, dapat equal to 1
+        #body_alignment = ["center", "left", "right", "right"]
+        self.body_alignment = ["center"]
+
+        self.grid = DataGrid(header, self.data, self.body_alignment, self.col_size)
+        self.grid.rows = 10
+
+        scroll = ScrollView(size_hint=(1, 1), size=(400, 500000), scroll_y=0, pos_hint={'center_x':.5, 'center_y':.5})
+        scroll.add_widget(self.grid)
+        scroll.do_scroll_y = True
+        scroll.do_scroll_x = False
+
+        self.layout.add_widget(scroll)
+        self.add_widget(self.layout)
+
+    def main_menu(self, *args):
+        self.clear_widgets()
+        self.add_widget(MainMenuWindow())
+
+    def create(self, *args):
+        self.clear_widgets()
+        self.add_widget(CreateSchoolyearWindow())
+
+    def view(self, *args):
+        self.clear_widgets()
+        self.add_widget(StudentRecordsWindow())
+
+    def reset(self, *args):
+        pass
+
+    def update(self, *args):
+        pass
+
+class CreateSchoolyearWindow(Widget):
+    def back(self, *args):
+        self.clear_widgets()
+        self.add_widget(ChooseSchoolyearWindow())
+    def save(self, *args):
+        new_year = Schoolyear(schoolyear_code = self.ids.year.text)
+        add_db(new_year)
+        self.clear_widgets()
+        self.add_widget(ChooseSchoolyearWindow())
+
 class StudentRecordsWindow(Widget):
-    student_list = ObjectProperty()
     def __init__(self, **kwargs):
         super(StudentRecordsWindow, self).__init__(**kwargs)
         label_student.text = ''
-        global studentid
+        global studentid, year
         studentid = -1
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         with self.canvas:
@@ -363,7 +421,13 @@ class StudentRecordsWindow(Widget):
 
         students = Students.query.all()
         for student in students:
-            self.data.append([student.nickname, student.last_name+', '+student.first_name+' '+student.middle_name, str(student.student_id)])
+            yy = student.date_of_admission.split('/')[-1][-2:]
+            mm = int(student.date_of_admission.split('/')[0])
+            if mm in range(1,6): yr = str(int(yy)-1) + yy
+            else: yr = yy + str(int(yy)+1)
+            if yr == year: self.data.append([student.nickname, student.last_name+', '+student.first_name+' '+student.middle_name, str(student.student_id)])
+        self.label_nostudents = Label(text='', pos=(174, 390), font_size=15, color=(0,0,0,1))
+        if len(self.data) == 0: self.label_nostudents.text="There are no students enrolled in this school year."
 
         header = ['Nickname', 'Name']
         self.col_size = [0.33, 0.67] #fractions siya, dapat equal to 1
@@ -396,19 +460,20 @@ class StudentRecordsWindow(Widget):
         self.layout.add_widget(scroll)
         self.layout.add_widget(self.label_grid)
         self.add_widget(self.layout)
+        self.add_widget(self.label_nostudents)
 
         del_row_btn = Button(text="Delete", on_press=partial(self.grid.remove_row, len(header)), font_size=15, pos=(250,25), size=(100,40))
         self.add_widget(del_row_btn)
         self.label_error = self.ids.error
         self.label_error.text = ''
 
-    def main_menu(self, *args):
+    def back(self, *args):
         self.label_error.text = ''
         label_student.text = ''
         self.canvas.clear()
         self.label_grid.remove_widget(label_student)
         self.clear_widgets()
-        self.add_widget(MainMenuWindow())
+        self.add_widget(ChooseSchoolyearWindow())
 
     def create(self, *args):
         label_student.text = ''
@@ -581,90 +646,6 @@ class EditStudentWindow(Widget):
         self.clear_widgets()
         self.add_widget(StudentRecordsWindow())
 
-class ChooseSchoolyearWindow(Widget):
-    def __init__(self, **kwargs):
-        super(ChooseSchoolyearWindow, self).__init__(**kwargs)
-        self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
-        self.data = []
-
-        schoolyears = Schoolyear.query.all()
-        for schoolyear in schoolyears:
-            self.data.append([schoolyear.schoolyear_code, 1])
-
-        header = ['Schoolyear Code']
-        self.col_size = [1] #fractions siya, dapat equal to 1
-        #body_alignment = ["center", "left", "right", "right"]
-        self.body_alignment = ["center"]
-
-        self.grid = DataGrid(header, self.data, self.body_alignment, self.col_size)
-        self.grid.rows = 10
-
-        scroll = ScrollView(size_hint=(1, 1), size=(400, 500000), scroll_y=0, pos_hint={'center_x':.5, 'center_y':.5})
-        scroll.add_widget(self.grid)
-        scroll.do_scroll_y = True
-        scroll.do_scroll_x = False
-
-        label_schoolyear.bind(size=label_schoolyear.setter('text_size'))
-        self.label_grid = BoxLayout(orientation="vertical")
-        self.label_grid.add_widget(label_schoolyear)
-
-        self.layout.add_widget(scroll)
-        self.layout.add_widget(self.label_grid)
-        self.add_widget(self.layout)
-
-        del_row_btn = Button(text="Delete", on_press=partial(self.grid.remove_row, len(header)), font_size=15, pos=(300,25), size=(100,40))
-        self.add_widget(del_row_btn)
-
-    def populate_list(self, *args):
-        pass
-
-    def main_menu(self, *args):
-        global label_schoolyear
-        label_schoolyear.text = ''
-        self.label_grid.remove_widget(label_schoolyear)
-        self.clear_widgets()
-        self.add_widget(MainMenuWindow())
-
-    def back_to_student_records(self, *args):
-        global label_schoolyear
-        label_schoolyear.text = ''
-        self.label_grid.remove_widget(label_schoolyear)
-        self.clear_widgets()
-        self.add_widget(StudentRecordsWindow())
-
-    def create_schoolyear(self, *args):
-        global label_schoolyear
-        label_schoolyear.text = ''
-        self.label_grid.remove_widget(label_schoolyear)
-        self.clear_widgets()
-        self.add_widget(CreateSchoolyearWindow())
-
-    def update(self, *args):
-        pass
-
-    def reset(self, *args):
-        pass
-
-class CreateSchoolyearWindow(Widget):
-    def create(self, *args):
-        schoolyear.schoolyear_code = self.ids.schoolyear_code
-        schoolyear_code_text = schoolyear.schoolyear_code.text
-
-        new_schoolyear = Schoolyear(schoolyear_code = schoolyear_code_text)
-        print( add_db(new_schoolyear) )
-
-        self.clear_widgets()
-        self.add_widget(ChooseSchoolyearWindow())
-
-    def back_to_choose_schoolyear(self, *args):
-          self.clear_widgets()
-          self.add_widget(ChooseSchoolyearWindow())
-
-class SchoolyearListWindow(Widget):
-    def choose_schoolyear(self, *args):
-        self.clear_widgets()
-        self.add_widget(ChooseSchoolyearWindow())
-
 class Facuty():
     def __init__(self):
         self.id_number = None
@@ -687,8 +668,8 @@ class Facuty():
 class FacultyRecordsWindow(Widget):
     def __init__(self, **kwargs):
         super(FacultyRecordsWindow, self).__init__(**kwargs)
-        global studentid, facultyid, daily
-        studentid = 0; daily = 0; facultyid = -1
+        global studentid, facultyid, daily, year
+        studentid = 0; daily = 0; facultyid = -1; year=0
         label_faculty.text = ''
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         with self.canvas:
@@ -932,8 +913,8 @@ class DailyAttendanceWindow(Widget):
 
 class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kivy
     def __init__(self, **kwargs):
-        global daily, monthcutoffid
-        daily = -2
+        global daily, monthcutoffid, year
+        daily = -2; year=0
         super(PrevAttendanceWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
@@ -973,8 +954,8 @@ class PrevAttendanceWindow(Widget): #not yet final, far from final, pati ung kiv
 class ViewAttendanceWindow(Widget):
     def __init__(self, **kwargs):
         super(ViewAttendanceWindow, self).__init__(**kwargs)
-        global studentid, daily, monthcutoffid
-        studentid = 0; daily = -1
+        global studentid, daily, monthcutoffid, year
+        studentid = 0; daily = -1; year=0
         self.absent = self.emerg = self.sick = 0
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
@@ -1082,8 +1063,8 @@ class ViewAttendanceWindow(Widget):
 class CheckAttendanceWindow(Widget):
     def __init__(self, **kwargs):
         super(CheckAttendanceWindow, self).__init__(**kwargs)
-        global studentid, daily, monthcutoffid
-        studentid = 0; daily = -1
+        global studentid, daily, monthcutoffid, year
+        studentid = 0; daily = -1; year=0
         self.today = strftime("%m/%d/%y", gmtime())
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
@@ -1228,8 +1209,8 @@ class CheckAttendanceWindow(Widget):
 #FINANCIAL-PAYROLL
 class FinanceSummaryWindow(Widget):
     def __init__(self, **kwargs):
-        global studentid, facultyid, daily, monthcutoffid
-        studentid = 0; daily = 0; facultyid = -1
+        global studentid, facultyid, daily, monthcutoffid, year
+        studentid = 0; daily = 0; facultyid = -1; year=0
         super(FinanceSummaryWindow, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))
         self.data = []
@@ -1331,8 +1312,8 @@ class PayrollWindow(Widget):
 
     def __init__(self, **kwargs):
         super(PayrollWindow, self).__init__(**kwargs)
-        global daily
-        daily = -2
+        global daily, year
+        daily = -2; year=0
         day_rate = 500
         total_minutes_late = 0
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100))

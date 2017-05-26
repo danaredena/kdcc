@@ -124,6 +124,32 @@
         size: (100,40)
         on_press: root.backup()
     Button:
+        id: back
+        font_size: 15
+        center_x: root.width + 560
+        center_y: root.y + 75
+        text: "Back"
+        size: (130,40)
+        on_press: root.back()
+
+<ChooseSchoolyearWindow>:
+    Button:
+        id: create
+        font_size: 15
+        center_x: root.width
+        center_y: root.y + 75
+        text: "Create New A.Y."
+        size: (120,40)
+        on_press: root.create()
+    Button:
+        id: view
+        font_size: 15
+        center_x: root.width + 120
+        center_y: root.y + 75
+        text: "View"
+        size: (100,40)
+        on_press: root.view()
+    Button:
         id: home
         font_size: 15
         center_x: root.width + 560
@@ -131,6 +157,50 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
+
+<CreateSchoolyearWindow>:
+    Label:
+        id: error
+        pos: (75,100)
+        size: self.texture_size
+        color: (0,0,0,1)
+        halign: "left"
+        text: ""
+    Label:
+        id: page
+        pos: (75,500)
+        size: self.texture_size
+        color: (0,0,0,1)
+        halign: "left"
+        text: "Create New School Year"
+        font_size: 20
+    TextInput:
+        on_text_validate: root.save()
+        id: year
+        font_size: 20
+        center_x: root.width + 25
+        center_y: root.y + 500
+        height: 35
+        width: 200
+        hint_text: "A.Y. (e.g. 1617)"
+        write_tab: False
+        multiline: False
+    Button:
+        id: back
+        font_size: 15
+        center_x: root.width + 560
+        center_y: root.y + 75
+        text: "Back"
+        size: (100,40)
+        on_press: root.back()
+    Button:
+        id: save
+        font_size: 15
+        center_x: root.width + 25
+        center_y: root.y + 450
+        text: "Save"
+        size: (130,40)
+        on_press: root.save()
 
 <CreateStudentWindow>:
     Label:
@@ -498,75 +568,6 @@
         text: "Back"
         size: (130,40)
         on_press: root.back()
-
-<ChooseSchoolyearWindow>:
-    Button:
-        id: add_schoolyear
-        font_size: 15
-        center_x: root.width
-        center_y: root.y + 75
-        text: "Start Schoolyear"
-        size: (150,40)
-        on_press: root.create_schoolyear()
-    Button:
-        id: open
-        font_size: 15
-        center_x: root.width + 150
-        center_y: root.y + 75
-        text: "Open"
-        size: (100,40)
-    Button:
-        id: view_summary
-        font_size: 15
-        center_x: root.width + 390
-        center_y: root.y + 560
-        text: "View Summary"
-        size: (150,50)
-        on_press: root.back_to_student_records()
-    Button:
-        id: schoolyear_list
-        font_size: 15
-        center_x: root.width + 540
-        center_y: root.y + 560
-        text: "Schoolyear List"
-        size: (150,50)
-        on_press: root.populate_list()
-    Button:
-        id: home
-        font_size: 15
-        center_x: root.width + 560
-        center_y: root.y + 75
-        text: "Back to Home"
-        size: (130,40)
-        on_press: root.main_menu()
-
-<CreateSchoolyearWindow>
-    TextInput:
-        id: schoolyear_code
-        font_size: 20
-        center_x: root.width + 25
-        center_y: root.y + 400 - 50
-        height: 35
-        width: 200
-        hint_text: "Schoolyear Code"
-        write_tab: False
-        multiline: False
-    Button:
-        id: student_records
-        font_size: 15
-        center_x: root.width + 450
-        center_y: root.y + 75
-        text: "Back to Student Records"
-        size: (250,40)
-        on_press: root.back_to_choose_schoolyear()
-    Button:
-        id: create
-        font_size: 15
-        center_x: root.width + 25
-        center_y: root.y + 75
-        text: "Create"
-        size: (250,40)
-        on_press: root.create()
 
 <SchoolyearListWindow>
     Button:
