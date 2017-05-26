@@ -98,7 +98,6 @@ class Students(Base):
 
 class Faculty(Base):
     __tablename__ = 'faculty'
-    __table_args__ = (UniqueConstraint('first_name','middle_name','last_name'),)
     faculty_id = Column(Integer, nullable=False, autoincrement=True, primary_key=True)
     id_number = Column(String, nullable=False)
     first_name = Column(String(70), nullable=False)

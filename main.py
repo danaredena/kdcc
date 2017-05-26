@@ -514,7 +514,7 @@ class StudentRecordsWindow(Widget):
             if mm in range(1,6): yr = str(int(yy)-1) + yy
             else: yr = yy + str(int(yy)+1)
             if yr == year:
-                cols = [student.nickname.lower(), student.first_name.lower(), student.last_name.lower(), student.suffix.lower(), student.address.lower(), student.birth_date, str(student.age), student.sex.lower(), student.date_of_admission, student.guardian1_name.lower(), str(student.guardian2_name), student.contact_number1, str(student.contact_number2)]
+                cols = [student.nickname.lower(), student.first_name.lower(), student.last_name.lower(), student.middle_name.lower(), student.suffix.lower(), student.address.lower(), student.birth_date, str(student.age), student.sex.lower(), student.date_of_admission, student.guardian1_name.lower(), str(student.guardian2_name), student.contact_number1, str(student.contact_number2)]
                 for col in cols:
                     if text.lower() in col:
                         count += 1
@@ -733,6 +733,8 @@ class FacultyRecordsWindow(Widget):
         all_faculty = session.query(Faculty).order_by(Faculty.last_name)
         for faculty in all_faculty:
             self.data.append([faculty.id_number, faculty.last_name+', '+faculty.first_name+' '+faculty.middle_name, str(faculty.faculty_id)])
+        self.label_nofaculty = Label(text='', pos=(174, 390), font_size=15, color=(0,0,0,1))
+        if len(self.data) == 0: self.label_nostudents.text="There are currently no faculty registered."
 
         header = ['ID Number', 'Name']
         self.col_size = [0.33, 0.67] #fractions - add to 1
@@ -785,6 +787,33 @@ class FacultyRecordsWindow(Widget):
         label_faculty.text = ''
         delete_db(facultyid, 1)
         self.grid.remove_row(2, self.grid)
+
+    def search(self, *args):
+        count = 0
+        text = self.ids.search_faculty.text
+        self.label_nofaculty.text = ''
+        print('text',text.lower())
+        self.grid.select_all(self.grid)
+        self.grid.remove_row(2, self.grid)
+        all_faculty = session.query(Faculty).order_by(Faculty.last_name)
+        for faculty in all_faculty:
+            cols = [str(faculty.id_number), faculty.first_name.lower(), faculty.last_name.lower(), faculty.middle_name.lower(), str(faculty.suffix).lower(), faculty.address.lower(), faculty.birth_date, faculty.sex.lower(), faculty.date_of_employment, str(faculty.position).lower(), str(faculty.contact_number.lower()), str(faculty.remarks).lower(), str(faculty.monthly_rate), str(faculty.pers_tin).lower(), str(faculty.pers_ssn).lower(), str(faculty.pers_philhealth).lower(), str(faculty.pers_accntnum).lower()]
+            for col in cols:
+                if text.lower() in col:
+                    count += 1
+                    self.grid.add_row([faculty.id_number, faculty.last_name+', '+faculty.first_name+' '+faculty.middle_name, str(faculty.faculty_id)], self.body_alignment, self.col_size, self.grid)
+                    break
+        if not count: self.label_nofaculty.text = "Faculty not found."
+
+    def clear_search(self, *args):
+        self.ids.search_faculty.text = ''
+        self.label_nofaculty.text = ''
+        self.grid.select_all(self.grid)
+        self.grid.remove_row(2, self.grid)
+
+        all_faculty = session.query(Faculty).order_by(Faculty.last_name)
+        for faculty in all_faculty:
+            self.grid.add_row([faculty.id_number, faculty.last_name+', '+faculty.first_name+' '+faculty.middle_name, str(faculty.faculty_id)], self.body_alignment, self.col_size, self.grid)
 
     def reset(self, *args):
         label_faculty.text = ''

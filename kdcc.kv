@@ -684,25 +684,34 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
-    Button:
-        id: search
-        font_size: 15
-        center_x: root.width + 600
-        center_y: root.y + 560
-        text: "Search"
-        size: (100,40)
-        on_press: root.search()
     TextInput:
-        id: search_student
+        on_text_validate: root.search()
+        id: search_faculty
         font_size: 20
-        center_x: root.width + 395
+        center_x: root.width + 355
         center_y: root.y + 563
         height: 35
         width: 200
-        hint_text: "student"
+        hint_text: "Search for faculty"
         write_tab: False
         multiline: False
-        on_text_validate: root.search()
+    Button:
+        id: search
+        font_size: 15
+        center_x: root.width + 560
+        center_y: root.y + 560
+        text: "Search"
+        size: (70,40)
+        on_press: root.search()
+    Button:
+        id: clear_search
+        font_size: 15
+        center_x: root.width + 630
+        center_y: root.y + 560
+        text: "Clear"
+        size: (70,40)
+        on_press: root.clear_search()
+
 
 <CreateFacultyWindow>:
     Label:
