@@ -45,18 +45,16 @@ def fill():
         session.add(new_faculty)
         session.commit()
 
-        '''
         #5: ADD SCHOOLYEAR (arbitrary) '1617'
         session = DBSession()
-        new_sem = Schoolyear(schoolyear_code='1415')
-        session.add(new_sem)
-        new_sem = Schoolyear(schoolyear_code='1516')
-        session.add(new_sem)
         new_sem = Schoolyear(schoolyear_code='1617')
+        session.add(new_sem)
+        new_sem = Schoolyear(schoolyear_code='1718')
         session.add(new_sem)
         session.commit()
 
 
+        '''
         #6: ADD ENROLLED (arbitrary) '1617A and Diane'
         session = DBSession()
         new_enrolled = Enrolled(schoolyear_code='1617',student_id=1, payment_mode=0) #0 for semestral, 1 for monthly

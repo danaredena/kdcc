@@ -83,7 +83,7 @@ class DataGrid(GridLayout):
         #self.rows = 2
         def change_on_press(self):
             global studentid, facultyid, date, year
-            if year==1: year = row_data[0]
+            if year==1 or type(year)==str: year = row_data[0]
             if daily == -2: date = row_data[0]
             if (studentid):
                 studentid = row_data[-1]
@@ -172,11 +172,6 @@ class DataGrid(GridLayout):
         #self.rows += 1
 
     def remove_row(self, n_cols, instance, **kwargs):
-        label_student.text = ''
-        label_faculty.text = ''
-        if studentid: delete_db(studentid, 0)
-        elif facultyid: delete_db(facultyid, 1)
-
         childs = self.parent.children
         selected = 0
         for ch in childs:
@@ -354,7 +349,7 @@ class ChooseSchoolyearWindow(Widget):
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
 
-        years = Schoolyear.query.all()
+        years = session.query(Schoolyear).order_by(Schoolyear.schoolyear_code)
         for yr in years:
             self.data.append([yr.schoolyear_code, 1])
 
@@ -381,6 +376,12 @@ class ChooseSchoolyearWindow(Widget):
     def create(self, *args):
         self.clear_widgets()
         self.add_widget(CreateSchoolyearWindow())
+
+    def delete(self, *args):
+        global year
+        self.grid.remove_row(2, self.grid)
+        session.query(Schoolyear).filter(Schoolyear.schoolyear_code==year).delete()
+        session.commit()
 
     def view(self, *args):
         self.clear_widgets()
@@ -417,7 +418,6 @@ class StudentRecordsWindow(Widget):
             Rectangle(pos=(401,101), size=(348,398))
         self.data = []
 
-        #students = Students.query.all()
         students = session.query(Students).order_by(Students.last_name)
         for student in students:
             yy = student.date_of_admission.split('/')[-1][-2:]
@@ -441,7 +441,6 @@ class StudentRecordsWindow(Widget):
         scroll.do_scroll_y = True
         scroll.do_scroll_x = False
 
-
         '''pp = partial(self.grid.add_row, ['001', 'Teste', '4.00', '4.00','9.00'], self.body_alignment, self.col_size)
 
         add_row_btn = Button(text="Add Row", on_press=pp)
@@ -461,8 +460,6 @@ class StudentRecordsWindow(Widget):
         self.add_widget(self.layout)
         self.add_widget(self.label_nostudents)
 
-        del_row_btn = Button(text="Delete", on_press=partial(self.grid.remove_row, len(header)), font_size=15, pos=(250,25), size=(100,40))
-        self.add_widget(del_row_btn)
         self.label_error = self.ids.error
         self.label_error.text = ''
 
@@ -490,6 +487,11 @@ class StudentRecordsWindow(Widget):
         self.clear_widgets()
         self.add_widget(EditStudentWindow())
 
+    def delete(self, *args):
+        label_student.text = ''
+        delete_db(studentid, 0)
+        self.grid.remove_row(2, self.grid)
+
     def choose_schoolyear(self, *args):
         label_student.text = ''
         self.label_error.text = ''
@@ -497,6 +499,41 @@ class StudentRecordsWindow(Widget):
         self.label_grid.remove_widget(label_student)
         self.clear_widgets()
         self.add_widget(ChooseSchoolyearWindow())
+
+    def search(self, *args):
+        count = 0
+        text = self.ids.search_student.text
+        self.label_nostudents.text = ''
+        print('text',text.lower())
+        self.grid.select_all(self.grid)
+        self.grid.remove_row(2, self.grid)
+        students = session.query(Students).order_by(Students.last_name)
+        for student in students:
+            yy = student.date_of_admission.split('/')[-1][-2:]
+            mm = int(student.date_of_admission.split('/')[0])
+            if mm in range(1,6): yr = str(int(yy)-1) + yy
+            else: yr = yy + str(int(yy)+1)
+            if yr == year:
+                cols = [student.nickname.lower(), student.first_name.lower(), student.last_name.lower(), student.suffix.lower(), student.address.lower(), student.birth_date, str(student.age), student.sex.lower(), student.date_of_admission, student.guardian1_name.lower(), str(student.guardian2_name), student.contact_number1, str(student.contact_number2)]
+                for col in cols:
+                    if text.lower() in col:
+                        count += 1
+                        self.grid.add_row([student.nickname, student.last_name+', '+student.first_name+' '+student.middle_name, str(student.student_id)], self.body_alignment, self.col_size, self.grid)
+                        break
+        if not count: self.label_nostudents.text = "Student not found."
+
+    def clear_search(self, *args):
+        self.ids.search_student.text = ''
+        self.label_nostudents.text = ''
+        self.grid.select_all(self.grid)
+        self.grid.remove_row(2, self.grid)
+        students = session.query(Students).order_by(Students.last_name)
+        for student in students:
+            yy = student.date_of_admission.split('/')[-1][-2:]
+            mm = int(student.date_of_admission.split('/')[0])
+            if mm in range(1,6): yr = str(int(yy)-1) + yy
+            else: yr = yy + str(int(yy)+1)
+            if yr == year: self.grid.add_row([student.nickname, student.last_name+', '+student.first_name+' '+student.middle_name, str(student.student_id)], self.body_alignment, self.col_size, self.grid)
 
     def reset(self, *args):
         label_student.text = ''
@@ -585,6 +622,15 @@ class CreateStudentWindow(Widget):
         elif (contact_number1_text != ""):
             if (int(int(contact_number1_text) / 1000000000) != 9):
                 label.text = "Contact number should be in 09xxxxxxxxx format"
+        yy = date_of_admission_text.split('/')[-1][-2:]
+        mm = int(date_of_admission_text.split('/')[0])
+        if mm in range(1,6): yr = str(int(yy)-1) + yy
+        else: yr = yy + str(int(yy)+1)
+        years = session.query(Schoolyear).all()
+        for year in years:
+            if yr == year.schoolyear_code: return
+        new_year = Schoolyear(schoolyear_code = yr)
+        add_db(new_year)
 
     def back_to_student_records(self, *args):
         self.clear_widgets()
@@ -637,6 +683,15 @@ class EditStudentWindow(Widget):
         elif (self.ids.contactA.text != ""):
             if (int(int(self.ids.contactA.text) / 1000000000) != 9):
                 label.text = "Contact number should be in 09xxxxxxxxx format"
+        yy = self.ids.date_of_admission.text.split('/')[-1][-2:]
+        mm = int(self.ids.date_of_admission.text.split('/')[0])
+        if mm in range(1,6): yr = str(int(yy)-1) + yy
+        else: yr = yy + str(int(yy)+1)
+        years = session.query(Schoolyear).all()
+        for year in years:
+            if yr == year.schoolyear_code: return
+        new_year = Schoolyear(schoolyear_code = yr)
+        add_db(new_year)
 
     def back(self):
         self.clear_widgets()
@@ -699,9 +754,6 @@ class FacultyRecordsWindow(Widget):
         self.layout.add_widget(self.label_grid)
         self.add_widget(self.layout)
 
-        del_row_btn = Button(text="Delete", on_press=partial(self.grid.remove_row, len(header)), font_size=15, pos=(250,25), size=(100,40))
-        self.add_widget(del_row_btn)
-
         self.label_error = self.ids.error
         self.label_error.text = ''
 
@@ -728,6 +780,11 @@ class FacultyRecordsWindow(Widget):
         self.label_error.text = ''
         self.clear_widgets()
         self.add_widget(EditFacultyWindow())
+
+    def delete(self, *args):
+        label_faculty.text = ''
+        delete_db(facultyid, 1)
+        self.grid.remove_row(2, self.grid)
 
     def reset(self, *args):
         label_faculty.text = ''

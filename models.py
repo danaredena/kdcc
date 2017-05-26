@@ -76,7 +76,6 @@ class MonthlyPayroll(Base):
 
 class Students(Base):
     __tablename__ = 'student'
-    __table_args__ = (UniqueConstraint('first_name','middle_name','last_name'),)
 
     student_id = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
     nickname = Column(String(30), nullable=False)

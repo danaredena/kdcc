@@ -116,6 +116,14 @@
         size: (100,40)
         on_press: root.edit()
     Button:
+        id: delete
+        font_size: 15
+        center_x: root.width + 200
+        center_y: root.y + 75
+        text: "Delete"
+        size: (100,40)
+        on_press: root.delete()
+    Button:
         id: backup
         font_size: 15
         center_x: root.width + 460
@@ -131,6 +139,33 @@
         text: "Back"
         size: (130,40)
         on_press: root.back()
+    TextInput:
+        on_text_validate: root.search()
+        id: search_student
+        font_size: 20
+        center_x: root.width + 355
+        center_y: root.y + 563
+        height: 35
+        width: 200
+        hint_text: "Search for student"
+        write_tab: False
+        multiline: False
+    Button:
+        id: search
+        font_size: 15
+        center_x: root.width + 560
+        center_y: root.y + 560
+        text: "Search"
+        size: (70,40)
+        on_press: root.search()
+    Button:
+        id: clear_search
+        font_size: 15
+        center_x: root.width + 630
+        center_y: root.y + 560
+        text: "Clear"
+        size: (70,40)
+        on_press: root.clear_search()
 
 <ChooseSchoolyearWindow>:
     Button:
@@ -138,13 +173,21 @@
         font_size: 15
         center_x: root.width
         center_y: root.y + 75
-        text: "Create New A.Y."
+        text: "Create New S.Y."
         size: (120,40)
         on_press: root.create()
     Button:
-        id: view
+        id: delete
         font_size: 15
         center_x: root.width + 120
+        center_y: root.y + 75
+        text: "Delete S.Y."
+        size: (100,40)
+        on_press: root.delete()
+    Button:
+        id: view
+        font_size: 15
+        center_x: root.width + 220
         center_y: root.y + 75
         text: "View"
         size: (100,40)
@@ -618,6 +661,14 @@
         size: (100,40)
         on_press: root.edit()
     Button:
+        id: delete
+        font_size: 15
+        center_x: root.width + 200
+        center_y: root.y + 75
+        text: "Delete"
+        size: (100,40)
+        on_press: root.delete()
+    Button:
         id: backup
         font_size: 15
         center_x: root.width + 460
@@ -633,6 +684,25 @@
         text: "Back to Home"
         size: (130,40)
         on_press: root.main_menu()
+    Button:
+        id: search
+        font_size: 15
+        center_x: root.width + 600
+        center_y: root.y + 560
+        text: "Search"
+        size: (100,40)
+        on_press: root.search()
+    TextInput:
+        id: search_student
+        font_size: 20
+        center_x: root.width + 395
+        center_y: root.y + 563
+        height: 35
+        width: 200
+        hint_text: "student"
+        write_tab: False
+        multiline: False
+        on_text_validate: root.search()
 
 <CreateFacultyWindow>:
     Label:
