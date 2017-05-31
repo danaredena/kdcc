@@ -69,7 +69,8 @@ counter = 0
 studentid = 0
 facultyid = 0
 daily = 0
-year = 0
+year = ''
+inYear = 0
 edit = 0
 date = ''
 label_student = Label(text='', halign="left", valign="top", font_size=19, color=[0,0,0,1])
@@ -83,8 +84,8 @@ class DataGrid(GridLayout):
         self.rows += 1
         #self.rows = 2
         def change_on_press(self):
-            global studentid, facultyid, date, year, edit
-            if year==1 and studentid!=-1: year = row_data[0]
+            global studentid, facultyid, date, year, edit, inYear
+            if inYear==1 and studentid!=-1: year = row_data[0]
             if daily == -2: date = row_data[0]
             if (studentid):
                 studentid = row_data[-1]
@@ -344,9 +345,9 @@ class Student():
 
 class ChooseSchoolyearWindow(Widget):
     def __init__(self, **kwargs):
-        global year, studentid, facultyid, daily
+        global inYear, studentid, facultyid, daily
         super(ChooseSchoolyearWindow, self).__init__(**kwargs)
-        year=1; studentid=0; facultyid=0; daily=0;
+        inYear=1; studentid=0; facultyid=0; daily=0;
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
 
