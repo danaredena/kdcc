@@ -351,7 +351,7 @@ class ChooseSchoolyearWindow(Widget):
         self.layout = BoxLayout(orientation="horizontal", height=400, width=700, pos=(50,100), spacing=20)
         self.data = []
 
-        years = session.query(Schoolyear).order_by(Schoolyear.schoolyear_code)
+        years = session.query(Schoolyear).order_by(desc(Schoolyear.schoolyear_code))
         for yr in years:
             self.data.append([yr.schoolyear_code, 1])
 
